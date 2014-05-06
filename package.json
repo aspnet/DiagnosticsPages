@@ -1,0 +1,10 @@
+{
+  "name": "DiagnosticsPages",
+  "version": "0.0.0",
+  "description": "",
+  "devDependencies": {
+    "grunt": "~0.4.4",
+    "grunt-contrib-csslint": "~0.2.0",
+    "grunt-contrib-jshint": "~0.10.0"
+  }
+}
