@@ -30,9 +30,45 @@ k-standard-goals
   exec program='msiexec' commandline='/a ${nodeMsiPath} /qb TARGETDIR=${nodeDir}' if='!nodeInstalled'
 
 #restore-npm-modules .install-node
-  -// Run npm install:
-  exec program='bin\node\nodejs\npm.cmd' commandline='install'
+  @{
+    // Find all dirs that contain a package.json file that aren't installed node modules
+    var currentDir = Directory.GetCurrentDirectory();
+    var npmCmd = Path.Combine(currentDir, "bin\\node\\nodejs\\npm.cmd");
+    var npmDirs = Directory.GetFiles(currentDir, "package.json", SearchOption.AllDirectories)
+                           .Where(p => p.IndexOf(Path.DirectorySeparatorChar + "node_modules" + Path.DirectorySeparatorChar) < 0)
+                           .Select(p => Path.GetDirectoryName(p))
+                           .Distinct();
 
-#run-grunt .restore-npm-modules target='compile' if='File.Exists("gruntfile.js")'
-  -// Run grunt:
-  exec program='bin\node\nodejs\node.exe' commandline='node_modules\grunt-cli\bin\grunt'
+    foreach (var dir in npmDirs) {
+      // Run npm in each dir
+      Process.Start(new ProcessStartInfo
+      {
+        UseShellExecute = false,
+        WorkingDirectory = dir,
+        FileName = npmCmd,
+        Arguments = "install"
+      }).WaitForExit();
+    }
+  }
+
+#run-grunt .restore-npm-modules target='compile'
+  @{
+    // Find all dirs that contain a gruntfile.js file
+    var currentDir = Directory.GetCurrentDirectory();
+    var nodeExe = Path.Combine(currentDir, "bin\\node\\nodejs\\node.exe");
+    var gruntDirs = Directory.GetFiles(currentDir, "gruntfile.js", SearchOption.AllDirectories)
+                             .Where(p => p.IndexOf(Path.DirectorySeparatorChar + "node_modules" + Path.DirectorySeparatorChar) < 0)
+                             .Select(p => Path.GetDirectoryName(p))
+                             .Distinct();
+
+    foreach (var dir in gruntDirs) {
+      // Run grunt in each dir
+      Process.Start(new ProcessStartInfo
+      {
+        UseShellExecute = false,
+        WorkingDirectory = dir,
+        FileName = nodeExe,
+        Arguments = "node_modules\\grunt-cli\\bin\\grunt"
+      }).WaitForExit();
+    }
+  }
