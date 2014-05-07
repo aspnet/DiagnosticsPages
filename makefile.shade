@@ -38,18 +38,9 @@ k-standard-goals
                            .Where(p => p.IndexOf(Path.DirectorySeparatorChar + "node_modules" + Path.DirectorySeparatorChar) < 0)
                            .Select(p => Path.GetDirectoryName(p))
                            .Distinct();
-
-    foreach (var dir in npmDirs) {
-      // Run npm in each dir
-      Process.Start(new ProcessStartInfo
-      {
-        UseShellExecute = false,
-        WorkingDirectory = dir,
-        FileName = npmCmd,
-        Arguments = "install"
-      }).WaitForExit();
-    }
   }
+
+  exec program='${npmCmd}' commandline='install' workingdir='${dir}' each='var dir in npmDirs'
 
 #run-grunt .restore-npm-modules target='compile'
   @{
@@ -60,15 +51,6 @@ k-standard-goals
                              .Where(p => p.IndexOf(Path.DirectorySeparatorChar + "node_modules" + Path.DirectorySeparatorChar) < 0)
                              .Select(p => Path.GetDirectoryName(p))
                              .Distinct();
-
-    foreach (var dir in gruntDirs) {
-      // Run grunt in each dir
-      Process.Start(new ProcessStartInfo
-      {
-        UseShellExecute = false,
-        WorkingDirectory = dir,
-        FileName = nodeExe,
-        Arguments = "node_modules\\grunt-cli\\bin\\grunt"
-      }).WaitForExit();
-    }
   }
+
+  exec program='${nodeExe}' commandline='node_modules\\grunt-cli\\bin\\grunt' workingdir='${dir}' each='var dir in gruntDirs'
