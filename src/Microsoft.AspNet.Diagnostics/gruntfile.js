@@ -4,8 +4,8 @@ module.exports = function (grunt) {
     grunt.initConfig({
         jshint: {
             src: [
-                "gruntfile.js",
-                "src/**/*.js"
+                "**/*.js",
+                "!node_modules/**/*.js"
             ],
             options: {
                 // Options are documented at https://github.com/gruntjs/grunt-contrib-jshint#options
@@ -14,7 +14,8 @@ module.exports = function (grunt) {
         },
         csslint: {
             src: [
-                "src/**/*.css"
+                "**/*.css",
+                "!node_modules/**/*.css"
             ],
             options: {
                 // Options are documented at https://github.com/gruntjs/grunt-contrib-csslint#options
