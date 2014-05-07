@@ -19,6 +19,7 @@
   <ItemGroup>
     <Content Include=".csslintrc" />
     <Content Include=".jshintrc" />
+    <Content Include="gruntfile.js" />
     <Content Include="node_modules\.bin\grunt" />
     <Content Include="node_modules\.bin\grunt.cmd" />
     <Content Include="node_modules\grunt-cli\.npmignore" />
@@ -1002,6 +1003,7 @@
     <Content Include="node_modules\grunt\node_modules\which\which.js" />
     <Content Include="node_modules\grunt\package.json" />
     <Content Include="node_modules\grunt\README.md" />
+    <Content Include="package.json" />
     <Content Include="Project.json" />
     <Content Include="Resources.resx" />
     <Content Include="Views\DiagnosticsPage.cshtml" />
