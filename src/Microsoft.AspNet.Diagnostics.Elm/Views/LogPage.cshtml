@@ -1,0 +1,175 @@
+﻿@using System
+@using System.Globalization
+@using System.Linq
+@using Microsoft.AspNet.Diagnostics.Elm.Views
+@using Microsoft.Framework.Logging
+@using Microsoft.AspNet.Diagnostics.Elm
+@using Microsoft.AspNet.Diagnostics.Views
+
+@functions
+{
+    public LogPage(LogPageModel model)
+    {
+        Model = model;
+    }
+
+    public LogPageModel Model { get; set; }
+}
+
+@* writes one log row indented by the given level *@
+@helper LogRow(LogInfo log, int level) {
+    if (log.Severity >= Model.Options.MinLevel && 
+        (string.IsNullOrEmpty(Model.Options.NamePrefix) || log.Name.StartsWith(Model.Options.NamePrefix)))
+    {
+        <tr class="logRow">
+            <td>@string.Format("{0:MM/dd/yy}", log.Time)</td>
+            <td>@string.Format("{0:H:mm:ss}", log.Time)</td>
+            <td title="@log.Name">@log.Name</td>
+            <td class="@log.Severity">@log.Severity</td>
+            <td title="@log.State">
+                @for (var i = 0; i < level; i++)
+                {
+                    <span class="tab"></span>
+                }
+                @log.State
+            </td>
+            <td title="@log.Exception">@log.Exception</td>
+        </tr>
+    }
+}
+
+@helper Traverse(ScopeNode node, int level)
+{
+    // print start time
+    @LogRow(new LogInfo()
+    {
+        Name = node.Name,
+        Time = node.StartTime,
+        Severity = TraceType.Verbose,
+        State = "Beginning " + node.State,
+    }, level);
+    var m = 0;
+    var c = 0;
+    while (m < node.Messages.Count && c < node.Children.Count)
+    {
+        if (node.Messages[m].Time < node.Children[c].StartTime)
+        {
+            @LogRow(node.Messages[m], level)
+            m++;
+        }
+        else
+        {
+            @Traverse(node.Children[c], level + 1)
+            c++;
+        }
+    }
+    if (m < node.Messages.Count)
+    {
+        for (var i = m; i < node.Messages.Count; i++)
+        {
+            @LogRow(node.Messages[i], level)
+        }
+    }
+    else
+    {
+        for (var i = c; i < node.Children.Count; i++)
+        {
+            @Traverse(node.Children[i], level + 1)
+        }
+    }
+    // print end time
+    @LogRow(new LogInfo()
+    {
+        Name = node.Name,
+        Time = node.EndTime,
+        Severity = TraceType.Verbose,
+        State = string.Format("Completed {0} in {1}ms", node.State, node.EndTime - node.StartTime)
+    }, level);
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>ELM</title>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <style>
+        <%$ include: LogPage.css %>
+    </style>
+</head>
+<body>
+    <h1>ELM</h1>
+    <form method="get">
+        <select name="level">
+            @foreach (var severity in Enum.GetValues(typeof(TraceType)))
+            {
+                var s = (int)severity;
+                if ((int)Model.Options.MinLevel == s)
+                {
+                    <option value="@s" selected="selected">@severity</option>
+                }
+                else
+                {
+                    <option value="@s">@severity</option>
+                }
+            }
+        </select>
+        <input type="text" name="name" value="@Model.Options.NamePrefix" />
+        <input type="submit" value="filter" />
+    </form>
+
+    <table id="requestTable">
+        <thead id="requestHeader">
+            <tr>
+                <th class="path">Path</th>
+                <th class="host">Host</th>
+                <th class="statusCode">Status Code</th>
+                <th class="logs">Logs</th>
+            </tr>
+        </thead>
+        <colgroup>
+            <col />
+            <col />
+            <col />
+            <col />
+        </colgroup>
+        @foreach (var activity in Model.LogTree.Reverse())
+        {
+            <tbody>
+                <tr class="requestRow">
+                    @{
+                        if (activity.Key.HttpInfo != null)
+                        {
+                            var requestPath = Model.Options.Path.Value + "/" + activity.Key.HttpInfo.RequestID;
+                            <td><a href="@requestPath" title="@activity.Key.HttpInfo.Path">@activity.Key.HttpInfo.Path</a></td>
+                            <td>@activity.Key.HttpInfo.Host</td>
+                            <td>@activity.Key.HttpInfo.StatusCode</td>
+                        }
+                        else
+                        {
+                            <td colspan="3">BOO</td>
+                        }
+                    }
+                    <td class="logTd">
+                        <table class="logTable">
+                            <thead class="logHeader">
+                                <tr>
+                                    <th class="date">Date</th>
+                                    <th class="time">Time</th>
+                                    <th class="name">Name</th>
+                                    <th class="severity">Severity</th>
+                                    <th class="state">State</th>
+                                    <th class="error">Error</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @Traverse(activity.Value, 0)
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+            </tbody>
+        }
+    </table>
+</body>
+</html>
