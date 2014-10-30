@@ -59,63 +59,61 @@ namespace Microsoft.AspNet.Diagnostics.Elm
             }
 
             // parse params
-            var logs = (IEnumerable<LogInfo>)null;
+            var logs = _store.GetLogs();
+            var options = new ElmOptions()
+            {
+                Path = _options.Path,
+                MinLevel = TraceType.Verbose,
+                NamePrefix = ""
+            };
             if (context.Request.Query.ContainsKey("level"))
             {
-                var minLevel = (TraceType)int.Parse(context.Request.Query.GetValues("level")[0]);
-                logs = _store.GetLogs(minLevel);
-                _options.MinLevel = minLevel;
-            }
-            else
-            {
-                logs = _store.GetLogs();
-                _options.MinLevel = TraceType.Verbose;
+                var minLevel = options.MinLevel;
+                if (Enum.TryParse<TraceType>(context.Request.Query.GetValues("level")[0], out minLevel))
+                {
+                    logs = _store.GetLogs(minLevel);
+                    options.MinLevel = minLevel;
+                }
             }
             if (context.Request.Query.ContainsKey("name"))
             {
                 var namePrefix = context.Request.Query.GetValues("name")[0];
                 logs = logs.Where(l => l.Name.StartsWith(namePrefix));
-                _options.NamePrefix = namePrefix;
+                options.NamePrefix = namePrefix;
             }
 
             // main log page
             if (context.Request.Path == _options.Path)
             {
-
                 var model = new LogPageModel()
                 {
                     // sort so most recent logs are first
                     Logs = logs.OrderBy(l => l.Time).Reverse(),
                     LogTree = ElmStore.Activities,
-                    Options = _options
+                    Options = options
                 };
                 var logPage = new LogPage(model);
-
-
 
                 await logPage.ExecuteAsync(context);
             }
             // request details page
             else
             {
-                try
+                var parts = context.Request.Path.Value.Split('/');
+                var id = Guid.Empty;
+                if (!Guid.TryParse(parts[parts.Length - 1], out id))
                 {
-                    var parts = context.Request.Path.Value.Split('/');
-                    var id = Guid.Parse(parts[parts.Length - 1]);
-                    var requestLogs = logs.Where(l => l.ActivityContext.HttpInfo != null ? l.ActivityContext.HttpInfo.RequestID == id : false);
-                    var model = new RequestPageModel()
-                    {
-                        RequestID = id,
-                        Logs = requestLogs,
-                        Options = _options
-                    };
-                    var requestPage = new RequestPage(model);
-                    await requestPage.ExecuteAsync(context);
+                    return;
                 }
-                catch (Exception)
+                var requestLogs = logs.Where(l => l.ActivityContext.HttpInfo != null ? l.ActivityContext.HttpInfo.RequestID == id : false);
+                var model = new RequestPageModel()
                 {
-                    // TODO: bad url
-                }
+                    RequestID = id,
+                    Logs = requestLogs,
+                    Options = options
+                };
+                var requestPage = new RequestPage(model);
+                await requestPage.ExecuteAsync(context);
             }
         }
 

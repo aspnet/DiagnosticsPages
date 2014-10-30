@@ -9,7 +9,9 @@ namespace Microsoft.AspNet.Diagnostics.Elm
 {
     public class ElmStore : IElmStore
     {
-        private readonly List<LogInfo> _logs = new List<LogInfo>();
+        private const int Capacity = 1000;
+
+        private readonly Queue<LogInfo> _logs = new Queue<LogInfo>();
 
         public static IDictionary<ActivityContext, ScopeNode> Activities { get; set; } = new Dictionary<ActivityContext, ScopeNode>();
 
@@ -25,7 +27,14 @@ namespace Microsoft.AspNet.Diagnostics.Elm
 
         public void Add(LogInfo info)
         {
-            _logs.Add(info);
+            lock(_logs)
+            {
+                _logs.Enqueue(info);
+                while (_logs.Count > Capacity)
+                {
+                    _logs.Dequeue();
+                }
+            }
         }
     }
 }
