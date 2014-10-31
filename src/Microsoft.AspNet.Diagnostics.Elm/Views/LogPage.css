@@ -1,7 +1,5 @@
 ﻿body {
-    font-family: 'Segoe UI', Tahoma, Arial, Helvetica, sans-serif;
     font-size: .813em;
-    line-height: 1.4em;
     white-space: nowrap;
     margin: 10px;
 }
@@ -23,11 +21,6 @@ table {
     border-collapse: collapse;
 }
 
-td {
-    text-overflow: ellipsis;
-    overflow: hidden;
-}
-
 td, th {
     padding: 4px;
 }
@@ -39,10 +32,6 @@ thead {
 
 tr {
     height: 23px;
-}
-
-tr:nth-child(2n) {
-    background-color: #F6F6F6;
 }
 
 #requestHeader {
@@ -87,25 +76,4 @@ tr:nth-child(2n) {
 
 .tab {
     margin-left: 30px;
-}
-
-.Critical {
-    background-color: red;
-    color: white;
-}
-
-.Error {
-    color: red;
-}
-
-.Information {
-    color: blue;
-}
-
-.Verbose {
-    color: black;
-}
-
-.Warning {
-    color: orange;
 }

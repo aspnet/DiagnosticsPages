@@ -123,7 +123,7 @@ namespace Microsoft.AspNet.Diagnostics.Elm
         /// Takes the info from the given HttpContext and copies it to an HttpInfo object
         /// </summary>
         /// <returns>The HttpInfo for the current elm context</returns>
-        private HttpInfo GetHttpInfo(HttpContext context, Guid requestId)
+        private static HttpInfo GetHttpInfo(HttpContext context, Guid requestId)
         {
             return new HttpInfo()
             {

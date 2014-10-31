@@ -9,11 +9,11 @@ namespace Microsoft.AspNet.Diagnostics.Elm
 {
     public class ElmStore : IElmStore
     {
-        private const int Capacity = 1000;
+        public const int Capacity = 200;
 
         private readonly Queue<LogInfo> _logs = new Queue<LogInfo>();
 
-        public static IDictionary<ActivityContext, ScopeNode> Activities { get; set; } = new Dictionary<ActivityContext, ScopeNode>();
+        public static LinkedList<ActivityContext> Activities { get; set; } = new LinkedList<ActivityContext>();
 
         public IEnumerable<LogInfo> GetLogs()
         {
@@ -27,7 +27,7 @@ namespace Microsoft.AspNet.Diagnostics.Elm
 
         public void Add(LogInfo info)
         {
-            lock(_logs)
+            lock (_logs)
             {
                 _logs.Enqueue(info);
                 while (_logs.Count > Capacity)
@@ -35,6 +35,12 @@ namespace Microsoft.AspNet.Diagnostics.Elm
                     _logs.Dequeue();
                 }
             }
+        }
+
+        // returns the number of log messages stored in Activities
+        public static int NumLogs()
+        {
+            return Activities.Sum(a => a.Size);
         }
     }
 }

@@ -2,7 +2,6 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
 using Microsoft.Framework.Logging;
 
 namespace Microsoft.AspNet.Diagnostics.Elm
@@ -33,7 +32,11 @@ namespace Microsoft.AspNet.Diagnostics.Elm
                 State = state,
                 Time = DateTimeOffset.UtcNow
             };
-            ElmScope.Current?.Node?.Messages?.Add(info);
+            if (ElmScope.Current != null)
+            {
+                ElmScope.Current.Context.Size++;
+                ElmScope.Current.Node.Messages.Add(info);
+            }
             _store.Add(info);
         }
 
@@ -45,14 +48,7 @@ namespace Microsoft.AspNet.Diagnostics.Elm
         public IDisposable BeginScope(object state)
         {
             var scope = new ElmScope(_name, state);
-            if (ElmScope.Current != null)
-            {
-                scope.Context = ElmScope.Current.Context;
-            }
-            else
-            {
-                scope.Context = GetNewActivityContext();
-            }
+            scope.Context = ElmScope.Current?.Context ?? GetNewActivityContext();
             return ElmScope.Push(scope);
         }
 
@@ -60,7 +56,8 @@ namespace Microsoft.AspNet.Diagnostics.Elm
         {
             return new ActivityContext()
             {
-                Id = Guid.NewGuid()
+                Id = Guid.NewGuid(),
+                Time = DateTimeOffset.UtcNow
             };
         }
     }

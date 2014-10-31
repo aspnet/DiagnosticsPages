@@ -1,7 +1,5 @@
 ﻿body {
-    font-family: 'Segoe UI', Tahoma, Arial, Helvtica, sans-serif;
     font-size: 0.9em;
-    line-height: 1.4em;
     width: 90%;
     margin: 0px auto;
 }
@@ -18,21 +16,12 @@ table {
     white-space: pre-wrap;
 }
 
-td {
-    text-overflow: ellipsis;
-    overflow: hidden;
-}
-
 th {
     font-family: Arial;
 }
 
 td, th {
     padding: 8px;
-}
-
-tr:nth-child(2n) {
-    background-color: #F6F6F6;
 }
 
 #headerTable {
@@ -55,25 +44,4 @@ tr:nth-child(2n) {
 
 #logs>thead>tr>th {
     border: 1px solid black;
-}
-
-.Critical {
-    background-color: red;
-    color: white;
-}
-
-.Error {
-    color: red;
-}
-
-.Information {
-    color: blue;
-}
-
-.Verbose {
-    color: black;
-}
-
-.Warning {
-    color: orange;
 }

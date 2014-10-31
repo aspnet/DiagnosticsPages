@@ -11,14 +11,9 @@ namespace Microsoft.AspNet.Diagnostics.Elm
     /// </summary>
     public class ElmOptions
     {
-        public ElmOptions()
-        {
-            Path = new PathString("/Elm");
-        }
-
         /// <summary>
         /// Specifies the path to view the logs
         /// </summary>
-        public PathString Path { get; set; }
+        public PathString Path { get; set; } = new PathString("/Elm");
     }
 }

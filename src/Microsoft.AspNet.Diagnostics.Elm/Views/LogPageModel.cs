@@ -7,7 +7,7 @@ namespace Microsoft.AspNet.Diagnostics.Elm.Views
     {
         public IEnumerable<LogInfo> Logs { get; set; }
 
-        public IDictionary<ActivityContext, ScopeNode> LogTree { get; set; }
+        public IEnumerable<ActivityContext> LogTree { get; set; }
 
         public ViewOptions Options { get; set; }
 

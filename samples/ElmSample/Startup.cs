@@ -21,9 +21,16 @@ namespace ElmSampleApp
         public void Configure(IApplicationBuilder app, ILoggerFactory factory)
         {
             app.UseElm();
+            var logger = factory.Create<Startup>();
+            
             app.Run(async context =>
             {
                 await context.Response.WriteAsync("Hello world");
+                using (logger.BeginScope("startup"))
+                {
+                    logger.WriteInformation("Hello world!");
+                    logger.WriteError("Mort");
+                }
                 throw new InvalidOperationException();
             });
         }

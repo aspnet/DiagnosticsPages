@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 #if ASPNET50
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Messaging;
@@ -71,6 +72,7 @@ namespace Microsoft.AspNet.Diagnostics.Elm
                 State = Current._state,
                 Name = Current._name
             };
+
             if (Current.Parent != null)
             {
                 Current.Node.Parent = Current.Parent.Node;
@@ -80,7 +82,12 @@ namespace Microsoft.AspNet.Diagnostics.Elm
             {
                 lock (ElmStore.Activities)
                 {
-                    ElmStore.Activities.Add(Current.Context, Current.Node);
+                    Current.Context.Root = Current.Node;
+                    ElmStore.Activities.AddLast(Current.Context);
+                    while (ElmStore.NumLogs() > ElmStore.Capacity)
+                    {
+                        ElmStore.Activities.RemoveFirst();
+                    }
                 }
             }
 

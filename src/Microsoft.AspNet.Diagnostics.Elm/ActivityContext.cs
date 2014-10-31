@@ -6,5 +6,8 @@ namespace Microsoft.AspNet.Diagnostics.Elm
     {
         public Guid Id { get; set; }
         public HttpInfo HttpInfo { get; set; }
+        public ScopeNode Root { get; set; }
+        public DateTimeOffset Time { get; set; }
+        public int Size { get; set; }
     }
 }
