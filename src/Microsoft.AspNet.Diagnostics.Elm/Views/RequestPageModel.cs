@@ -9,6 +9,6 @@ namespace Microsoft.AspNet.Diagnostics.Elm.Views
         
         public IEnumerable<LogInfo> Logs { get; set; }
 
-        public ElmOptions Options { get; set; }
+        public ViewOptions Options { get; set; }
     }
 }

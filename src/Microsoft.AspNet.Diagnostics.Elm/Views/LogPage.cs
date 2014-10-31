@@ -525,16 +525,16 @@ tr:nth-child(2n) {
                       
                         if (activity.Key.HttpInfo != null)
                         {
-                            var requestPath = Model.Options.Path.Value + "/" + activity.Key.HttpInfo.RequestID;
+                            var requestPath = Model.Path.Value + "/" + activity.Key.HttpInfo.RequestID;
 
 #line default
 #line hidden
 
             WriteLiteral("                            <td><a");
-            WriteAttribute("href", Tuple.Create(" href=\"", 4190), Tuple.Create("\"", 4209), 
-            Tuple.Create(Tuple.Create("", 4197), Tuple.Create<System.Object, System.Int32>(requestPath, 4197), false));
-            WriteAttribute("title", Tuple.Create(" title=\"", 4210), Tuple.Create("\"", 4245), 
-            Tuple.Create(Tuple.Create("", 4218), Tuple.Create<System.Object, System.Int32>(activity.Key.HttpInfo.Path, 4218), false));
+            WriteAttribute("href", Tuple.Create(" href=\"", 4182), Tuple.Create("\"", 4201), 
+            Tuple.Create(Tuple.Create("", 4189), Tuple.Create<System.Object, System.Int32>(requestPath, 4189), false));
+            WriteAttribute("title", Tuple.Create(" title=\"", 4202), Tuple.Create("\"", 4237), 
+            Tuple.Create(Tuple.Create("", 4210), Tuple.Create<System.Object, System.Int32>(activity.Key.HttpInfo.Path, 4210), false));
             WriteLiteral(">");
 #line 144 "LogPage.cshtml"
                                                                                       Write(activity.Key.HttpInfo.Path);

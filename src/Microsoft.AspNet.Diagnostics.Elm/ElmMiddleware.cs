@@ -60,9 +60,8 @@ namespace Microsoft.AspNet.Diagnostics.Elm
 
             // parse params
             var logs = _store.GetLogs();
-            var options = new ElmOptions()
+            var options = new ViewOptions()
             {
-                Path = _options.Path,
                 MinLevel = TraceType.Verbose,
                 NamePrefix = ""
             };
@@ -90,7 +89,8 @@ namespace Microsoft.AspNet.Diagnostics.Elm
                     // sort so most recent logs are first
                     Logs = logs.OrderBy(l => l.Time).Reverse(),
                     LogTree = ElmStore.Activities,
-                    Options = options
+                    Options = options,
+                    Path = _options.Path
                 };
                 var logPage = new LogPage(model);
 
@@ -103,9 +103,11 @@ namespace Microsoft.AspNet.Diagnostics.Elm
                 var id = Guid.Empty;
                 if (!Guid.TryParse(parts[parts.Length - 1], out id))
                 {
+                    context.Response.StatusCode = 400;
+                    await context.Response.WriteAsync("Invalid Request Id");
                     return;
                 }
-                var requestLogs = logs.Where(l => l.ActivityContext.HttpInfo != null ? l.ActivityContext.HttpInfo.RequestID == id : false);
+                var requestLogs = logs.Where(l => l.ActivityContext?.HttpInfo?.RequestID == id);
                 var model = new RequestPageModel()
                 {
                     RequestID = id,

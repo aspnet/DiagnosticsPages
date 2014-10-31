@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using Microsoft.AspNet.Http;
 using Microsoft.Framework.Logging;
 
 namespace Microsoft.AspNet.Diagnostics.Elm
@@ -9,16 +8,16 @@ namespace Microsoft.AspNet.Diagnostics.Elm
     /// <summary>
     /// Options for ElmMiddleware
     /// </summary>
-    public class ElmOptions
+    public class ViewOptions
     {
-        public ElmOptions()
-        {
-            Path = new PathString("/Elm");
-        }
+        /// <summary>
+        /// The minimum severity level shown
+        /// </summary>
+        public TraceType MinLevel { get; set; }
 
         /// <summary>
-        /// Specifies the path to view the logs
+        /// prefix filter for the loggers shown
         /// </summary>
-        public PathString Path { get; set; }
+        public string NamePrefix { get; set; }
     }
 }

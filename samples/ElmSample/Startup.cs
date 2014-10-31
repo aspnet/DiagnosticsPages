@@ -21,9 +21,7 @@ namespace ElmSampleApp
         public void Configure(IApplicationBuilder app, ILoggerFactory factory)
         {
             app.UseElm();
-#pragma warning disable CS1998
             app.Run(async context =>
-#pragma warning restore CS1998
             {
                 await context.Response.WriteAsync("Hello world");
                 throw new InvalidOperationException();

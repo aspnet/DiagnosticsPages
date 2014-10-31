@@ -13,7 +13,6 @@
         "aspnet50": { },
         "aspnetcore50": {
             "dependencies": {
-                "K.CommonFx": "1.0.0-*",
                 "System.Collections.Concurrent": "4.0.0-beta-*",
                 "System.Collections": "4.0.10-beta-*",
                 "System.Diagnostics.TraceSource": "4.0.0-beta-*",
@@ -23,8 +22,7 @@
                 "System.Runtime.InteropServices": "4.0.20-beta-*",
                 "System.Linq": "4.0.0-beta-*",
                 "System.Threading": "4.0.0-beta-*",
-                "System.Threading.ExecutionContext": "4.0.0-beta-*",
-                "Microsoft.Framework.Logging.Interfaces": { "version": "1.0.0-*", "type": "build" }
+                "System.Threading.ExecutionContext": "4.0.0-beta-*"
             }
         }
     }

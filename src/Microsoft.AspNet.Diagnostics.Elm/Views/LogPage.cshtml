@@ -140,7 +140,7 @@
                     @{
                         if (activity.Key.HttpInfo != null)
                         {
-                            var requestPath = Model.Options.Path.Value + "/" + activity.Key.HttpInfo.RequestID;
+                            var requestPath = Model.Path.Value + "/" + activity.Key.HttpInfo.RequestID;
                             <td><a href="@requestPath" title="@activity.Key.HttpInfo.Path">@activity.Key.HttpInfo.Path</a></td>
                             <td>@activity.Key.HttpInfo.Host</td>
                             <td>@activity.Key.HttpInfo.StatusCode</td>

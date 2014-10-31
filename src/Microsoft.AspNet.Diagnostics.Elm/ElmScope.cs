@@ -67,7 +67,7 @@ namespace Microsoft.AspNet.Diagnostics.Elm
 
             Current.Node = new ScopeNode()
             {
-                StartTime = DateTime.Now,
+                StartTime = DateTimeOffset.UtcNow,
                 State = Current._state,
                 Name = Current._name
             };
@@ -78,15 +78,15 @@ namespace Microsoft.AspNet.Diagnostics.Elm
             }
             else
             {
-                lock(ElmStore.Activities)
+                lock (ElmStore.Activities)
                 {
                     ElmStore.Activities.Add(Current.Context, Current.Node);
                 }
             }
-           
+
             return new DisposableAction(() =>
             {
-                Current.Node.EndTime = DateTime.Now;
+                Current.Node.EndTime = DateTimeOffset.UtcNow;
                 Current = Current.Parent;
             });
         }

@@ -31,9 +31,9 @@ namespace Microsoft.AspNet.Diagnostics.Elm
                 Severity = traceType,
                 Exception = exception,
                 State = state,
-                Time = DateTime.Now
+                Time = DateTimeOffset.UtcNow
             };
-            ElmScope.Current.Node.Messages.Add(info);
+            ElmScope.Current?.Node?.Messages?.Add(info);
             _store.Add(info);
         }
 

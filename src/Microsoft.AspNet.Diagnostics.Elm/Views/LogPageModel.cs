@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Microsoft.AspNet.Http;
 
 namespace Microsoft.AspNet.Diagnostics.Elm.Views
 {
@@ -8,6 +9,8 @@ namespace Microsoft.AspNet.Diagnostics.Elm.Views
 
         public IDictionary<ActivityContext, ScopeNode> LogTree { get; set; }
 
-        public ElmOptions Options { get; set; }
+        public ViewOptions Options { get; set; }
+
+        public PathString Path { get; set; }
     }
 }

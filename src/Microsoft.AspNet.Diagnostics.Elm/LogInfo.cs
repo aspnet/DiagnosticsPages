@@ -21,7 +21,7 @@ namespace Microsoft.AspNet.Diagnostics.Elm
 
         public int EventID { get; set; }
 
-        public DateTime Time { get; set; }
+        public DateTimeOffset Time { get; set; }
 
         public IList<Guid> Scopes { get; set; }
     }

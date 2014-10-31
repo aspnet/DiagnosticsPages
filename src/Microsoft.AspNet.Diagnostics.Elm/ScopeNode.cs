@@ -8,8 +8,8 @@ namespace Microsoft.AspNet.Diagnostics.Elm
         public ScopeNode Parent { get; set; }
         public List<ScopeNode> Children { get; set; } = new List<ScopeNode>();
         public List<LogInfo> Messages { get; set; } = new List<LogInfo>();
-        public DateTime StartTime { get; set; }
-        public DateTime EndTime { get; set; }
+        public DateTimeOffset StartTime { get; set; }
+        public DateTimeOffset EndTime { get; set; }
         public object State { get; set; }
         public string Name { get; set; }
     }
