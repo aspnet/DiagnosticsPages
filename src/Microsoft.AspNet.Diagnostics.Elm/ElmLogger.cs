@@ -24,7 +24,7 @@ namespace Microsoft.AspNet.Diagnostics.Elm
         {
             LogInfo info = new LogInfo()
             {
-                ActivityContext = ElmScope.Current == null ? GetNewActivityContext() : ElmScope.Current.Context,
+                ActivityContext = GetCurrentActivityContext(),
                 Name = _name,
                 EventID = eventId,
                 Severity = traceType,
@@ -34,7 +34,7 @@ namespace Microsoft.AspNet.Diagnostics.Elm
             };
             if (ElmScope.Current != null)
             {
-                ElmScope.Current.Context.Size++;
+                GetCurrentActivityContext().Size++;
                 ElmScope.Current.Node.Messages.Add(info);
             }
             _store.Add(info);
@@ -59,6 +59,11 @@ namespace Microsoft.AspNet.Diagnostics.Elm
                 Id = Guid.NewGuid(),
                 Time = DateTimeOffset.UtcNow
             };
+        }
+
+        private ActivityContext GetCurrentActivityContext()
+        {
+            return ElmScope.Current?.Context ?? GetNewActivityContext();
         }
     }
 }

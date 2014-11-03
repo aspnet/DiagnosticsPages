@@ -88,7 +88,7 @@ namespace Microsoft.AspNet.Diagnostics.Elm
                 {
                     // sort so most recent logs are first
                     Logs = logs.OrderBy(l => l.Time).Reverse(),
-                    LogTree = ElmStore.Activities,
+                    LogTree = ElmStore.GetActivities(),
                     Options = options,
                     Path = _options.Path
                 };

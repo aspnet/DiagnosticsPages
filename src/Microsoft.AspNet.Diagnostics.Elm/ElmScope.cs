@@ -80,15 +80,8 @@ namespace Microsoft.AspNet.Diagnostics.Elm
             }
             else
             {
-                lock (ElmStore.Activities)
-                {
-                    Current.Context.Root = Current.Node;
-                    ElmStore.Activities.AddLast(Current.Context);
-                    while (ElmStore.NumLogs() > ElmStore.Capacity)
-                    {
-                        ElmStore.Activities.RemoveFirst();
-                    }
-                }
+                Current.Context.Root = Current.Node;
+                ElmStore.AddActivity(Current.Context);
             }
 
             return new DisposableAction(() =>

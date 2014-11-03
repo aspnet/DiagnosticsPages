@@ -9,11 +9,11 @@ namespace Microsoft.AspNet.Diagnostics.Elm
 {
     public class ElmStore : IElmStore
     {
-        public const int Capacity = 200;
+        private const int Capacity = 200;
 
         private readonly Queue<LogInfo> _logs = new Queue<LogInfo>();
 
-        public static LinkedList<ActivityContext> Activities { get; set; } = new LinkedList<ActivityContext>();
+        private static LinkedList<ActivityContext> Activities { get; set; } = new LinkedList<ActivityContext>();
 
         public IEnumerable<LogInfo> GetLogs()
         {
@@ -38,9 +38,26 @@ namespace Microsoft.AspNet.Diagnostics.Elm
         }
 
         // returns the number of log messages stored in Activities
-        public static int NumLogs()
+        private static int NumLogs()
         {
             return Activities.Sum(a => a.Size);
+        }
+
+        public static IEnumerable<ActivityContext> GetActivities()
+        {
+            return Activities;
+        }
+
+        public static void AddActivity(ActivityContext activity)
+        {
+            lock (Activities)
+            {
+                Activities.AddLast(activity);
+                while (NumLogs() > Capacity)
+                {
+                    Activities.RemoveFirst();
+                }
+            }
         }
     }
 }
