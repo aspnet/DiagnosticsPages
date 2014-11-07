@@ -167,7 +167,7 @@ WriteTo(__razor_helper_writer, LogRow(new LogInfo()
     {
         Name = node.Name,
         Time = node.StartTime,
-        Severity = TraceType.Verbose,
+        Severity = LogLevel.Verbose,
         State = "Beginning " + node.State,
     }, level));
 
@@ -259,7 +259,7 @@ WriteTo(__razor_helper_writer, LogRow(new LogInfo()
     {
         Name = node.Name,
         Time = node.EndTime,
-        Severity = TraceType.Verbose,
+        Severity = LogLevel.Verbose,
         State = string.Format("Completed {0} in {1}ms", node.State, node.EndTime - node.StartTime)
     }, level));
 
@@ -435,7 +435,7 @@ tr:nth-child(2n) {
 #line hidden
 
 #line 104 "LogPage.cshtml"
-             foreach (var severity in Enum.GetValues(typeof(TraceType)))
+             foreach (var severity in Enum.GetValues(typeof(LogLevel)))
             {
                 var severityInt = (int)severity;
                 if ((int)Model.Options.MinLevel == severityInt)
@@ -445,8 +445,8 @@ tr:nth-child(2n) {
 #line hidden
 
             WriteLiteral("                    <option");
-            WriteAttribute("value", Tuple.Create(" value=\"", 3128), Tuple.Create("\"", 3148), 
-            Tuple.Create(Tuple.Create("", 3136), Tuple.Create<System.Object, System.Int32>(severityInt, 3136), false));
+            WriteAttribute("value", Tuple.Create(" value=\"", 3125), Tuple.Create("\"", 3145), 
+            Tuple.Create(Tuple.Create("", 3133), Tuple.Create<System.Object, System.Int32>(severityInt, 3133), false));
             WriteLiteral(" selected=\"selected\">");
 #line 109 "LogPage.cshtml"
                                                                 Write(severity);
@@ -463,8 +463,8 @@ tr:nth-child(2n) {
 #line hidden
 
             WriteLiteral("                    <option");
-            WriteAttribute("value", Tuple.Create(" value=\"", 3277), Tuple.Create("\"", 3297), 
-            Tuple.Create(Tuple.Create("", 3285), Tuple.Create<System.Object, System.Int32>(severityInt, 3285), false));
+            WriteAttribute("value", Tuple.Create(" value=\"", 3274), Tuple.Create("\"", 3294), 
+            Tuple.Create(Tuple.Create("", 3282), Tuple.Create<System.Object, System.Int32>(severityInt, 3282), false));
             WriteLiteral(">");
 #line 113 "LogPage.cshtml"
                                             Write(severity);
@@ -480,8 +480,8 @@ tr:nth-child(2n) {
 #line hidden
 
             WriteLiteral("        </select>\r\n        <input type=\"text\" name=\"name\"");
-            WriteAttribute("value", Tuple.Create(" value=\"", 3410), Tuple.Create("\"", 3443), 
-            Tuple.Create(Tuple.Create("", 3418), Tuple.Create<System.Object, System.Int32>(Model.Options.NamePrefix, 3418), false));
+            WriteAttribute("value", Tuple.Create(" value=\"", 3407), Tuple.Create("\"", 3440), 
+            Tuple.Create(Tuple.Create("", 3415), Tuple.Create<System.Object, System.Int32>(Model.Options.NamePrefix, 3415), false));
             WriteLiteral(@" />
         <input type=""submit"" value=""filter"" />
     </form>
@@ -532,10 +532,10 @@ tr:nth-child(2n) {
 #line hidden
 
             WriteLiteral("                            <td><a");
-            WriteAttribute("href", Tuple.Create(" href=\"", 4323), Tuple.Create("\"", 4342), 
-            Tuple.Create(Tuple.Create("", 4330), Tuple.Create<System.Object, System.Int32>(requestPath, 4330), false));
-            WriteAttribute("title", Tuple.Create(" title=\"", 4343), Tuple.Create("\"", 4374), 
-            Tuple.Create(Tuple.Create("", 4351), Tuple.Create<System.Object, System.Int32>(activity.HttpInfo.Path, 4351), false));
+            WriteAttribute("href", Tuple.Create(" href=\"", 4320), Tuple.Create("\"", 4339), 
+            Tuple.Create(Tuple.Create("", 4327), Tuple.Create<System.Object, System.Int32>(requestPath, 4327), false));
+            WriteAttribute("title", Tuple.Create(" title=\"", 4340), Tuple.Create("\"", 4371), 
+            Tuple.Create(Tuple.Create("", 4348), Tuple.Create<System.Object, System.Int32>(activity.HttpInfo.Path, 4348), false));
             WriteLiteral(">");
 #line 144 "LogPage.cshtml"
                                                                                   Write(activity.HttpInfo.Path);

@@ -62,13 +62,13 @@ namespace Microsoft.AspNet.Diagnostics.Elm
             var logs = _store.GetLogs();
             var options = new ViewOptions()
             {
-                MinLevel = TraceType.Verbose,
+                MinLevel = LogLevel.Verbose,
                 NamePrefix = ""
             };
             if (context.Request.Query.ContainsKey("level"))
             {
                 var minLevel = options.MinLevel;
-                if (Enum.TryParse<TraceType>(context.Request.Query.GetValues("level")[0], out minLevel))
+                if (Enum.TryParse<LogLevel>(context.Request.Query.GetValues("level")[0], out minLevel))
                 {
                     logs = _store.GetLogs(minLevel);
                     options.MinLevel = minLevel;

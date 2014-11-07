@@ -20,7 +20,7 @@ namespace Microsoft.AspNet.Diagnostics.Elm
             return _logs;
         }
 
-        public IEnumerable<LogInfo> GetLogs(TraceType minLevel)
+        public IEnumerable<LogInfo> GetLogs(LogLevel minLevel)
         {
             return _logs.Where(l => l.Severity >= minLevel);
         }

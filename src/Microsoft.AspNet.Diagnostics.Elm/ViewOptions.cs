@@ -13,7 +13,7 @@ namespace Microsoft.AspNet.Diagnostics.Elm
         /// <summary>
         /// The minimum severity level shown
         /// </summary>
-        public TraceType MinLevel { get; set; }
+        public LogLevel MinLevel { get; set; }
 
         /// <summary>
         /// prefix filter for the loggers shown

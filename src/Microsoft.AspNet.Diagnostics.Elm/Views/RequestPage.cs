@@ -280,7 +280,7 @@ using Microsoft.Framework.Logging
 #line hidden
 
 #line 127 "RequestPage.cshtml"
-             foreach (var severity in Enum.GetValues(typeof(TraceType)))
+             foreach (var severity in Enum.GetValues(typeof(LogLevel)))
             {
                 var severityInt = (int)severity;
                 if ((int)Model.Options.MinLevel == severityInt)
@@ -290,8 +290,8 @@ using Microsoft.Framework.Logging
 #line hidden
 
             WriteLiteral("                    <option");
-            WriteAttribute("value", Tuple.Create(" value=\"", 4139), Tuple.Create("\"", 4159), 
-            Tuple.Create(Tuple.Create("", 4147), Tuple.Create<System.Object, System.Int32>(severityInt, 4147), false));
+            WriteAttribute("value", Tuple.Create(" value=\"", 4138), Tuple.Create("\"", 4158), 
+            Tuple.Create(Tuple.Create("", 4146), Tuple.Create<System.Object, System.Int32>(severityInt, 4146), false));
             WriteLiteral(" selected=\"selected\">");
 #line 132 "RequestPage.cshtml"
                                                                 Write(severity);
@@ -308,8 +308,8 @@ using Microsoft.Framework.Logging
 #line hidden
 
             WriteLiteral("                    <option");
-            WriteAttribute("value", Tuple.Create(" value=\"", 4288), Tuple.Create("\"", 4308), 
-            Tuple.Create(Tuple.Create("", 4296), Tuple.Create<System.Object, System.Int32>(severityInt, 4296), false));
+            WriteAttribute("value", Tuple.Create(" value=\"", 4287), Tuple.Create("\"", 4307), 
+            Tuple.Create(Tuple.Create("", 4295), Tuple.Create<System.Object, System.Int32>(severityInt, 4295), false));
             WriteLiteral(">");
 #line 136 "RequestPage.cshtml"
                                             Write(severity);
@@ -325,8 +325,8 @@ using Microsoft.Framework.Logging
 #line hidden
 
             WriteLiteral("        </select>\r\n        <input type=\"text\" name=\"name\"");
-            WriteAttribute("value", Tuple.Create(" value=\"", 4421), Tuple.Create("\"", 4454), 
-            Tuple.Create(Tuple.Create("", 4429), Tuple.Create<System.Object, System.Int32>(Model.Options.NamePrefix, 4429), false));
+            WriteAttribute("value", Tuple.Create(" value=\"", 4420), Tuple.Create("\"", 4453), 
+            Tuple.Create(Tuple.Create("", 4428), Tuple.Create<System.Object, System.Int32>(Model.Options.NamePrefix, 4428), false));
             WriteLiteral(@" />
         <input type=""submit"" value=""filter"" />
     </form>
@@ -368,8 +368,8 @@ using Microsoft.Framework.Logging
 #line default
 #line hidden
             WriteLiteral("</td>\r\n                <td");
-            WriteAttribute("class", Tuple.Create(" class=\"", 5031), Tuple.Create("\"", 5082), 
-            Tuple.Create(Tuple.Create("", 5039), Tuple.Create<System.Object, System.Int32>(log.Severity.ToString().ToLowerInvariant(), 5039), false));
+            WriteAttribute("class", Tuple.Create(" class=\"", 5030), Tuple.Create("\"", 5081), 
+            Tuple.Create(Tuple.Create("", 5038), Tuple.Create<System.Object, System.Int32>(log.Severity.ToString().ToLowerInvariant(), 5038), false));
             WriteLiteral(">");
 #line 159 "RequestPage.cshtml"
                                                                    Write(log.Severity);
@@ -377,8 +377,8 @@ using Microsoft.Framework.Logging
 #line default
 #line hidden
             WriteLiteral("</td>\r\n                <td");
-            WriteAttribute("title", Tuple.Create(" title=\"", 5123), Tuple.Create("\"", 5140), 
-            Tuple.Create(Tuple.Create("", 5131), Tuple.Create<System.Object, System.Int32>(log.Name, 5131), false));
+            WriteAttribute("title", Tuple.Create(" title=\"", 5122), Tuple.Create("\"", 5139), 
+            Tuple.Create(Tuple.Create("", 5130), Tuple.Create<System.Object, System.Int32>(log.Name, 5130), false));
             WriteLiteral(">");
 #line 160 "RequestPage.cshtml"
                                  Write(log.Name);
@@ -386,8 +386,8 @@ using Microsoft.Framework.Logging
 #line default
 #line hidden
             WriteLiteral("</td>\r\n                <td");
-            WriteAttribute("title", Tuple.Create(" title=\"", 5177), Tuple.Create("\"", 5195), 
-            Tuple.Create(Tuple.Create("", 5185), Tuple.Create<System.Object, System.Int32>(log.State, 5185), false));
+            WriteAttribute("title", Tuple.Create(" title=\"", 5176), Tuple.Create("\"", 5194), 
+            Tuple.Create(Tuple.Create("", 5184), Tuple.Create<System.Object, System.Int32>(log.State, 5184), false));
             WriteLiteral(" class=\"logState\" width=\"100px\">");
 #line 161 "RequestPage.cshtml"
                                                                  Write(log.State);
@@ -395,8 +395,8 @@ using Microsoft.Framework.Logging
 #line default
 #line hidden
             WriteLiteral("</td>\r\n                <td");
-            WriteAttribute("title", Tuple.Create(" title=\"", 5264), Tuple.Create("\"", 5286), 
-            Tuple.Create(Tuple.Create("", 5272), Tuple.Create<System.Object, System.Int32>(log.Exception, 5272), false));
+            WriteAttribute("title", Tuple.Create(" title=\"", 5263), Tuple.Create("\"", 5285), 
+            Tuple.Create(Tuple.Create("", 5271), Tuple.Create<System.Object, System.Int32>(log.Exception, 5271), false));
             WriteLiteral(">");
 #line 162 "RequestPage.cshtml"
                                       Write(log.Exception);

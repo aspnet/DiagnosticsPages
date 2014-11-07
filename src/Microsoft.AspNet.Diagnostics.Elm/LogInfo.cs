@@ -16,7 +16,7 @@ namespace Microsoft.AspNet.Diagnostics.Elm
 
         public Exception Exception { get; set; }
 
-        public TraceType Severity { get; set; }
+        public LogLevel Severity { get; set; }
 
         public int EventID { get; set; }
 

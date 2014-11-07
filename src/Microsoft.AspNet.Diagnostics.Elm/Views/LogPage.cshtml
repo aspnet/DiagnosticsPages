@@ -45,7 +45,7 @@
     {
         Name = node.Name,
         Time = node.StartTime,
-        Severity = TraceType.Verbose,
+        Severity = LogLevel.Verbose,
         State = "Beginning " + node.State,
     }, level);
     var messageIndex = 0;
@@ -82,7 +82,7 @@
     {
         Name = node.Name,
         Time = node.EndTime,
-        Severity = TraceType.Verbose,
+        Severity = LogLevel.Verbose,
         State = string.Format("Completed {0} in {1}ms", node.State, node.EndTime - node.StartTime)
     }, level);
 }
@@ -101,7 +101,7 @@
     <h1>ELM</h1>
     <form method="get">
         <select name="level">
-            @foreach (var severity in Enum.GetValues(typeof(TraceType)))
+            @foreach (var severity in Enum.GetValues(typeof(LogLevel)))
             {
                 var severityInt = (int)severity;
                 if ((int)Model.Options.MinLevel == severityInt)

@@ -19,7 +19,7 @@ namespace Microsoft.AspNet.Diagnostics.Elm
             _store = store;
         }
 
-        public void Write(TraceType traceType, int eventId, object state, Exception exception, 
+        public void Write(LogLevel logLevel, int eventId, object state, Exception exception, 
                           Func<object, Exception, string> formatter)
         {
             LogInfo info = new LogInfo()
@@ -27,7 +27,7 @@ namespace Microsoft.AspNet.Diagnostics.Elm
                 ActivityContext = GetCurrentActivityContext(),
                 Name = _name,
                 EventID = eventId,
-                Severity = traceType,
+                Severity = logLevel,
                 Exception = exception,
                 State = state,
                 Time = DateTimeOffset.UtcNow
@@ -40,7 +40,7 @@ namespace Microsoft.AspNet.Diagnostics.Elm
             _store.Add(info);
         }
 
-        public bool IsEnabled(TraceType traceType)
+        public bool IsEnabled(LogLevel logLevel)
         {
             return true;
         }

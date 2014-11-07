@@ -10,6 +10,6 @@ namespace Microsoft.AspNet.Diagnostics.Elm
     {
         void Add(LogInfo info);
         IEnumerable<LogInfo> GetLogs();
-        IEnumerable<LogInfo> GetLogs(TraceType minLevel);
+        IEnumerable<LogInfo> GetLogs(LogLevel minLevel);
     }
 }
