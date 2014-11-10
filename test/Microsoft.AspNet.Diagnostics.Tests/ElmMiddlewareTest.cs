@@ -88,8 +88,7 @@ namespace Microsoft.AspNet.Diagnostics.Tests
                elmStoreMock.Object);
             var contextMock = GetMockContext("/Elm");
 
-            var buffer = new byte[4096];
-            using (var responseStream = new MemoryStream(buffer))
+            using (var responseStream = new MemoryStream())
             {
                 contextMock
                     .SetupGet(c => c.Response.Body)
@@ -98,7 +97,7 @@ namespace Microsoft.AspNet.Diagnostics.Tests
                 // Act
                 await middleware.Invoke(contextMock.Object);
 
-                string response = Encoding.UTF8.GetString(buffer);
+                string response = Encoding.UTF8.GetString(responseStream.ToArray());
 
                 // Assert
                 contextMock.VerifyGet(c => c.Request.Query, Times.AtLeastOnce());
