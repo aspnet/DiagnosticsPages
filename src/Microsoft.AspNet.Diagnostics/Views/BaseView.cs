@@ -100,6 +100,35 @@ namespace Microsoft.AspNet.Diagnostics.Views
             WriteLiteral(trailer.Item1);
         }
 
+        protected void WriteAttributeTo<T1>(
+            TextWriter writer,
+            string name,
+            Tuple<string, int> leader,
+            Tuple<string, int> trailer,
+            Tuple<Tuple<string, int>, Tuple<T1, int>, bool> part1)
+        {
+            if (name == null)
+            {
+                throw new ArgumentNullException("name");
+            }
+            if (leader == null)
+            {
+                throw new ArgumentNullException("leader");
+            }
+            if (trailer == null)
+            {
+                throw new ArgumentNullException("trailer");
+            }
+            if (part1 == null)
+            {
+                throw new ArgumentNullException("part1");
+            }
+            WriteLiteralTo(writer, leader.Item1);
+            WriteLiteralTo(writer, part1.Item1.Item1);
+            WriteTo(writer, part1.Item2.Item1);
+            WriteLiteralTo(writer, trailer.Item1);
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -421,7 +450,7 @@ namespace Microsoft.AspNet.Diagnostics.Views
         /// <param name="value"></param>
         private void WriteEncoded(string value)
         {
-            Output.Write(WebUtility.HtmlEncode(value));
+            WriteLiteralTo(Output, WebUtility.HtmlEncode(value));
         }
 
         /// <summary>
@@ -440,6 +469,73 @@ namespace Microsoft.AspNet.Diagnostics.Views
         protected void Write(string value)
         {
             WriteEncoded(value);
+        }
+
+        /// <summary>
+        /// <see cref="HelperResult.WriteTo(TextWriter)"/> is invoked
+        /// </summary>
+        /// <param name="result">The <see cref="HelperResult"/> to invoke</param>
+        protected void Write(HelperResult result)
+        {
+            WriteTo(Output, result);
+        }
+
+        /// <summary>
+        /// Writes the specified <paramref name="value"/> to <paramref name="writer"/>.
+        /// </summary>
+        /// <param name="writer">The <see cref="TextWriter"/> instance to write to.</param>
+        /// <param name="value">The <see cref="object"/> to write.</param>
+        /// <remarks>
+        /// <see cref="HelperResult.WriteTo(TextWriter)"/> is invoked for <see cref="HelperResult"/> types.
+        /// For all other types, the encoded result of <see cref="object.ToString"/> is written to the 
+        /// <paramref name="writer"/>.
+        /// </remarks>
+        protected void WriteTo(TextWriter writer, object value)
+        {
+            if (value != null)
+            {
+                var helperResult = value as HelperResult;
+                if (helperResult != null)
+                {
+                    helperResult.WriteTo(writer);
+                }
+                else
+                {
+                    WriteTo(writer, value.ToString());
+                }
+            }
+        }
+
+        /// <summary>
+        /// Writes the specified <paramref name="value"/> with HTML encoding to <paramref name="writer"/>.
+        /// </summary>
+        /// <param name="writer">The <see cref="TextWriter"/> instance to write to.</param>
+        /// <param name="value">The <see cref="string"/> to write.</param>
+        protected void WriteTo(TextWriter writer, string value)
+        {
+            WriteLiteralTo(writer, WebUtility.HtmlEncode(value));
+        }
+
+        /// <summary>
+        /// Writes the specified <paramref name="value"/> without HTML encoding to the <paramref name="writer"/>.
+        /// </summary>
+        /// <param name="writer">The <see cref="TextWriter"/> instance to write to.</param>
+        /// <param name="value">The <see cref="object"/> to write.</param>
+        protected void WriteLiteralTo(TextWriter writer, object value)
+        {
+            WriteLiteralTo(writer, Convert.ToString(value, CultureInfo.InvariantCulture));
+        }
+
+        /// <summary>
+        /// Writes the specified <paramref name="value"/> without HTML encoding to <see cref="Output"/>.
+        /// </summary>
+        /// <param name="value">The <see cref="string"/> to write.</param>
+        protected void WriteLiteralTo(TextWriter writer, string value)
+        {
+            if (!string.IsNullOrEmpty(value))
+            {
+                writer.Write(value);
+            }
         }
     }
 }
