@@ -43,15 +43,16 @@ namespace Microsoft.AspNet.Diagnostics.Elm
             {
                 using (_logger.BeginScope(string.Format("request {0}", requestId)))
                 {
+                    ElmScope.Current.Context.HttpInfo = GetHttpInfo(context, requestId);
                     try
                     {
-                        ElmScope.Current.Context.HttpInfo = GetHttpInfo(context, requestId);
                         await _next(context);
+                        ElmScope.Current.Context.HttpInfo.StatusCode = context.Response.StatusCode;
                         return;
                     }
                     catch (Exception ex)
                     {
-                        ElmScope.Current.Context.HttpInfo = GetHttpInfo(context, requestId);
+                        ElmScope.Current.Context.HttpInfo.StatusCode = context.Response.StatusCode;
                         _logger.WriteError("An unhandled exception has occurred: " + ex.Message, ex);
                         throw;
                     }
