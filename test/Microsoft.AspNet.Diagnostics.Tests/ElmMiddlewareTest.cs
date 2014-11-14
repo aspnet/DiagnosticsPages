@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using System.Collections.Generic;
 using System.IO;
 using System.Security.Claims;
 using System.Text;
@@ -48,18 +47,24 @@ namespace Microsoft.AspNet.Diagnostics.Tests
                 return Task.FromResult<object>(null);
             };
 
-            var middleware = new ElmMiddleware(
-               next,
-               new LoggerFactory(),
-               optionsMock.Object,
-               elmStore);
+            var captureMiddleware = new ElmCaptureMiddleware(
+                next,
+                new LoggerFactory(),
+                optionsMock.Object,
+                elmStore);
+            var pageMiddleware = new ElmPageMiddleware(
+                next,
+                optionsMock.Object,
+                elmStore);
 
             var contextMock = GetMockContext("/nonmatchingpath");
 
             // Act
-            await middleware.Invoke(contextMock.Object);
+            await captureMiddleware.Invoke(contextMock.Object);
+            await pageMiddleware.Invoke(contextMock.Object);
 
             // Assert
+            // Request.Query is used by the ElmPageMiddleware to parse the query parameters
             contextMock.VerifyGet(c => c.Request.Query, Times.Never());
         }
 
@@ -68,6 +73,7 @@ namespace Microsoft.AspNet.Diagnostics.Tests
         {
             // Arrange
             var elmStore = new ElmStore();
+            var factory = new LoggerFactory();
             var optionsMock = new Mock<IOptions<ElmOptions>>();
             optionsMock
                 .SetupGet(o => o.Options)
@@ -78,11 +84,15 @@ namespace Microsoft.AspNet.Diagnostics.Tests
                 return Task.FromResult<object>(null);
             };
 
-            var middleware = new ElmMiddleware(
-               next,
-               new LoggerFactory(),
-               optionsMock.Object,
-               elmStore);
+            var captureMiddleware = new ElmCaptureMiddleware(
+                next,
+                factory,
+                optionsMock.Object,
+                elmStore);
+            var pageMiddleware = new ElmPageMiddleware(
+                next,
+                optionsMock.Object,
+                elmStore);
             var contextMock = GetMockContext("/Elm");
 
             using (var responseStream = new MemoryStream())
@@ -92,13 +102,59 @@ namespace Microsoft.AspNet.Diagnostics.Tests
                     .Returns(responseStream);
 
                 // Act
-                await middleware.Invoke(contextMock.Object);
+                await captureMiddleware.Invoke(contextMock.Object);
+                await pageMiddleware.Invoke(contextMock.Object);
 
                 string response = Encoding.UTF8.GetString(responseStream.ToArray());
 
                 // Assert
                 contextMock.VerifyGet(c => c.Request.Query, Times.AtLeastOnce());
                 Assert.True(response.Contains("<title>ELM</title>"));
+            }
+        }
+
+        [Fact]
+        public async void Invoke_BadRequestShowsError()
+        {
+            // Arrange
+            var elmStore = new ElmStore();
+            var factory = new LoggerFactory();
+            var optionsMock = new Mock<IOptions<ElmOptions>>();
+            optionsMock
+                .SetupGet(o => o.Options)
+                .Returns(new ElmOptions());
+
+            RequestDelegate next = _ =>
+            {
+                return Task.FromResult<object>(null);
+            };
+
+            var captureMiddleware = new ElmCaptureMiddleware(
+                next,
+                factory,
+                optionsMock.Object,
+                elmStore);
+            var pageMiddleware = new ElmPageMiddleware(
+                next,
+                optionsMock.Object,
+                elmStore);
+            var contextMock = GetMockContext("/Elm/666");
+
+            using (var responseStream = new MemoryStream())
+            {
+                contextMock
+                    .SetupGet(c => c.Response.Body)
+                    .Returns(responseStream);
+
+                // Act
+                await captureMiddleware.Invoke(contextMock.Object);
+                await pageMiddleware.Invoke(contextMock.Object);
+
+                string response = Encoding.UTF8.GetString(responseStream.ToArray());
+
+                // Assert
+                contextMock.VerifyGet(c => c.Request.Query, Times.AtLeastOnce());
+                Assert.True(response.Contains("Invalid Request Id"));
             }
         }
 
@@ -123,6 +179,9 @@ namespace Microsoft.AspNet.Diagnostics.Tests
             contextMock
                 .SetupGet(c => c.Response.StatusCode)
                 .Returns(200);
+            contextMock
+                .SetupGet(c => c.Response.Body)
+                .Returns(new Mock<Stream>().Object);
             contextMock
                 .SetupGet(c => c.User)
                 .Returns(new ClaimsPrincipal());

@@ -15,46 +15,26 @@ namespace Microsoft.AspNet.Diagnostics.Elm
     /// <summary>
     /// Enables the Elm logging service
     /// </summary>
-    public class ElmMiddleware
+    public class ElmPageMiddleware
     {
         private readonly RequestDelegate _next;
         private readonly ElmOptions _options;
-        private readonly ElmLoggerProvider _provider;
         private readonly IElmStore _store;
-        private readonly ILogger _logger;
 
-        public ElmMiddleware(RequestDelegate next, ILoggerFactory factory, IOptions<ElmOptions> options, IElmStore store)
+        public ElmPageMiddleware(RequestDelegate next, IOptions<ElmOptions> options, IElmStore store)
         {
             _next = next;
             _options = options.Options;
             _store = store;
-            _logger = factory.Create<ElmMiddleware>();
-            _provider = new ElmLoggerProvider(_store, _options);
-            factory.AddProvider(_provider);
         }
 
         public async Task Invoke(HttpContext context)
         {
-            var requestId = Guid.NewGuid();
 
             if (context.Request.Path != _options.Path && !context.Request.Path.StartsWithSegments(_options.Path))
             {
-                using (_logger.BeginScope(string.Format("request {0}", requestId)))
-                {
-                    ElmScope.Current.Context.HttpInfo = GetHttpInfo(context, requestId);
-                    try
-                    {
-                        await _next(context);
-                        ElmScope.Current.Context.HttpInfo.StatusCode = context.Response.StatusCode;
-                        return;
-                    }
-                    catch (Exception ex)
-                    {
-                        ElmScope.Current.Context.HttpInfo.StatusCode = context.Response.StatusCode;
-                        _logger.WriteError("An unhandled exception has occurred: " + ex.Message, ex);
-                        throw;
-                    }
-                }
+                await _next(context);
+                return;
             }
 
             // parse params
@@ -116,29 +96,6 @@ namespace Microsoft.AspNet.Diagnostics.Elm
                 var requestPage = new RequestPage(model);
                 await requestPage.ExecuteAsync(context);
             }
-        }
-
-        /// <summary>
-        /// Takes the info from the given HttpContext and copies it to an HttpInfo object
-        /// </summary>
-        /// <returns>The HttpInfo for the current elm context</returns>
-        private static HttpInfo GetHttpInfo(HttpContext context, Guid requestId)
-        {
-            return new HttpInfo()
-            {
-                RequestID = requestId,
-                Host = context.Request.Host,
-                ContentType = context.Request.ContentType,
-                Path = context.Request.Path,
-                Scheme = context.Request.Scheme,
-                StatusCode = context.Response.StatusCode,
-                User = context.User,
-                Method = context.Request.Method,
-                Protocol = context.Request.Protocol,
-                Headers = context.Request.Headers,
-                Query = context.Request.QueryString,
-                Cookies = context.Request.Cookies
-            };
         }
     }
 }

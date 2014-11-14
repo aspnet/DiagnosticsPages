@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Http;
-using Microsoft.AspNet.Diagnostics.Elm;
 using Microsoft.Framework.DependencyInjection;
 using Microsoft.Framework.Logging;
 
@@ -11,8 +10,7 @@ namespace ElmSampleApp
     {
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<IElmStore, ElmStore>(); // registering the service so it can be injected into constructors
-            services.Configure<ElmOptions>(options =>
+            services.AddElm(options =>
             {
                 options.Path = new PathString("/foo");
                 options.Filter = (name, level) => level >= LogLevel.Information;
@@ -21,9 +19,12 @@ namespace ElmSampleApp
 
         public void Configure(IApplicationBuilder app, ILoggerFactory factory)
         {
-            app.UseElm();
-            var logger = factory.Create<Startup>();
             
+            app.UseElmCapture();
+            app.UseElmPage();
+
+            var logger = factory.Create<Startup>();
+
             app.Run(async context =>
             {
                 await context.Response.WriteAsync("Hello world");

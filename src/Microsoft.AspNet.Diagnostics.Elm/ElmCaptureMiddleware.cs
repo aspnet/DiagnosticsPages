@@ -1,0 +1,85 @@
+﻿// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved.
+// Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+
+using System;
+using System.Threading.Tasks;
+using Microsoft.AspNet.Builder;
+using Microsoft.AspNet.Http;
+using Microsoft.Framework.Logging;
+using Microsoft.Framework.OptionsModel;
+
+namespace Microsoft.AspNet.Diagnostics.Elm
+{
+    /// <summary>
+    /// Enables the Elm logging service
+    /// </summary>
+    public class ElmCaptureMiddleware
+    {
+        private readonly RequestDelegate _next;
+        private readonly ElmOptions _options;
+        private readonly ElmLoggerProvider _provider;
+        private readonly IElmStore _store;
+        private readonly ILogger _logger;
+
+        public ElmCaptureMiddleware(RequestDelegate next, ILoggerFactory factory, IOptions<ElmOptions> options, IElmStore store)
+        {
+            _next = next;
+            _options = options.Options;
+            _store = store;
+            _logger = factory.Create<ElmCaptureMiddleware>();
+            _provider = new ElmLoggerProvider(_store, _options);
+            factory.AddProvider(_provider);
+        }
+
+        public async Task Invoke(HttpContext context)
+        {
+            if (context.Request.Path == _options.Path || context.Request.Path.StartsWithSegments(_options.Path))
+            {
+                await _next(context);
+            }
+            else
+            {
+                var requestId = Guid.NewGuid();
+                using (_logger.BeginScope(string.Format("request {0}", requestId)))
+                {
+                    ElmScope.Current.Context.HttpInfo = GetHttpInfo(context, requestId);
+                    try
+                    {
+                        await _next(context);
+                        ElmScope.Current.Context.HttpInfo.StatusCode = context.Response.StatusCode;
+                        return;
+                    }
+                    catch (Exception ex)
+                    {
+                        ElmScope.Current.Context.HttpInfo.StatusCode = context.Response.StatusCode;
+                        _logger.WriteError("An unhandled exception has occurred: " + ex.Message, ex);
+                        throw;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Takes the info from the given HttpContext and copies it to an HttpInfo object
+        /// </summary>
+        /// <returns>The HttpInfo for the current elm context</returns>
+        private static HttpInfo GetHttpInfo(HttpContext context, Guid requestId)
+        {
+            return new HttpInfo()
+            {
+                RequestID = requestId,
+                Host = context.Request.Host,
+                ContentType = context.Request.ContentType,
+                Path = context.Request.Path,
+                Scheme = context.Request.Scheme,
+                StatusCode = context.Response.StatusCode,
+                User = context.User,
+                Method = context.Request.Method,
+                Protocol = context.Request.Protocol,
+                Headers = context.Request.Headers,
+                Query = context.Request.QueryString,
+                Cookies = context.Request.Cookies
+            };
+        }
+    }
+}
