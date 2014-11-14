@@ -9,19 +9,23 @@ namespace Microsoft.AspNet.Diagnostics.Elm
     public class ElmLogger : ILogger
     {
         private readonly string _name;
-        private readonly ElmLoggerProvider _provider;
         private IElmStore _store;
+        private readonly ElmOptions _options;
 
-        public ElmLogger(string name, ElmLoggerProvider provider, IElmStore store)
+        public ElmLogger(string name, IElmStore store, ElmOptions options)
         {
             _name = name;
-            _provider = provider;
             _store = store;
+            _options = options;
         }
 
         public void Write(LogLevel logLevel, int eventId, object state, Exception exception, 
                           Func<object, Exception, string> formatter)
         {
+            if (!IsEnabled(logLevel))
+            {
+                return;
+            }
             LogInfo info = new LogInfo()
             {
                 ActivityContext = GetCurrentActivityContext(),
@@ -42,14 +46,14 @@ namespace Microsoft.AspNet.Diagnostics.Elm
 
         public bool IsEnabled(LogLevel logLevel)
         {
-            return true;
+            return _options.Filter(_name, logLevel);
         }
 
         public IDisposable BeginScope(object state)
         {
             var scope = new ElmScope(_name, state);
             scope.Context = ElmScope.Current?.Context ?? GetNewActivityContext();
-            return ElmScope.Push(scope);
+            return ElmScope.Push(scope, _store);
         }
 
         private ActivityContext GetNewActivityContext()

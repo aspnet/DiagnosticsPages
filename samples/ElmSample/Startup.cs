@@ -15,6 +15,7 @@ namespace ElmSampleApp
             services.Configure<ElmOptions>(options =>
             {
                 options.Path = new PathString("/foo");
+                options.Filter = (name, level) => level >= LogLevel.Information;
             });
         }
 
@@ -30,6 +31,10 @@ namespace ElmSampleApp
                 {
                     logger.WriteInformation("Hello world!");
                     logger.WriteError("Mort");
+                }
+                using (logger.BeginScope("verbose"))
+                {
+                    logger.WriteVerbose("some verbose stuff");
                 }
                 throw new InvalidOperationException();
             });

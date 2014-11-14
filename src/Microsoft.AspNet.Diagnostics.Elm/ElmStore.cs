@@ -13,7 +13,7 @@ namespace Microsoft.AspNet.Diagnostics.Elm
 
         private readonly Queue<LogInfo> _logs = new Queue<LogInfo>();
 
-        private static LinkedList<ActivityContext> Activities { get; set; } = new LinkedList<ActivityContext>();
+        private LinkedList<ActivityContext> Activities { get; set; } = new LinkedList<ActivityContext>();
 
         public IEnumerable<LogInfo> GetLogs()
         {
@@ -38,17 +38,24 @@ namespace Microsoft.AspNet.Diagnostics.Elm
         }
 
         // returns the number of log messages stored in Activities
-        private static int NumLogs()
+        private int NumLogs()
         {
             return Activities.Sum(a => a.Size);
         }
 
-        public static IEnumerable<ActivityContext> GetActivities()
+        public IEnumerable<ActivityContext> GetActivities()
         {
+            for (var context = Activities.First; context != null; context = context.Next)
+            {
+                if (!context.Value.IsCollapsed && CollapseActivityContext(context.Value))
+                {
+                    Activities.Remove(context);
+                }
+            }
             return Activities;
         }
 
-        public static void AddActivity(ActivityContext activity)
+        public void AddActivity(ActivityContext activity)
         {
             lock (Activities)
             {
@@ -57,6 +64,40 @@ namespace Microsoft.AspNet.Diagnostics.Elm
                 {
                     Activities.RemoveFirst();
                 }
+            }
+        }
+
+        /// <summary>
+        /// Removes any nodes on the context's scope tree that doesn't have any logs
+        /// This may occur as a result of the filters turned on
+        /// </summary>
+        /// <param name="context">The context who's node should be condensed</param>
+        /// <returns>true if the node has been condensed to null, false otherwise</returns>
+        private bool CollapseActivityContext(ActivityContext context)
+        {
+            context.Root = CollapseHelper(context.Root);
+            context.IsCollapsed = true;
+            return context.Root == null;
+        }
+
+        private ScopeNode CollapseHelper(ScopeNode node)
+        {
+            if (node == null)
+            {
+                return node;
+            }
+            for (int i = 0; i < node.Children.Count; i++)
+            {
+                node.Children[i] = CollapseHelper(node.Children[i]);
+            }
+            node.Children = node.Children.Where(c => c != null).ToList();
+            if (node.Children.Count == 0 && node.Messages.Count == 0)
+            {
+                return null;
+            }
+            else
+            {
+                return node;
             }
         }
     }

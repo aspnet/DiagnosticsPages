@@ -37,7 +37,7 @@ namespace Microsoft.AspNet.Diagnostics.Tests
         public async void Invoke_WithNonMatchingPath_IgnoresRequest()
         {
             // Arrange
-            var elmStoreMock = new Mock<IElmStore>(MockBehavior.Strict);
+            var elmStore = new ElmStore();
             var optionsMock = new Mock<IOptions<ElmOptions>>();
             optionsMock
                 .SetupGet(o => o.Options)
@@ -52,7 +52,7 @@ namespace Microsoft.AspNet.Diagnostics.Tests
                next,
                new LoggerFactory(),
                optionsMock.Object,
-               elmStoreMock.Object);
+               elmStore);
 
             var contextMock = GetMockContext("/nonmatchingpath");
 
@@ -67,10 +67,7 @@ namespace Microsoft.AspNet.Diagnostics.Tests
         public async void Invoke_WithMatchingPath_FulfillsRequest()
         {
             // Arrange
-            var elmStoreMock = new Mock<IElmStore>(MockBehavior.Strict);
-            elmStoreMock
-                .Setup(e => e.GetLogs())
-                .Returns(new Mock<IEnumerable<LogInfo>>().Object);
+            var elmStore = new ElmStore();
             var optionsMock = new Mock<IOptions<ElmOptions>>();
             optionsMock
                 .SetupGet(o => o.Options)
@@ -85,7 +82,7 @@ namespace Microsoft.AspNet.Diagnostics.Tests
                next,
                new LoggerFactory(),
                optionsMock.Object,
-               elmStoreMock.Object);
+               elmStore);
             var contextMock = GetMockContext("/Elm");
 
             using (var responseStream = new MemoryStream())

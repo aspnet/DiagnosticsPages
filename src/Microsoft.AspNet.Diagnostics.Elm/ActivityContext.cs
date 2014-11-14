@@ -9,5 +9,6 @@ namespace Microsoft.AspNet.Diagnostics.Elm
         public ScopeNode Root { get; set; }
         public DateTimeOffset Time { get; set; }
         public int Size { get; set; }
+        public bool IsCollapsed { get; set; }
     }
 }

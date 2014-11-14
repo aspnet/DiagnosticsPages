@@ -12,22 +12,24 @@ namespace Microsoft.AspNet.Diagnostics.Tests
     {
         private const string _name = "test";
         private const string _state = "This is a test";
+        private Func<string, LogLevel, bool> _filter = (_, __) => true;
 
-        private Tuple<ElmLogger, IElmStore> SetUp(LogLevel logLevel, string name = null)
+        private Tuple<ElmLogger, IElmStore> SetUp(Func<string, LogLevel, bool> filter = null, string name = null)
         {
             // Arrange
             var store = new ElmStore();
-            var provider = new ElmLoggerProvider(store);
+            var options = new ElmOptions() { Filter = filter ?? _filter };
+            var provider = new ElmLoggerProvider(store, options);
             var logger = (ElmLogger)provider.Create(name ?? _name);
 
             return new Tuple<ElmLogger, IElmStore>(logger, store);
         }
 
         [Fact]
-        public void LogsWhenNullFilterGiven()
+        public void LogsWhenNullFormatterGiven()
         {
             // Arrange
-            var t = SetUp(LogLevel.Verbose);
+            var t = SetUp();
             var logger = t.Item1;
             var store = t.Item2;
 
@@ -42,7 +44,7 @@ namespace Microsoft.AspNet.Diagnostics.Tests
         public void LogsWithEmptyStateAndException()
         {
             // Arrange
-            var t = SetUp(LogLevel.Verbose);
+            var t = SetUp();
             var logger = t.Item1;
             var store = t.Item2;
 
@@ -54,10 +56,10 @@ namespace Microsoft.AspNet.Diagnostics.Tests
         }
 
         [Fact]
-        public void LogsForAllLogLevels()
+        public void DefaultLogsForAllLogLevels()
         {
             // Arrange
-            var t = SetUp(LogLevel.Verbose);
+            var t = SetUp();
             var logger = t.Item1;
             var store = t.Item2;
 
@@ -72,13 +74,36 @@ namespace Microsoft.AspNet.Diagnostics.Tests
             Assert.Equal(5, ((Queue<LogInfo>)store.GetLogs()).Count);
         }
 
+        [Theory]
+        [InlineData(LogLevel.Warning, "", 3)]
+        [InlineData(LogLevel.Warning, "te", 3)]
+        [InlineData(LogLevel.Warning, "bad", 0)]
+        [InlineData(LogLevel.Critical, "", 1)]
+        [InlineData(LogLevel.Critical, "test", 1)]
+        [InlineData(LogLevel.Verbose, "t", 5)]
+        public void Filter_LogsWhenAppropriate(LogLevel minLevel, string prefix, int count)
+        {
+            // Arrange
+            var t = SetUp((name, level) => (name.StartsWith(prefix) && level >= minLevel), _name);
+            var logger = t.Item1;
+            var store = t.Item2;
+
+            // Act
+            logger.Write(LogLevel.Verbose, 0, _state, null, null);
+            logger.Write(LogLevel.Information, 0, _state, null, null);
+            logger.Write(LogLevel.Warning, 0, _state, null, null);
+            logger.Write(LogLevel.Error, 0, _state, null, null);
+            logger.Write(LogLevel.Critical, 0, _state, null, null);
+
+            // Assert
+            Assert.Equal(count, ((Queue<LogInfo>)store.GetLogs()).Count);
+        }
+
         [Fact]
         public void ThreadsHaveSeparateActivityContexts()
         {
             // Arrange
-            // note: this logger name must be unique to this test
-            var name = "thread_test_logger";
-            var t = SetUp(LogLevel.Verbose, name);
+            var t = SetUp();
             var logger = t.Item1;
             var store = t.Item2;
 
@@ -97,8 +122,8 @@ namespace Microsoft.AspNet.Diagnostics.Tests
 
             // Assert
             Assert.Equal(17, ((Queue<LogInfo>)store.GetLogs()).Count);
-            var activityCount = ((LinkedList<ActivityContext>)ElmStore.GetActivities()).Where(
-                a => a.Root.Name.Equals(name)).Count();
+            var activities = store.GetActivities();
+            var activityCount = ((LinkedList<ActivityContext>)store.GetActivities()).Count();
             Assert.Equal(2, activityCount);
         }
 
@@ -106,7 +131,7 @@ namespace Microsoft.AspNet.Diagnostics.Tests
         public void ScopesHaveProperTreeStructure()
         {
             // Arrange
-            var t = SetUp(LogLevel.Verbose);
+            var t = SetUp();
             var logger = t.Item1;
             var store = t.Item2;
 
@@ -124,9 +149,9 @@ namespace Microsoft.AspNet.Diagnostics.Tests
             workerThread.Join();
 
             // Assert
-            var root1 = (ElmStore.GetActivities()).Where(a => a.Root.State.Equals("test1"))?.ElementAt(0)?.Root;
+            var root1 = (store.GetActivities()).Where(a => a.Root.State.Equals("test1"))?.ElementAt(0)?.Root;
             Assert.NotNull(root1);
-            var root2 = (ElmStore.GetActivities()).Where(a => a.Root.State.Equals("test2"))?.ElementAt(0)?.Root;
+            var root2 = (store.GetActivities()).Where(a => a.Root.State.Equals("test2"))?.ElementAt(0)?.Root;
             Assert.NotNull(root2);
 
             Assert.Equal(0, root1.Children.Count);
@@ -135,6 +160,108 @@ namespace Microsoft.AspNet.Diagnostics.Tests
             Assert.Equal(12, root2.Messages.Count);
             Assert.Equal(0, root2.Children.ElementAt(0).Children.Count);
             Assert.Equal(3, root2.Children.ElementAt(0).Messages.Count);
+        }
+
+        [Fact]
+        public void CollapseTree_CollapsesWhenNoLogsInSingleScope()
+        {
+            // Arrange
+            var t = SetUp();
+            var logger = t.Item1;
+            var store = t.Item2;
+
+            // Act
+            using (logger.BeginScope("test"))
+            {
+            }
+
+            // Assert
+            Assert.Empty(store.GetActivities());
+        }
+
+        [Fact]
+        public void CollapseTree_CollapsesWhenNoLogsInNestedScope()
+        {
+            // Arrange
+            var t = SetUp();
+            var logger = t.Item1;
+            var store = t.Item2;
+
+            // Act
+            using (logger.BeginScope("test1"))
+            {
+                using (logger.BeginScope("test2"))
+                {
+                }
+            }
+
+            // Assert
+            Assert.Empty(store.GetActivities());
+        }
+
+        [Fact]
+        public void CollapseTree_DoesNotCollapseWhenLogsExist()
+        {
+            // Arrange
+            var t = SetUp();
+            var logger = t.Item1;
+            var store = t.Item2;
+
+            // Act
+            using (logger.BeginScope("test1"))
+            {
+                using (logger.BeginScope("test2"))
+                {
+                    logger.WriteVerbose("hi");
+                }
+            }
+
+            // Assert
+            Assert.Single(store.GetActivities());
+        }
+
+        [Fact]
+        public void CollapseTree_CollapsesAppropriateNodes()
+        {
+            // Arrange
+            var t = SetUp();
+            var logger = t.Item1;
+            var store = t.Item2;
+
+            // Act
+            using (logger.BeginScope("test1"))
+            {
+                logger.WriteVerbose("hi");
+                using (logger.BeginScope("test2"))
+                {
+                }
+            }
+
+            // Assert
+            Assert.Single(store.GetActivities());
+            var context = store.GetActivities().First();
+            Assert.Empty(context.Root.Children);
+        }
+
+        [Fact]
+        public void CollapseTree_WorksWithFilter()
+        {
+            // Arrange
+            var t = SetUp((_, level) => level >= LogLevel.Warning, null);
+            var logger = t.Item1;
+            var store = t.Item2;
+
+            // Act
+            using (logger.BeginScope("test1"))
+            {
+                using (logger.BeginScope("test2"))
+                {
+                    logger.WriteInformation("hi");
+                }
+            }
+
+            // Assert
+            Assert.Empty(store.GetActivities());
         }
 
         private class TestThread

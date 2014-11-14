@@ -2,9 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Http;
@@ -31,7 +29,7 @@ namespace Microsoft.AspNet.Diagnostics.Elm
             _options = options.Options;
             _store = store;
             _logger = factory.Create<ElmMiddleware>();
-            _provider = new ElmLoggerProvider(_store);
+            _provider = new ElmLoggerProvider(_store, _options);
             factory.AddProvider(_provider);
         }
 
@@ -89,7 +87,7 @@ namespace Microsoft.AspNet.Diagnostics.Elm
                 {
                     // sort so most recent logs are first
                     Logs = logs.OrderBy(l => l.Time).Reverse(),
-                    LogTree = ElmStore.GetActivities(),
+                    LogTree = _store.GetActivities(),
                     Options = options,
                     Path = _options.Path
                 };

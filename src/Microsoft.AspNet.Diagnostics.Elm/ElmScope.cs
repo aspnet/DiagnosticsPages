@@ -59,7 +59,7 @@ namespace Microsoft.AspNet.Diagnostics.Elm
         }
 #endif
 
-        public static IDisposable Push(ElmScope scope)
+        public static IDisposable Push(ElmScope scope, IElmStore store)
         {
             var temp = Current;
             Current = scope;
@@ -80,7 +80,7 @@ namespace Microsoft.AspNet.Diagnostics.Elm
             else
             {
                 Current.Context.Root = Current.Node;
-                ElmStore.AddActivity(Current.Context);
+                store.AddActivity(Current.Context);
             }
 
             return new DisposableAction(() =>
