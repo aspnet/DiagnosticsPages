@@ -17,18 +17,13 @@ namespace Microsoft.AspNet.Diagnostics.Elm
     {
         private readonly RequestDelegate _next;
         private readonly ElmOptions _options;
-        private readonly ElmLoggerProvider _provider;
-        private readonly IElmStore _store;
         private readonly ILogger _logger;
 
-        public ElmCaptureMiddleware(RequestDelegate next, ILoggerFactory factory, IOptions<ElmOptions> options, IElmStore store)
+        public ElmCaptureMiddleware(RequestDelegate next, ILoggerFactory factory, IOptions<ElmOptions> options)
         {
             _next = next;
             _options = options.Options;
-            _store = store;
             _logger = factory.Create<ElmCaptureMiddleware>();
-            _provider = new ElmLoggerProvider(_store, _options);
-            factory.AddProvider(_provider);
         }
 
         public async Task Invoke(HttpContext context)

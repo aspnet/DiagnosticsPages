@@ -4,6 +4,8 @@
 using System;
 using Microsoft.AspNet.Diagnostics.Elm;
 using Microsoft.Framework.DependencyInjection;
+using Microsoft.Framework.Logging;
+using Microsoft.Framework.OptionsModel;
 
 namespace Microsoft.AspNet.Builder
 {
@@ -11,6 +13,10 @@ namespace Microsoft.AspNet.Builder
     {
         public static IApplicationBuilder UseElmCapture(this IApplicationBuilder builder)
         {
+            var factory = builder.ApplicationServices.GetRequiredService<ILoggerFactory>();
+            var store = builder.ApplicationServices.GetRequiredService<IElmStore>();
+            var options = builder.ApplicationServices.GetService<IOptions<ElmOptions>>();
+            factory.AddProvider(new ElmLoggerProvider(store, options != null ? options.Options : new ElmOptions()));
             return builder.UseMiddleware<ElmCaptureMiddleware>();
         }
 

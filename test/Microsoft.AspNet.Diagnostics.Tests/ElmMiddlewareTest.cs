@@ -37,10 +37,12 @@ namespace Microsoft.AspNet.Diagnostics.Tests
         {
             // Arrange
             var elmStore = new ElmStore();
+            var factory = new LoggerFactory();
             var optionsMock = new Mock<IOptions<ElmOptions>>();
             optionsMock
                 .SetupGet(o => o.Options)
                 .Returns(new ElmOptions());
+            factory.AddProvider(new ElmLoggerProvider(elmStore, optionsMock.Object.Options));
 
             RequestDelegate next = _ =>
             {
@@ -49,9 +51,8 @@ namespace Microsoft.AspNet.Diagnostics.Tests
 
             var captureMiddleware = new ElmCaptureMiddleware(
                 next,
-                new LoggerFactory(),
-                optionsMock.Object,
-                elmStore);
+                factory,
+                optionsMock.Object);
             var pageMiddleware = new ElmPageMiddleware(
                 next,
                 optionsMock.Object,
@@ -87,8 +88,7 @@ namespace Microsoft.AspNet.Diagnostics.Tests
             var captureMiddleware = new ElmCaptureMiddleware(
                 next,
                 factory,
-                optionsMock.Object,
-                elmStore);
+                optionsMock.Object);
             var pageMiddleware = new ElmPageMiddleware(
                 next,
                 optionsMock.Object,
@@ -132,8 +132,7 @@ namespace Microsoft.AspNet.Diagnostics.Tests
             var captureMiddleware = new ElmCaptureMiddleware(
                 next,
                 factory,
-                optionsMock.Object,
-                elmStore);
+                optionsMock.Object);
             var pageMiddleware = new ElmPageMiddleware(
                 next,
                 optionsMock.Object,
