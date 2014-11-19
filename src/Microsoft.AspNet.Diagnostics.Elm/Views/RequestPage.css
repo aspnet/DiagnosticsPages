@@ -24,7 +24,7 @@ td, th {
     padding: 8px;
 }
 
-#headerTable {
+#headerTable, #cookieTable {
     border: none;
     height: 100%;
 }
@@ -36,6 +36,11 @@ td, th {
 #label {
     width: 20%;
     border-right: 1px solid black;
+}
+
+#logs{
+    margin-top: 10px;
+    margin-bottom: 20px;
 }
 
 #logs>tbody>tr>td {

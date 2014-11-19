@@ -60,15 +60,111 @@ using Microsoft.Framework.Logging
         public override async Task ExecuteAsync()
         {
             WriteLiteral("\r\n");
-            WriteLiteral("<!DOCTYPE html>\r\n<html>\r\n<head>\r\n    <meta charset=\"utf-8\" />\r\n    <title>ELM</ti" +
-"tle>\r\n    <style>\r\n        body {\r\n    font-family: 'Segoe UI', Tahoma, Arial, Helvtica, sans-serif;\r\n    line-height: 1.4em;\r\n}\r\n\r\ntd {\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\ntr:nth-child(2n) {\r\n    background-color: #F6F6F6;\r\n}\r\n\r\n.critical {\r\n    background-color: red;\r\n    color: white;\r\n}\r\n\r\n.error {\r\n    color: red;\r\n}\r\n\r\n.information {\r\n    color: blue;\r\n}\r\n\r\n.verbose {\r\n    color: black;\r\n}\r\n\r\n.warning {\r\n    color: orange;\r\n}\r\n        body {\r\n    font-size: 0.9em;\r\n    width: 90%;\r\n    margin: 0px auto;\r\n}\r\n\r\nh1, h2 {\r\n    font-weight: normal;\r\n}\r\n\r\ntable {\r\n    border-spacing: 0px;\r\n    width: 100%;\r\n    border-collapse: collapse;\r\n    border: 1px solid black;\r\n    white-space: pre-wrap;\r\n}\r\n\r\nth {\r\n    font-family: Arial;\r\n}\r\n\r\ntd, th {\r\n    padding: 8px;\r\n}\r\n\r\n#headerTable {\r\n    border: none;\r\n    height: 100%;\r\n}\r\n\r\n#headerTd {\r\n    white-space: normal;\r\n}\r\n\r\n#label {\r\n    width: 20%;\r\n    border-right: 1px solid black;\r\n}\r\n\r\n#logs>tbody>tr>td {\r\n    border-right: 1px dashed lightgray;\r\n}\r\n\r\n#logs>thead>tr>th {\r\n    border: 1px solid black;\r\n}\r\n    </style>\r\n</head>\r\n<body>\r\n    <h1>ELM</h1>\r\n");
-#line 29 "RequestPage.cshtml"
+            WriteLiteral(@"<!DOCTYPE html>
+<html>
+<head>
+    <meta charset=""utf-8"" />
+    <title>ELM</title>
+    <script src=""http://ajax.aspnetcdn.com/ajax/jquery/jquery-2.1.1.min.js""></script>
+    <style>
+        body {
+    font-family: 'Segoe UI', Tahoma, Arial, Helvtica, sans-serif;
+    line-height: 1.4em;
+}
+
+td {
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+tr:nth-child(2n) {
+    background-color: #F6F6F6;
+}
+
+.critical {
+    background-color: red;
+    color: white;
+}
+
+.error {
+    color: red;
+}
+
+.information {
+    color: blue;
+}
+
+.verbose {
+    color: black;
+}
+
+.warning {
+    color: orange;
+}
+        body {
+    font-size: 0.9em;
+    width: 90%;
+    margin: 0px auto;
+}
+
+h1, h2 {
+    font-weight: normal;
+}
+
+table {
+    border-spacing: 0px;
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid black;
+    white-space: pre-wrap;
+}
+
+th {
+    font-family: Arial;
+}
+
+td, th {
+    padding: 8px;
+}
+
+#headerTable, #cookieTable {
+    border: none;
+    height: 100%;
+}
+
+#headerTd {
+    white-space: normal;
+}
+
+#label {
+    width: 20%;
+    border-right: 1px solid black;
+}
+
+#logs{
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+#logs>tbody>tr>td {
+    border-right: 1px dashed lightgray;
+}
+
+#logs>thead>tr>th {
+    border: 1px solid black;
+}
+    </style>
+</head>
+<body>
+    <h1>ELM</h1>
+");
+#line 30 "RequestPage.cshtml"
     
 
 #line default
 #line hidden
 
-#line 29 "RequestPage.cshtml"
+#line 30 "RequestPage.cshtml"
       
         var context = Model.Logs.FirstOrDefault()?.ActivityContext?.HttpInfo;
     
@@ -77,51 +173,51 @@ using Microsoft.Framework.Logging
 #line hidden
 
             WriteLiteral("\r\n");
-#line 32 "RequestPage.cshtml"
+#line 33 "RequestPage.cshtml"
     
 
 #line default
 #line hidden
 
-#line 32 "RequestPage.cshtml"
+#line 33 "RequestPage.cshtml"
      if (context != null)
     {
 
 #line default
 #line hidden
 
-            WriteLiteral("        <h2>Request Details</h2>\r\n        <table id=\"requestDetails\">\r\n          " +
-"  <colgroup><col id=\"label\" /><col /></colgroup>\r\n\r\n            <tr>\r\n          " +
-"      <th>Path</th>\r\n                <td>");
-#line 40 "RequestPage.cshtml"
+            WriteLiteral("        <h2 id=\"requestHeader\">Request Details</h2>\r\n        <table id=\"requestDe" +
+"tails\">\r\n            <colgroup><col id=\"label\" /><col /></colgroup>\r\n\r\n         " +
+"   <tr>\r\n                <th>Path</th>\r\n                <td>");
+#line 41 "RequestPage.cshtml"
                Write(context.Path);
 
 #line default
 #line hidden
             WriteLiteral("</td>\r\n            </tr>\r\n            <tr>\r\n                <th>Host</th>\r\n      " +
 "          <td>");
-#line 44 "RequestPage.cshtml"
+#line 45 "RequestPage.cshtml"
                Write(context.Host);
 
 #line default
 #line hidden
             WriteLiteral("</td>\r\n            </tr>\r\n            <tr>\r\n                <th>Content Type</th>" +
 "\r\n                <td>");
-#line 48 "RequestPage.cshtml"
+#line 49 "RequestPage.cshtml"
                Write(context.ContentType);
 
 #line default
 #line hidden
             WriteLiteral("</td>\r\n            </tr>\r\n            <tr>\r\n                <th>Method</th>\r\n    " +
 "            <td>");
-#line 52 "RequestPage.cshtml"
+#line 53 "RequestPage.cshtml"
                Write(context.Method);
 
 #line default
 #line hidden
             WriteLiteral("</td>\r\n            </tr>\r\n            <tr>\r\n                <th>Protocol</th>\r\n  " +
 "              <td>");
-#line 56 "RequestPage.cshtml"
+#line 57 "RequestPage.cshtml"
                Write(context.Protocol);
 
 #line default
@@ -140,13 +236,13 @@ using Microsoft.Framework.Logging
                         </thead>
                         <tbody>
 ");
-#line 69 "RequestPage.cshtml"
+#line 70 "RequestPage.cshtml"
                             
 
 #line default
 #line hidden
 
-#line 69 "RequestPage.cshtml"
+#line 70 "RequestPage.cshtml"
                              foreach (var header in context.Headers)
                             {
 
@@ -154,19 +250,19 @@ using Microsoft.Framework.Logging
 #line hidden
 
             WriteLiteral("                                <tr>\r\n                                    <td>");
-#line 72 "RequestPage.cshtml"
+#line 73 "RequestPage.cshtml"
                                    Write(header.Key);
 
 #line default
 #line hidden
             WriteLiteral("</td>\r\n                                    <td>");
-#line 73 "RequestPage.cshtml"
+#line 74 "RequestPage.cshtml"
                                    Write(string.Join(";", header.Value));
 
 #line default
 #line hidden
             WriteLiteral("</td>\r\n                                </tr>\r\n");
-#line 75 "RequestPage.cshtml"
+#line 76 "RequestPage.cshtml"
                             }
 
 #line default
@@ -175,48 +271,112 @@ using Microsoft.Framework.Logging
             WriteLiteral("                        </tbody>\r\n                    </table>\r\n                <" +
 "/td>\r\n            </tr>\r\n            <tr>\r\n                <th>Status Code</th>\r" +
 "\n                <td>");
-#line 82 "RequestPage.cshtml"
+#line 83 "RequestPage.cshtml"
                Write(context.StatusCode);
 
 #line default
 #line hidden
             WriteLiteral("</td>\r\n            </tr>\r\n            <tr>\r\n                <th>User</th>\r\n      " +
-"          \r\n                <td>");
+"          <td>");
 #line 87 "RequestPage.cshtml"
                Write(context.User.Identity.Name);
 
 #line default
 #line hidden
-            WriteLiteral("</td>\r\n            </tr>\r\n            <tr>\r\n                <th>Scheme</th>\r\n    " +
-"            <td>");
-#line 91 "RequestPage.cshtml"
+            WriteLiteral("</td>\r\n            </tr>\r\n            <tr>\r\n                <th>Claims</th>\r\n    " +
+"            <td>\r\n");
+#line 92 "RequestPage.cshtml"
+                    
+
+#line default
+#line hidden
+
+#line 92 "RequestPage.cshtml"
+                     if (context.User.Claims.Any())
+                    {
+
+#line default
+#line hidden
+
+            WriteLiteral(@"                        <table id=""claimsTable"">
+                            <thead>
+                                <tr>
+                                    <th>Issuer</th>
+                                    <th>Value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+");
+#line 102 "RequestPage.cshtml"
+                                
+
+#line default
+#line hidden
+
+#line 102 "RequestPage.cshtml"
+                                 foreach (var claim in context.User.Claims)
+                                {
+
+#line default
+#line hidden
+
+            WriteLiteral("                                    <tr>\r\n                                       " +
+" <td>");
+#line 105 "RequestPage.cshtml"
+                                       Write(claim.Issuer);
+
+#line default
+#line hidden
+            WriteLiteral("</td>\r\n                                        <td>");
+#line 106 "RequestPage.cshtml"
+                                       Write(claim.Value);
+
+#line default
+#line hidden
+            WriteLiteral("</td>\r\n                                    </tr>\r\n");
+#line 108 "RequestPage.cshtml"
+                                }
+
+#line default
+#line hidden
+
+            WriteLiteral("                            </tbody>\r\n                        </table>\r\n");
+#line 111 "RequestPage.cshtml"
+                    }
+
+#line default
+#line hidden
+
+            WriteLiteral("                </td>\r\n            </tr>\r\n            <tr>\r\n                <th>S" +
+"cheme</th>\r\n                <td>");
+#line 116 "RequestPage.cshtml"
                Write(context.Scheme);
 
 #line default
 #line hidden
             WriteLiteral("</td>\r\n            </tr>\r\n            <tr>\r\n                <th>Query</th>\r\n     " +
 "           <td>");
-#line 95 "RequestPage.cshtml"
+#line 120 "RequestPage.cshtml"
                Write(context.Query.Value);
 
 #line default
 #line hidden
             WriteLiteral("</td>\r\n            </tr>\r\n            <tr>\r\n                <th>Cookies</th>\r\n   " +
 "             <td>\r\n");
-#line 100 "RequestPage.cshtml"
+#line 125 "RequestPage.cshtml"
                     
 
 #line default
 #line hidden
 
-#line 100 "RequestPage.cshtml"
+#line 125 "RequestPage.cshtml"
                      if (context.Cookies.Any())
                     {
 
 #line default
 #line hidden
 
-            WriteLiteral(@"                        <table id=""queryTable"">
+            WriteLiteral(@"                        <table id=""cookieTable"">
                             <thead>
                                 <tr>
                                     <th>Variable</th>
@@ -225,13 +385,13 @@ using Microsoft.Framework.Logging
                             </thead>
                             <tbody>
 ");
-#line 110 "RequestPage.cshtml"
+#line 135 "RequestPage.cshtml"
                                 
 
 #line default
 #line hidden
 
-#line 110 "RequestPage.cshtml"
+#line 135 "RequestPage.cshtml"
                                  foreach (var cookie in context.Cookies)
                                 {
 
@@ -240,46 +400,46 @@ using Microsoft.Framework.Logging
 
             WriteLiteral("                                    <tr>\r\n                                       " +
 " <td>");
-#line 113 "RequestPage.cshtml"
+#line 138 "RequestPage.cshtml"
                                        Write(cookie.Key);
 
 #line default
 #line hidden
             WriteLiteral("</td>\r\n                                        <td>");
-#line 114 "RequestPage.cshtml"
+#line 139 "RequestPage.cshtml"
                                        Write(string.Join(";", cookie.Value));
 
 #line default
 #line hidden
             WriteLiteral("</td>\r\n                                    </tr>\r\n");
-#line 116 "RequestPage.cshtml"
+#line 141 "RequestPage.cshtml"
                                 }
 
 #line default
 #line hidden
 
             WriteLiteral("                            </tbody>\r\n                        </table>\r\n");
-#line 119 "RequestPage.cshtml"
+#line 144 "RequestPage.cshtml"
                     }
 
 #line default
 #line hidden
 
             WriteLiteral("                </td>\r\n            </tr>\r\n        </table>\r\n");
-#line 123 "RequestPage.cshtml"
+#line 148 "RequestPage.cshtml"
     }
 
 #line default
 #line hidden
 
             WriteLiteral("    <h2>Logs</h2>\r\n    <form method=\"get\">\r\n        <select name=\"level\">\r\n");
-#line 127 "RequestPage.cshtml"
+#line 152 "RequestPage.cshtml"
             
 
 #line default
 #line hidden
 
-#line 127 "RequestPage.cshtml"
+#line 152 "RequestPage.cshtml"
              foreach (var severity in Enum.GetValues(typeof(LogLevel)))
             {
                 var severityInt = (int)severity;
@@ -290,16 +450,16 @@ using Microsoft.Framework.Logging
 #line hidden
 
             WriteLiteral("                    <option");
-            WriteAttribute("value", Tuple.Create(" value=\"", 4138), Tuple.Create("\"", 4158), 
-            Tuple.Create(Tuple.Create("", 4146), Tuple.Create<System.Object, System.Int32>(severityInt, 4146), false));
+            WriteAttribute("value", Tuple.Create(" value=\"", 5169), Tuple.Create("\"", 5189), 
+            Tuple.Create(Tuple.Create("", 5177), Tuple.Create<System.Object, System.Int32>(severityInt, 5177), false));
             WriteLiteral(" selected=\"selected\">");
-#line 132 "RequestPage.cshtml"
+#line 157 "RequestPage.cshtml"
                                                                 Write(severity);
 
 #line default
 #line hidden
             WriteLiteral("</option>\r\n");
-#line 133 "RequestPage.cshtml"
+#line 158 "RequestPage.cshtml"
                 }
                 else
                 {
@@ -308,16 +468,16 @@ using Microsoft.Framework.Logging
 #line hidden
 
             WriteLiteral("                    <option");
-            WriteAttribute("value", Tuple.Create(" value=\"", 4287), Tuple.Create("\"", 4307), 
-            Tuple.Create(Tuple.Create("", 4295), Tuple.Create<System.Object, System.Int32>(severityInt, 4295), false));
+            WriteAttribute("value", Tuple.Create(" value=\"", 5318), Tuple.Create("\"", 5338), 
+            Tuple.Create(Tuple.Create("", 5326), Tuple.Create<System.Object, System.Int32>(severityInt, 5326), false));
             WriteLiteral(">");
-#line 136 "RequestPage.cshtml"
+#line 161 "RequestPage.cshtml"
                                             Write(severity);
 
 #line default
 #line hidden
             WriteLiteral("</option>\r\n");
-#line 137 "RequestPage.cshtml"
+#line 162 "RequestPage.cshtml"
                 }
             }
 
@@ -325,8 +485,8 @@ using Microsoft.Framework.Logging
 #line hidden
 
             WriteLiteral("        </select>\r\n        <input type=\"text\" name=\"name\"");
-            WriteAttribute("value", Tuple.Create(" value=\"", 4420), Tuple.Create("\"", 4453), 
-            Tuple.Create(Tuple.Create("", 4428), Tuple.Create<System.Object, System.Int32>(Model.Options.NamePrefix, 4428), false));
+            WriteAttribute("value", Tuple.Create(" value=\"", 5451), Tuple.Create("\"", 5484), 
+            Tuple.Create(Tuple.Create("", 5459), Tuple.Create<System.Object, System.Int32>(Model.Options.NamePrefix, 5459), false));
             WriteLiteral(@" />
         <input type=""submit"" value=""filter"" />
     </form>
@@ -342,13 +502,13 @@ using Microsoft.Framework.Logging
             </tr>
         </thead>
 ");
-#line 154 "RequestPage.cshtml"
+#line 179 "RequestPage.cshtml"
         
 
 #line default
 #line hidden
 
-#line 154 "RequestPage.cshtml"
+#line 179 "RequestPage.cshtml"
          foreach (var log in Model.Logs)
         {
 
@@ -356,61 +516,81 @@ using Microsoft.Framework.Logging
 #line hidden
 
             WriteLiteral("            <tr>\r\n                <td>");
-#line 157 "RequestPage.cshtml"
+#line 182 "RequestPage.cshtml"
                Write(string.Format("{0:MM/dd/yy}", log.Time));
 
 #line default
 #line hidden
             WriteLiteral("</td>\r\n                <td>");
-#line 158 "RequestPage.cshtml"
+#line 183 "RequestPage.cshtml"
                Write(string.Format("{0:H:mm:ss}", log.Time));
 
 #line default
 #line hidden
             WriteLiteral("</td>\r\n                <td");
-            WriteAttribute("class", Tuple.Create(" class=\"", 5030), Tuple.Create("\"", 5081), 
-            Tuple.Create(Tuple.Create("", 5038), Tuple.Create<System.Object, System.Int32>(log.Severity.ToString().ToLowerInvariant(), 5038), false));
+            WriteAttribute("class", Tuple.Create(" class=\"", 6061), Tuple.Create("\"", 6112), 
+            Tuple.Create(Tuple.Create("", 6069), Tuple.Create<System.Object, System.Int32>(log.Severity.ToString().ToLowerInvariant(), 6069), false));
             WriteLiteral(">");
-#line 159 "RequestPage.cshtml"
+#line 184 "RequestPage.cshtml"
                                                                    Write(log.Severity);
 
 #line default
 #line hidden
             WriteLiteral("</td>\r\n                <td");
-            WriteAttribute("title", Tuple.Create(" title=\"", 5122), Tuple.Create("\"", 5139), 
-            Tuple.Create(Tuple.Create("", 5130), Tuple.Create<System.Object, System.Int32>(log.Name, 5130), false));
+            WriteAttribute("title", Tuple.Create(" title=\"", 6153), Tuple.Create("\"", 6170), 
+            Tuple.Create(Tuple.Create("", 6161), Tuple.Create<System.Object, System.Int32>(log.Name, 6161), false));
             WriteLiteral(">");
-#line 160 "RequestPage.cshtml"
+#line 185 "RequestPage.cshtml"
                                  Write(log.Name);
 
 #line default
 #line hidden
             WriteLiteral("</td>\r\n                <td");
-            WriteAttribute("title", Tuple.Create(" title=\"", 5176), Tuple.Create("\"", 5194), 
-            Tuple.Create(Tuple.Create("", 5184), Tuple.Create<System.Object, System.Int32>(log.State, 5184), false));
+            WriteAttribute("title", Tuple.Create(" title=\"", 6207), Tuple.Create("\"", 6227), 
+            Tuple.Create(Tuple.Create("", 6215), Tuple.Create<System.Object, System.Int32>(log.Message, 6215), false));
             WriteLiteral(" class=\"logState\" width=\"100px\">");
-#line 161 "RequestPage.cshtml"
-                                                                 Write(log.State);
+#line 186 "RequestPage.cshtml"
+                                                                   Write(log.Message);
 
 #line default
 #line hidden
             WriteLiteral("</td>\r\n                <td");
-            WriteAttribute("title", Tuple.Create(" title=\"", 5263), Tuple.Create("\"", 5285), 
-            Tuple.Create(Tuple.Create("", 5271), Tuple.Create<System.Object, System.Int32>(log.Exception, 5271), false));
+            WriteAttribute("title", Tuple.Create(" title=\"", 6298), Tuple.Create("\"", 6320), 
+            Tuple.Create(Tuple.Create("", 6306), Tuple.Create<System.Object, System.Int32>(log.Exception, 6306), false));
             WriteLiteral(">");
-#line 162 "RequestPage.cshtml"
+#line 187 "RequestPage.cshtml"
                                       Write(log.Exception);
 
 #line default
 #line hidden
             WriteLiteral("</td>\r\n            </tr>\r\n");
-#line 164 "RequestPage.cshtml"
+#line 189 "RequestPage.cshtml"
         }
 
 #line default
 #line hidden
 
-            WriteLiteral("    </table>\r\n</body>\r\n</html>");
+            WriteLiteral(@"    </table>
+    <script type=""text/javascript"">
+        $(document).ready(function () {
+            $(""#requestHeader"").text(""Request Details v"");
+            $(""#requestDetails"").hide();
+            $( ""#requestHeader"" ).click(
+                function () {
+                    var requestDetails = $(""#requestDetails"");
+                    if (requestDetails.is(':visible')) {
+                        requestDetails.hide();
+                        $(""#requestHeader"").text(""Request Details v"");
+                    } else {
+                        requestDetails.show();
+                        $(""#requestHeader"").text(""Request Details ^"");
+                    }
+                }
+            );
+        });
+    </script>
+</body>
+</html>");
         }
         #pragma warning restore 1998
     }

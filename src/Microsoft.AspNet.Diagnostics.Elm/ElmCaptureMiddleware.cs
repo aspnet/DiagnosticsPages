@@ -28,28 +28,18 @@ namespace Microsoft.AspNet.Diagnostics.Elm
 
         public async Task Invoke(HttpContext context)
         {
-            if (context.Request.Path == _options.Path || context.Request.Path.StartsWithSegments(_options.Path))
+            var requestId = Guid.NewGuid();
+            using (_logger.BeginScope(string.Format("request {0}", requestId)))
             {
-                await _next(context);
-            }
-            else
-            {
-                var requestId = Guid.NewGuid();
-                using (_logger.BeginScope(string.Format("request {0}", requestId)))
+                var p = ElmScope.Current;
+                ElmScope.Current.Context.HttpInfo = GetHttpInfo(context, requestId);
+                try
                 {
-                    ElmScope.Current.Context.HttpInfo = GetHttpInfo(context, requestId);
-                    try
-                    {
-                        await _next(context);
-                        ElmScope.Current.Context.HttpInfo.StatusCode = context.Response.StatusCode;
-                        return;
-                    }
-                    catch (Exception ex)
-                    {
-                        ElmScope.Current.Context.HttpInfo.StatusCode = context.Response.StatusCode;
-                        _logger.WriteError("An unhandled exception has occurred: " + ex.Message, ex);
-                        throw;
-                    }
+                    await _next(context);
+                }
+                finally
+                {
+                    ElmScope.Current.Context.HttpInfo.StatusCode = context.Response.StatusCode;
                 }
             }
         }

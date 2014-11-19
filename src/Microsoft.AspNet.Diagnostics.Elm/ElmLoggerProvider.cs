@@ -9,10 +9,10 @@ namespace Microsoft.AspNet.Diagnostics.Elm
 {
     public class ElmLoggerProvider : ILoggerProvider
     {
-        private readonly IElmStore _store;
+        private readonly ElmStore _store;
         private readonly ElmOptions _options;
 
-        public ElmLoggerProvider(IElmStore store, ElmOptions options)
+        public ElmLoggerProvider(ElmStore store, ElmOptions options)
         {
             _store = store;
             _options = options;
@@ -20,7 +20,7 @@ namespace Microsoft.AspNet.Diagnostics.Elm
 
         public ILogger Create(string name)
         {
-            return new ElmLogger(name, _store, _options);
+            return new ElmLogger(name, _options);
         }
     }
 }

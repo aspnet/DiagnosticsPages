@@ -9,20 +9,18 @@ namespace Microsoft.AspNet.Diagnostics.Elm
     public class ElmLogger : ILogger
     {
         private readonly string _name;
-        private IElmStore _store;
         private readonly ElmOptions _options;
 
-        public ElmLogger(string name, IElmStore store, ElmOptions options)
+        public ElmLogger(string name, ElmOptions options)
         {
             _name = name;
-            _store = store;
             _options = options;
         }
 
         public void Write(LogLevel logLevel, int eventId, object state, Exception exception, 
                           Func<object, Exception, string> formatter)
         {
-            if (!IsEnabled(logLevel))
+            if (!IsEnabled(logLevel) || state == null && exception == null)
             {
                 return;
             }
@@ -34,14 +32,24 @@ namespace Microsoft.AspNet.Diagnostics.Elm
                 Severity = logLevel,
                 Exception = exception,
                 State = state,
+                Message = formatter == null ? state.ToString() : formatter(state, exception),
                 Time = DateTimeOffset.UtcNow
             };
             if (ElmScope.Current != null)
             {
-                GetCurrentActivityContext().Size++;
+                GetCurrentActivityContext().AllMessages.Add(info);
                 ElmScope.Current.Node.Messages.Add(info);
             }
-            _store.Add(info);
+            // The log does not belong to any scope - create a new context for it
+            else
+            {
+                var context = GetNewActivityContext();
+                context.Id = Guid.Empty;  // mark as a non-scope log
+                context.Root = new ScopeNode();
+                context.Root.Messages.Add(info);
+                context.AllMessages.Add(info);  // to keep the log count accurate
+                ElmStore.AddActivity(context);
+            }
         }
 
         public bool IsEnabled(LogLevel logLevel)
@@ -53,7 +61,7 @@ namespace Microsoft.AspNet.Diagnostics.Elm
         {
             var scope = new ElmScope(_name, state);
             scope.Context = ElmScope.Current?.Context ?? GetNewActivityContext();
-            return ElmScope.Push(scope, _store);
+            return ElmScope.Push(scope);
         }
 
         private ActivityContext GetNewActivityContext()

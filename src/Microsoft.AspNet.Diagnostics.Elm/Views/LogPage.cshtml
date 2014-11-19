@@ -26,12 +26,12 @@
             <td>@string.Format("{0:H:mm:ss}", log.Time)</td>
             <td title="@log.Name">@log.Name</td>
             <td class="@log.Severity.ToString().ToLowerInvariant()">@log.Severity</td>
-            <td title="@log.State">
+            <td title="@log.Message">
                 @for (var i = 0; i < level; i++)
                 {
                     <span class="tab"></span>
                 }
-                @log.State
+                @log.Message
             </td>
             <td title="@log.Exception">@log.Exception</td>
         </tr>
@@ -40,13 +40,13 @@
 
 @helper Traverse(ScopeNode node, int level)
 {
-    // print start time
+    // print start of scope
     @LogRow(new LogInfo()
     {
         Name = node.Name,
         Time = node.StartTime,
         Severity = LogLevel.Verbose,
-        State = "Beginning " + node.State,
+        Message = "Beginning " + node.State,
     }, level);
     var messageIndex = 0;
     var childIndex = 0;
@@ -77,13 +77,13 @@
             @Traverse(node.Children[i], level + 1)
         }
     }
-    // print end time
+    // print end of scope
     @LogRow(new LogInfo()
     {
         Name = node.Name,
         Time = node.EndTime,
         Severity = LogLevel.Verbose,
-        State = string.Format("Completed {0} in {1}ms", node.State, node.EndTime - node.StartTime)
+        Message = string.Format("Completed {0} in {1}ms", node.State, node.EndTime - node.StartTime)
     }, level);
 }
 
@@ -99,7 +99,7 @@
 </head>
 <body>
     <h1>ELM</h1>
-    <form method="get">
+    <form id="viewOptions" method="get">
         <select name="level">
             @foreach (var severity in Enum.GetValues(typeof(LogLevel)))
             {
@@ -133,7 +133,7 @@
             <col />
             <col />
         </colgroup>
-        @foreach (var activity in Model.LogTree.Reverse())
+        @foreach (var activity in Model.Activities.Reverse())
         {
             <tbody>
                 <tr class="requestRow">
@@ -147,7 +147,7 @@
                         }
                         else
                         {
-                            <td colspan="3"></td>
+                            <td colspan="3">@activity.Root.State</td>
                         }
                     }
                     <td class="logTd">
@@ -163,7 +163,15 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @Traverse(activity.Root, 0)
+                                @if (activity.Id.Equals(Guid.Empty))
+                                {
+                                    // message not within a scope
+                                    @LogRow(activity.Root.Messages.FirstOrDefault(), 0)
+                                }
+                                else
+                                {
+                                    @Traverse(activity.Root, 0)
+                                }
                             </tbody>
                         </table>
                     </td>

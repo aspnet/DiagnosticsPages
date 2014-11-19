@@ -79,6 +79,7 @@ namespace Microsoft.AspNet.Diagnostics.Tests
             optionsMock
                 .SetupGet(o => o.Options)
                 .Returns(new ElmOptions());
+            factory.AddProvider(new ElmLoggerProvider(elmStore, optionsMock.Object.Options));
 
             RequestDelegate next = _ =>
             {
@@ -123,6 +124,7 @@ namespace Microsoft.AspNet.Diagnostics.Tests
             optionsMock
                 .SetupGet(o => o.Options)
                 .Returns(new ElmOptions());
+            factory.AddProvider(new ElmLoggerProvider(elmStore, optionsMock.Object.Options));
 
             RequestDelegate next = _ =>
             {

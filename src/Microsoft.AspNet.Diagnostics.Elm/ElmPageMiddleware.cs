@@ -2,7 +2,6 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Http;
@@ -19,9 +18,9 @@ namespace Microsoft.AspNet.Diagnostics.Elm
     {
         private readonly RequestDelegate _next;
         private readonly ElmOptions _options;
-        private readonly IElmStore _store;
+        private readonly ElmStore _store;
 
-        public ElmPageMiddleware(RequestDelegate next, IOptions<ElmOptions> options, IElmStore store)
+        public ElmPageMiddleware(RequestDelegate next, IOptions<ElmOptions> options, ElmStore store)
         {
             _next = next;
             _options = options.Options;
@@ -38,7 +37,6 @@ namespace Microsoft.AspNet.Diagnostics.Elm
             }
 
             // parse params
-            var logs = _store.GetLogs();
             var options = new ViewOptions()
             {
                 MinLevel = LogLevel.Verbose,
@@ -49,14 +47,12 @@ namespace Microsoft.AspNet.Diagnostics.Elm
                 var minLevel = options.MinLevel;
                 if (Enum.TryParse<LogLevel>(context.Request.Query.GetValues("level")[0], out minLevel))
                 {
-                    logs = _store.GetLogs(minLevel);
                     options.MinLevel = minLevel;
                 }
             }
             if (context.Request.Query.ContainsKey("name"))
             {
                 var namePrefix = context.Request.Query.GetValues("name")[0];
-                logs = logs.Where(l => l.Name.StartsWith(namePrefix));
                 options.NamePrefix = namePrefix;
             }
 
@@ -66,8 +62,7 @@ namespace Microsoft.AspNet.Diagnostics.Elm
                 var model = new LogPageModel()
                 {
                     // sort so most recent logs are first
-                    Logs = logs.OrderBy(l => l.Time).Reverse(),
-                    LogTree = _store.GetActivities(),
+                    Activities = _store.GetActivities(),
                     Options = options,
                     Path = _options.Path
                 };
@@ -86,7 +81,7 @@ namespace Microsoft.AspNet.Diagnostics.Elm
                     await context.Response.WriteAsync("Invalid Request Id");
                     return;
                 }
-                var requestLogs = logs.Where(l => l.ActivityContext?.HttpInfo?.RequestID == id);
+                var requestLogs = _store.GetActivityLogs(id, options.MinLevel);
                 var model = new RequestPageModel()
                 {
                     RequestID = id,

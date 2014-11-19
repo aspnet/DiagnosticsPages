@@ -1,7 +1,7 @@
 ﻿body {
     font-size: .813em;
     white-space: nowrap;
-    margin: 10px;
+    margin: 20px;
 }
 
 col:nth-child(2) {
@@ -9,16 +9,17 @@ col:nth-child(2) {
 }
 
 h1 {
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 2em;
+    font-family: 'Segoe UI', Helvetica, sans-serif;
+    font-size: 2.5em;
+    margin-left: 25px;
 }
 
 table {
     margin: 0px auto;
+    border-collapse: collapse;
     border-spacing: 0px;
     table-layout: fixed;
-    width: 100%; 
-    border-collapse: collapse;
+    width: 100%;
 }
 
 td, th {
@@ -66,6 +67,10 @@ tr {
     width: 80%;
 }
 
+.logRow:hover {
+    background-color: #D6F5FF;
+}
+
 .requestRow>td {
     border-bottom: solid 1px gray;
 }
@@ -76,4 +81,12 @@ tr {
 
 .tab {
     margin-left: 30px;
+}
+
+#viewOptions {
+    margin: 20px;
+}
+
+#viewOptions > * {
+    margin: 5px;
 }

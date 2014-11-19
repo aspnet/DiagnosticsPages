@@ -59,7 +59,7 @@ namespace Microsoft.AspNet.Diagnostics.Elm
         }
 #endif
 
-        public static IDisposable Push(ElmScope scope, IElmStore store)
+        public static IDisposable Push(ElmScope scope)
         {
             var temp = Current;
             Current = scope;
@@ -80,7 +80,7 @@ namespace Microsoft.AspNet.Diagnostics.Elm
             else
             {
                 Current.Context.Root = Current.Node;
-                store.AddActivity(Current.Context);
+                ElmStore.AddActivity(Current.Context);
             }
 
             return new DisposableAction(() =>
@@ -93,6 +93,7 @@ namespace Microsoft.AspNet.Diagnostics.Elm
         private class DisposableAction : IDisposable
         {
             private Action _action;
+
             public DisposableAction(Action action)
             {
                 _action = action;
@@ -100,7 +101,12 @@ namespace Microsoft.AspNet.Diagnostics.Elm
 
             public void Dispose()
             {
-                Interlocked.Exchange(ref _action, null)?.Invoke();
+                if (_action != null)
+                {
+                    _action.Invoke();
+                    _action = null;
+                }
+                // TODO: ? Interlocked.Exchange(ref _action, null)?.Invoke();
             }
         }
     }

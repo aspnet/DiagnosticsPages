@@ -1,48 +1,26 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Framework.Logging;
 
 namespace Microsoft.AspNet.Diagnostics.Elm
 {
-    public class ElmStore : IElmStore
+    public class ElmStore
     {
         private const int Capacity = 200;
 
-        private readonly Queue<LogInfo> _logs = new Queue<LogInfo>();
+        private static int _count = 0;
 
-        private LinkedList<ActivityContext> Activities { get; set; } = new LinkedList<ActivityContext>();
+        private static LinkedList<ActivityContext> Activities { get; set; } = new LinkedList<ActivityContext>();
 
-        public IEnumerable<LogInfo> GetLogs()
-        {
-            return _logs;
-        }
-
-        public IEnumerable<LogInfo> GetLogs(LogLevel minLevel)
-        {
-            return _logs.Where(l => l.Severity >= minLevel);
-        }
-
-        public void Add(LogInfo info)
-        {
-            lock (_logs)
-            {
-                _logs.Enqueue(info);
-                while (_logs.Count > Capacity)
-                {
-                    _logs.Dequeue();
-                }
-            }
-        }
-
-        // returns the number of log messages stored in Activities
-        private int NumLogs()
-        {
-            return Activities.Sum(a => a.Size);
-        }
-
+        /// <summary>
+        /// Returns an IEnumerable of the contexts of the logs.
+        /// </summary>
+        /// <returns>An IEnumerable of <see cref="ActivityContext"/> objects where each context stores 
+        /// information about a top level scope.</returns>
         public IEnumerable<ActivityContext> GetActivities()
         {
             for (var context = Activities.First; context != null; context = context.Next)
@@ -55,12 +33,29 @@ namespace Microsoft.AspNet.Diagnostics.Elm
             return Activities;
         }
 
-        public void AddActivity(ActivityContext activity)
+        /// <summary>
+        /// Returns an IEnumerable of <see cref="LogInfo"/> objects for the given request id, 
+        /// with a minimum <see cref="LogLevel"/> of minLevel
+        /// </summary>
+        /// <param name="requestId">The id of the request to get the logs of</param>
+        /// <param name="minLevel">The minimum <see cref="LogLevel"/> of the returned logs</param>
+        /// <returns>An IEnumerable of <see cref="LogInfo"/> objects</returns>
+        public IEnumerable<LogInfo> GetActivityLogs(Guid requestId, LogLevel minLevel)
+        {
+            return Activities.Where(a => a.HttpInfo?.RequestID == requestId).FirstOrDefault()?.AllMessages?.Where(m => m.Severity >= minLevel);
+        }
+
+        /// <summary>
+        /// Adds a new <see cref="ActivityContext"/> to the store.
+        /// </summary>
+        /// <param name="context">The context to be added to the store.</param>
+        public static void AddActivity(ActivityContext activity)
         {
             lock (Activities)
             {
                 Activities.AddLast(activity);
-                while (NumLogs() > Capacity)
+                _count += activity.AllMessages.Count;
+                while (_count > Capacity)
                 {
                     Activities.RemoveFirst();
                 }
@@ -90,7 +85,7 @@ namespace Microsoft.AspNet.Diagnostics.Elm
             {
                 node.Children[i] = CollapseHelper(node.Children[i]);
             }
-            node.Children = node.Children.Where(c => c != null).ToList();
+            node.Children.RemoveAll(c => c == null);
             if (node.Children.Count == 0 && node.Messages.Count == 0)
             {
                 return null;

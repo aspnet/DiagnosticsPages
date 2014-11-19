@@ -5,9 +5,7 @@ namespace Microsoft.AspNet.Diagnostics.Elm.Views
 {
     public class LogPageModel
     {
-        public IEnumerable<LogInfo> Logs { get; set; }
-
-        public IEnumerable<ActivityContext> LogTree { get; set; }
+        public IEnumerable<ActivityContext> Activities { get; set; }
 
         public ViewOptions Options { get; set; }
 

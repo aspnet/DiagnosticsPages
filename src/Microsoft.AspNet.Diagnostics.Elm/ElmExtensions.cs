@@ -14,9 +14,10 @@ namespace Microsoft.AspNet.Builder
         public static IApplicationBuilder UseElmCapture(this IApplicationBuilder builder)
         {
             var factory = builder.ApplicationServices.GetRequiredService<ILoggerFactory>();
-            var store = builder.ApplicationServices.GetRequiredService<IElmStore>();
+            var store = builder.ApplicationServices.GetRequiredService<ElmStore>();
             var options = builder.ApplicationServices.GetService<IOptions<ElmOptions>>();
-            factory.AddProvider(new ElmLoggerProvider(store, options != null ? options.Options : new ElmOptions()));
+            factory.AddProvider(new ElmLoggerProvider(store, options?.Options ?? new ElmOptions()));
+
             return builder.UseMiddleware<ElmCaptureMiddleware>();
         }
 
@@ -27,8 +28,8 @@ namespace Microsoft.AspNet.Builder
 
         public static IServiceCollection AddElm(this IServiceCollection services, Action<ElmOptions> configureOptions = null)
         {
-            services.AddSingleton<IElmStore, ElmStore>(); // registering the service so it can be injected into constructors
-            return services.Configure(configureOptions);
+            services.AddSingleton<ElmStore>(); // registering the service so it can be injected into constructors
+            return services.Configure(configureOptions ?? (o => { }));
         }
     }
 }
