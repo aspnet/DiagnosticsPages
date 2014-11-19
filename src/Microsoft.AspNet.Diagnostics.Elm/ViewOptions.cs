@@ -6,17 +6,17 @@ using Microsoft.Framework.Logging;
 namespace Microsoft.AspNet.Diagnostics.Elm
 {
     /// <summary>
-    /// Options for ElmMiddleware
+    /// Options for viewing elm logs.
     /// </summary>
     public class ViewOptions
     {
         /// <summary>
-        /// The minimum severity level shown
+        /// The minimum <see cref="LogLevel"/> of logs shown on the elm page.
         /// </summary>
         public LogLevel MinLevel { get; set; }
 
         /// <summary>
-        /// prefix filter for the loggers shown
+        /// The prefix for the logger names of logs shown on the elm page.
         /// </summary>
         public string NamePrefix { get; set; }
     }

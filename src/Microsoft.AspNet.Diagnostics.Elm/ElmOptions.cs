@@ -13,10 +13,14 @@ namespace Microsoft.AspNet.Diagnostics.Elm
     public class ElmOptions
     {
         /// <summary>
-        /// Specifies the path to view the logs
+        /// Specifies the path to view the logs.
         /// </summary>
         public PathString Path { get; set; } = new PathString("/Elm");
 
+        /// <summary>
+        /// Determines whether log statements should be logged based on the name of the logger
+        /// and the <see cref="LogLevel"/> of the message.
+        /// </summary>
         public Func<string, LogLevel, bool> Filter { get; set; } = (name, level) => true;
     }
 }

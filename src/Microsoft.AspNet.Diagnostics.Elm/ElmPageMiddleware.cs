@@ -12,7 +12,7 @@ using Microsoft.Framework.OptionsModel;
 namespace Microsoft.AspNet.Diagnostics.Elm
 {
     /// <summary>
-    /// Enables the Elm logging service
+    /// Enables viewing logs captured by the <see cref="ElmCaptureMiddleware"/>.
     /// </summary>
     public class ElmPageMiddleware
     {

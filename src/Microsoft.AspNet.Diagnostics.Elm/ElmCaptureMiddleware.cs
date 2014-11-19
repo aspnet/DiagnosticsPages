@@ -11,7 +11,7 @@ using Microsoft.Framework.OptionsModel;
 namespace Microsoft.AspNet.Diagnostics.Elm
 {
     /// <summary>
-    /// Enables the Elm logging service
+    /// Enables the Elm logging service.
     /// </summary>
     public class ElmCaptureMiddleware
     {

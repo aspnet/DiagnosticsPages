@@ -11,8 +11,12 @@ namespace Microsoft.AspNet.Builder
 {
     public static class ElmExtensions
     {
+        /// <summary>
+        /// Enables the Elm logging service, which can be accessed via the <see cref="ElmPageMiddleware"/>.
+        /// </summary>
         public static IApplicationBuilder UseElmCapture(this IApplicationBuilder builder)
         {
+            // add the elm provider to the factory here so the logger can start capturing logs immediately
             var factory = builder.ApplicationServices.GetRequiredService<ILoggerFactory>();
             var store = builder.ApplicationServices.GetRequiredService<ElmStore>();
             var options = builder.ApplicationServices.GetService<IOptions<ElmOptions>>();
@@ -21,11 +25,17 @@ namespace Microsoft.AspNet.Builder
             return builder.UseMiddleware<ElmCaptureMiddleware>();
         }
 
+        /// <summary>
+        /// Enables viewing logs captured by the <see cref="ElmCaptureMiddleware"/>.
+        /// </summary>
         public static IApplicationBuilder UseElmPage(this IApplicationBuilder builder)
         {
             return builder.UseMiddleware<ElmPageMiddleware>();
         }
 
+       /// <summary>
+       /// Registers an <see cref="ElmStore"/> and configures <see cref="ElmOptions"/>.
+       /// </summary>
         public static IServiceCollection AddElm(this IServiceCollection services, Action<ElmOptions> configureOptions = null)
         {
             services.AddSingleton<ElmStore>(); // registering the service so it can be injected into constructors
