@@ -4,6 +4,7 @@ using System.Runtime.Remoting;
 using System.Runtime.Remoting.Messaging;
 #endif
 using System.Threading;
+using Jetbrains.Annotations;
 
 namespace Microsoft.AspNet.Diagnostics.Elm
 {
@@ -59,7 +60,7 @@ namespace Microsoft.AspNet.Diagnostics.Elm
         }
 #endif
 
-        public static IDisposable Push(ElmScope scope)
+        public static IDisposable Push([NotNull] ElmScope scope, [NotNull] ElmStore store)
         {
             var temp = Current;
             Current = scope;
@@ -80,7 +81,7 @@ namespace Microsoft.AspNet.Diagnostics.Elm
             else
             {
                 Current.Context.Root = Current.Node;
-                ElmStore.AddActivity(Current.Context);
+                store.AddActivity(Current.Context);
             }
 
             return new DisposableAction(() =>
@@ -106,7 +107,6 @@ namespace Microsoft.AspNet.Diagnostics.Elm
                     _action.Invoke();
                     _action = null;
                 }
-                // TODO: ? Interlocked.Exchange(ref _action, null)?.Invoke();
             }
         }
     }

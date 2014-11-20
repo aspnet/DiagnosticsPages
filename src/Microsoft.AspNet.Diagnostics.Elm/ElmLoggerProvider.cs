@@ -1,8 +1,7 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using Microsoft.AspNet.Http;
-using Microsoft.Framework.DependencyInjection;
+using Jetbrains.Annotations;
 using Microsoft.Framework.Logging;
 
 namespace Microsoft.AspNet.Diagnostics.Elm
@@ -12,7 +11,7 @@ namespace Microsoft.AspNet.Diagnostics.Elm
         private readonly ElmStore _store;
         private readonly ElmOptions _options;
 
-        public ElmLoggerProvider(ElmStore store, ElmOptions options)
+        public ElmLoggerProvider([NotNull] ElmStore store, [NotNull] ElmOptions options)
         {
             _store = store;
             _options = options;
@@ -20,7 +19,7 @@ namespace Microsoft.AspNet.Diagnostics.Elm
 
         public ILogger Create(string name)
         {
-            return new ElmLogger(name, _options);
+            return new ElmLogger(name, _options, _store);
         }
     }
 }

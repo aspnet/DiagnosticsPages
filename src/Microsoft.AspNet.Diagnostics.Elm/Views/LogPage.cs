@@ -25,19 +25,19 @@ using Microsoft.AspNet.Diagnostics.Elm.Views
 #line hidden
     ;
 #line 5 "LogPage.cshtml"
-using Microsoft.Framework.Logging
-
-#line default
-#line hidden
-    ;
-#line 6 "LogPage.cshtml"
 using Microsoft.AspNet.Diagnostics.Elm
 
 #line default
 #line hidden
     ;
-#line 7 "LogPage.cshtml"
+#line 6 "LogPage.cshtml"
 using Microsoft.AspNet.Diagnostics.Views
+
+#line default
+#line hidden
+    ;
+#line 7 "LogPage.cshtml"
+using Microsoft.Framework.Logging
 
 #line default
 #line hidden
@@ -56,7 +56,7 @@ LogRow(LogInfo log, int level) {
 #line 20 "LogPage.cshtml"
                                         
     if (log.Severity >= Model.Options.MinLevel && 
-        (string.IsNullOrEmpty(Model.Options.NamePrefix) || log.Name.StartsWith(Model.Options.NamePrefix)))
+        (string.IsNullOrEmpty(Model.Options.NamePrefix) || log.Name.StartsWith(Model.Options.NamePrefix, StringComparison.Ordinal)))
     {
 
 #line default
@@ -75,8 +75,8 @@ WriteTo(__razor_helper_writer, string.Format("{0:H:mm:ss}", log.Time));
 #line default
 #line hidden
             WriteLiteralTo(__razor_helper_writer, "</td>\r\n            <td");
-            WriteAttributeTo(__razor_helper_writer, "title", Tuple.Create(" title=\"", 810), Tuple.Create("\"", 827), 
-            Tuple.Create(Tuple.Create("", 818), Tuple.Create<System.Object, System.Int32>(log.Name, 818), false));
+            WriteAttributeTo(__razor_helper_writer, "title", Tuple.Create(" title=\"", 836), Tuple.Create("\"", 853), 
+            Tuple.Create(Tuple.Create("", 844), Tuple.Create<System.Object, System.Int32>(log.Name, 844), false));
             WriteLiteralTo(__razor_helper_writer, ">");
 #line 27 "LogPage.cshtml"
     WriteTo(__razor_helper_writer, log.Name);
@@ -84,8 +84,8 @@ WriteTo(__razor_helper_writer, string.Format("{0:H:mm:ss}", log.Time));
 #line default
 #line hidden
             WriteLiteralTo(__razor_helper_writer, "</td>\r\n            <td");
-            WriteAttributeTo(__razor_helper_writer, "class", Tuple.Create(" class=\"", 860), Tuple.Create("\"", 911), 
-            Tuple.Create(Tuple.Create("", 868), Tuple.Create<System.Object, System.Int32>(log.Severity.ToString().ToLowerInvariant(), 868), false));
+            WriteAttributeTo(__razor_helper_writer, "class", Tuple.Create(" class=\"", 886), Tuple.Create("\"", 937), 
+            Tuple.Create(Tuple.Create("", 894), Tuple.Create<System.Object, System.Int32>(log.Severity.ToString().ToLowerInvariant(), 894), false));
             WriteLiteralTo(__razor_helper_writer, ">");
 #line 28 "LogPage.cshtml"
                                       WriteTo(__razor_helper_writer, log.Severity);
@@ -93,8 +93,8 @@ WriteTo(__razor_helper_writer, string.Format("{0:H:mm:ss}", log.Time));
 #line default
 #line hidden
             WriteLiteralTo(__razor_helper_writer, "</td>\r\n            <td");
-            WriteAttributeTo(__razor_helper_writer, "title", Tuple.Create(" title=\"", 948), Tuple.Create("\"", 968), 
-            Tuple.Create(Tuple.Create("", 956), Tuple.Create<System.Object, System.Int32>(log.Message, 956), false));
+            WriteAttributeTo(__razor_helper_writer, "title", Tuple.Create(" title=\"", 974), Tuple.Create("\"", 994), 
+            Tuple.Create(Tuple.Create("", 982), Tuple.Create<System.Object, System.Int32>(log.Message, 982), false));
             WriteLiteralTo(__razor_helper_writer, ">\r\n");
 #line 30 "LogPage.cshtml"
                 
@@ -123,8 +123,8 @@ WriteTo(__razor_helper_writer, log.Message);
 #line default
 #line hidden
             WriteLiteralTo(__razor_helper_writer, "\r\n            </td>\r\n            <td");
-            WriteAttributeTo(__razor_helper_writer, "title", Tuple.Create(" title=\"", 1171), Tuple.Create("\"", 1193), 
-            Tuple.Create(Tuple.Create("", 1179), Tuple.Create<System.Object, System.Int32>(log.Exception, 1179), false));
+            WriteAttributeTo(__razor_helper_writer, "title", Tuple.Create(" title=\"", 1197), Tuple.Create("\"", 1219), 
+            Tuple.Create(Tuple.Create("", 1205), Tuple.Create<System.Object, System.Int32>(log.Exception, 1205), false));
             WriteLiteralTo(__razor_helper_writer, ">");
 #line 36 "LogPage.cshtml"
          WriteTo(__razor_helper_writer, log.Exception);
@@ -306,7 +306,7 @@ WriteTo(__razor_helper_writer, LogRow(new LogInfo()
 <html>
 <head>
     <meta charset=""utf-8"" />
-    <title>ELM</title>
+    <title>ASP.NET Logs</title>
     <style>
         body {
     font-size: .813em;
@@ -319,8 +319,6 @@ col:nth-child(2) {
 }
 
 h1 {
-    font-family: 'Segoe UI', Helvetica, sans-serif;
-    font-size: 2.5em;
     margin-left: 25px;
 }
 
@@ -405,6 +403,11 @@ tr {
     line-height: 1.4em;
 }
 
+h1 {
+    font-family: 'Segoe UI', Helvetica, sans-serif;
+    font-size: 2.5em;
+}
+
 td {
     text-overflow: ellipsis;
     overflow: hidden;
@@ -437,7 +440,7 @@ tr:nth-child(2n) {
     </style>
 </head>
 <body>
-    <h1>ELM</h1>
+    <h1>ASP.NET Logs</h1>
     <form id=""viewOptions"" method=""get"">
         <select name=""level"">
 ");
@@ -458,8 +461,8 @@ tr:nth-child(2n) {
 #line hidden
 
             WriteLiteral("                    <option");
-            WriteAttribute("value", Tuple.Create(" value=\"", 3158), Tuple.Create("\"", 3178), 
-            Tuple.Create(Tuple.Create("", 3166), Tuple.Create<System.Object, System.Int32>(severityInt, 3166), false));
+            WriteAttribute("value", Tuple.Create(" value=\"", 3202), Tuple.Create("\"", 3222), 
+            Tuple.Create(Tuple.Create("", 3210), Tuple.Create<System.Object, System.Int32>(severityInt, 3210), false));
             WriteLiteral(" selected=\"selected\">");
 #line 109 "LogPage.cshtml"
                                                                 Write(severity);
@@ -476,8 +479,8 @@ tr:nth-child(2n) {
 #line hidden
 
             WriteLiteral("                    <option");
-            WriteAttribute("value", Tuple.Create(" value=\"", 3307), Tuple.Create("\"", 3327), 
-            Tuple.Create(Tuple.Create("", 3315), Tuple.Create<System.Object, System.Int32>(severityInt, 3315), false));
+            WriteAttribute("value", Tuple.Create(" value=\"", 3351), Tuple.Create("\"", 3371), 
+            Tuple.Create(Tuple.Create("", 3359), Tuple.Create<System.Object, System.Int32>(severityInt, 3359), false));
             WriteLiteral(">");
 #line 113 "LogPage.cshtml"
                                             Write(severity);
@@ -493,8 +496,8 @@ tr:nth-child(2n) {
 #line hidden
 
             WriteLiteral("        </select>\r\n        <input type=\"text\" name=\"name\"");
-            WriteAttribute("value", Tuple.Create(" value=\"", 3440), Tuple.Create("\"", 3473), 
-            Tuple.Create(Tuple.Create("", 3448), Tuple.Create<System.Object, System.Int32>(Model.Options.NamePrefix, 3448), false));
+            WriteAttribute("value", Tuple.Create(" value=\"", 3484), Tuple.Create("\"", 3517), 
+            Tuple.Create(Tuple.Create("", 3492), Tuple.Create<System.Object, System.Int32>(Model.Options.NamePrefix, 3492), false));
             WriteLiteral(@" />
         <input type=""submit"" value=""filter"" />
     </form>
@@ -545,10 +548,10 @@ tr:nth-child(2n) {
 #line hidden
 
             WriteLiteral("                            <td><a");
-            WriteAttribute("href", Tuple.Create(" href=\"", 4356), Tuple.Create("\"", 4375), 
-            Tuple.Create(Tuple.Create("", 4363), Tuple.Create<System.Object, System.Int32>(requestPath, 4363), false));
-            WriteAttribute("title", Tuple.Create(" title=\"", 4376), Tuple.Create("\"", 4407), 
-            Tuple.Create(Tuple.Create("", 4384), Tuple.Create<System.Object, System.Int32>(activity.HttpInfo.Path, 4384), false));
+            WriteAttribute("href", Tuple.Create(" href=\"", 4400), Tuple.Create("\"", 4419), 
+            Tuple.Create(Tuple.Create("", 4407), Tuple.Create<System.Object, System.Int32>(requestPath, 4407), false));
+            WriteAttribute("title", Tuple.Create(" title=\"", 4420), Tuple.Create("\"", 4451), 
+            Tuple.Create(Tuple.Create("", 4428), Tuple.Create<System.Object, System.Int32>(activity.HttpInfo.Path, 4428), false));
             WriteLiteral(">");
 #line 144 "LogPage.cshtml"
                                                                                   Write(activity.HttpInfo.Path);

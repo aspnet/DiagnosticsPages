@@ -110,7 +110,7 @@ namespace Microsoft.AspNet.Diagnostics.Tests
 
                 // Assert
                 contextMock.VerifyGet(c => c.Request.Query, Times.AtLeastOnce());
-                Assert.True(response.Contains("<title>ELM</title>"));
+                Assert.True(response.Contains("<title>ASP.NET Logs</title>"));
             }
         }
 

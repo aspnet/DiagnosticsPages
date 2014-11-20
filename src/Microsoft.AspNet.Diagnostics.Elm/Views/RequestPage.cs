@@ -64,12 +64,17 @@ using Microsoft.Framework.Logging
 <html>
 <head>
     <meta charset=""utf-8"" />
-    <title>ELM</title>
+    <title>ASP.NET Logs</title>
     <script src=""http://ajax.aspnetcdn.com/ajax/jquery/jquery-2.1.1.min.js""></script>
     <style>
         body {
     font-family: 'Segoe UI', Tahoma, Arial, Helvtica, sans-serif;
     line-height: 1.4em;
+}
+
+h1 {
+    font-family: 'Segoe UI', Helvetica, sans-serif;
+    font-size: 2.5em;
 }
 
 td {
@@ -107,7 +112,11 @@ tr:nth-child(2n) {
     margin: 0px auto;
 }
 
-h1, h2 {
+h1 {
+    padding-bottom: 10px;
+}
+
+h2 {
     font-weight: normal;
 }
 
@@ -156,7 +165,7 @@ td, th {
     </style>
 </head>
 <body>
-    <h1>ELM</h1>
+    <h1>ASP.NET Logs</h1>
 ");
 #line 30 "RequestPage.cshtml"
     
@@ -450,8 +459,8 @@ td, th {
 #line hidden
 
             WriteLiteral("                    <option");
-            WriteAttribute("value", Tuple.Create(" value=\"", 5169), Tuple.Create("\"", 5189), 
-            Tuple.Create(Tuple.Create("", 5177), Tuple.Create<System.Object, System.Int32>(severityInt, 5177), false));
+            WriteAttribute("value", Tuple.Create(" value=\"", 5187), Tuple.Create("\"", 5207), 
+            Tuple.Create(Tuple.Create("", 5195), Tuple.Create<System.Object, System.Int32>(severityInt, 5195), false));
             WriteLiteral(" selected=\"selected\">");
 #line 157 "RequestPage.cshtml"
                                                                 Write(severity);
@@ -468,8 +477,8 @@ td, th {
 #line hidden
 
             WriteLiteral("                    <option");
-            WriteAttribute("value", Tuple.Create(" value=\"", 5318), Tuple.Create("\"", 5338), 
-            Tuple.Create(Tuple.Create("", 5326), Tuple.Create<System.Object, System.Int32>(severityInt, 5326), false));
+            WriteAttribute("value", Tuple.Create(" value=\"", 5336), Tuple.Create("\"", 5356), 
+            Tuple.Create(Tuple.Create("", 5344), Tuple.Create<System.Object, System.Int32>(severityInt, 5344), false));
             WriteLiteral(">");
 #line 161 "RequestPage.cshtml"
                                             Write(severity);
@@ -485,8 +494,8 @@ td, th {
 #line hidden
 
             WriteLiteral("        </select>\r\n        <input type=\"text\" name=\"name\"");
-            WriteAttribute("value", Tuple.Create(" value=\"", 5451), Tuple.Create("\"", 5484), 
-            Tuple.Create(Tuple.Create("", 5459), Tuple.Create<System.Object, System.Int32>(Model.Options.NamePrefix, 5459), false));
+            WriteAttribute("value", Tuple.Create(" value=\"", 5469), Tuple.Create("\"", 5502), 
+            Tuple.Create(Tuple.Create("", 5477), Tuple.Create<System.Object, System.Int32>(Model.Options.NamePrefix, 5477), false));
             WriteLiteral(@" />
         <input type=""submit"" value=""filter"" />
     </form>
@@ -528,8 +537,8 @@ td, th {
 #line default
 #line hidden
             WriteLiteral("</td>\r\n                <td");
-            WriteAttribute("class", Tuple.Create(" class=\"", 6061), Tuple.Create("\"", 6112), 
-            Tuple.Create(Tuple.Create("", 6069), Tuple.Create<System.Object, System.Int32>(log.Severity.ToString().ToLowerInvariant(), 6069), false));
+            WriteAttribute("class", Tuple.Create(" class=\"", 6079), Tuple.Create("\"", 6130), 
+            Tuple.Create(Tuple.Create("", 6087), Tuple.Create<System.Object, System.Int32>(log.Severity.ToString().ToLowerInvariant(), 6087), false));
             WriteLiteral(">");
 #line 184 "RequestPage.cshtml"
                                                                    Write(log.Severity);
@@ -537,8 +546,8 @@ td, th {
 #line default
 #line hidden
             WriteLiteral("</td>\r\n                <td");
-            WriteAttribute("title", Tuple.Create(" title=\"", 6153), Tuple.Create("\"", 6170), 
-            Tuple.Create(Tuple.Create("", 6161), Tuple.Create<System.Object, System.Int32>(log.Name, 6161), false));
+            WriteAttribute("title", Tuple.Create(" title=\"", 6171), Tuple.Create("\"", 6188), 
+            Tuple.Create(Tuple.Create("", 6179), Tuple.Create<System.Object, System.Int32>(log.Name, 6179), false));
             WriteLiteral(">");
 #line 185 "RequestPage.cshtml"
                                  Write(log.Name);
@@ -546,8 +555,8 @@ td, th {
 #line default
 #line hidden
             WriteLiteral("</td>\r\n                <td");
-            WriteAttribute("title", Tuple.Create(" title=\"", 6207), Tuple.Create("\"", 6227), 
-            Tuple.Create(Tuple.Create("", 6215), Tuple.Create<System.Object, System.Int32>(log.Message, 6215), false));
+            WriteAttribute("title", Tuple.Create(" title=\"", 6225), Tuple.Create("\"", 6245), 
+            Tuple.Create(Tuple.Create("", 6233), Tuple.Create<System.Object, System.Int32>(log.Message, 6233), false));
             WriteLiteral(" class=\"logState\" width=\"100px\">");
 #line 186 "RequestPage.cshtml"
                                                                    Write(log.Message);
@@ -555,8 +564,8 @@ td, th {
 #line default
 #line hidden
             WriteLiteral("</td>\r\n                <td");
-            WriteAttribute("title", Tuple.Create(" title=\"", 6298), Tuple.Create("\"", 6320), 
-            Tuple.Create(Tuple.Create("", 6306), Tuple.Create<System.Object, System.Int32>(log.Exception, 6306), false));
+            WriteAttribute("title", Tuple.Create(" title=\"", 6316), Tuple.Create("\"", 6338), 
+            Tuple.Create(Tuple.Create("", 6324), Tuple.Create<System.Object, System.Int32>(log.Exception, 6324), false));
             WriteLiteral(">");
 #line 187 "RequestPage.cshtml"
                                       Write(log.Exception);
@@ -570,27 +579,10 @@ td, th {
 #line default
 #line hidden
 
-            WriteLiteral(@"    </table>
-    <script type=""text/javascript"">
-        $(document).ready(function () {
-            $(""#requestHeader"").text(""Request Details v"");
-            $(""#requestDetails"").hide();
-            $( ""#requestHeader"" ).click(
-                function () {
-                    var requestDetails = $(""#requestDetails"");
-                    if (requestDetails.is(':visible')) {
-                        requestDetails.hide();
-                        $(""#requestHeader"").text(""Request Details v"");
-                    } else {
-                        requestDetails.show();
-                        $(""#requestHeader"").text(""Request Details ^"");
-                    }
-                }
-            );
-        });
-    </script>
-</body>
-</html>");
+            WriteLiteral("    </table>\r\n    <script type=\"text/javascript\">\r\n        $(document).ready(func" +
+"tion () {\r\n            $(\"#requestHeader\").click(function () {\r\n                " +
+"$(\"#requestDetails\").toggle();\r\n            });\r\n        });\r\n    </script>\r\n</b" +
+"ody>\r\n</html>");
         }
         #pragma warning restore 1998
     }

@@ -29,18 +29,64 @@ namespace Microsoft.AspNet.Diagnostics.Elm
 
         public async Task Invoke(HttpContext context)
         {
-
-            if (context.Request.Path != _options.Path && !context.Request.Path.StartsWithSegments(_options.Path))
+            if (!context.Request.Path.StartsWithSegments(_options.Path))
             {
                 await _next(context);
                 return;
             }
 
-            // parse params
+            var options = ParseParams(context);
+            if (context.Request.Path == _options.Path)
+            {
+                RenderMainLogPage(options, context);
+            }
+            else
+            {
+                RenderRequestDetailsPage(options, context);
+            }
+        }
+
+        private async void RenderMainLogPage(ViewOptions options, HttpContext context)
+        {
+            var model = new LogPageModel()
+            {
+                // sort so most recent logs are first
+                Activities = _store.GetActivities(),
+                Options = options,
+                Path = _options.Path
+            };
+            var logPage = new LogPage(model);
+
+            await logPage.ExecuteAsync(context);
+        }
+
+        private async void RenderRequestDetailsPage(ViewOptions options, HttpContext context)
+        {
+            var parts = context.Request.Path.Value.Split('/');
+            var id = Guid.Empty;
+            if (!Guid.TryParse(parts[parts.Length - 1], out id))
+            {
+                context.Response.StatusCode = 400;
+                await context.Response.WriteAsync("Invalid Request Id");
+                return;
+            }
+            var requestLogs = _store.GetActivityLogs(id, options.MinLevel);
+            var model = new RequestPageModel()
+            {
+                RequestID = id,
+                Logs = requestLogs,
+                Options = options
+            };
+            var requestPage = new RequestPage(model);
+            await requestPage.ExecuteAsync(context);
+        }
+
+        private ViewOptions ParseParams(HttpContext context)
+        {
             var options = new ViewOptions()
             {
                 MinLevel = LogLevel.Verbose,
-                NamePrefix = ""
+                NamePrefix = string.Empty
             };
             if (context.Request.Query.ContainsKey("level"))
             {
@@ -55,42 +101,7 @@ namespace Microsoft.AspNet.Diagnostics.Elm
                 var namePrefix = context.Request.Query.GetValues("name")[0];
                 options.NamePrefix = namePrefix;
             }
-
-            // main log page
-            if (context.Request.Path == _options.Path)
-            {
-                var model = new LogPageModel()
-                {
-                    // sort so most recent logs are first
-                    Activities = _store.GetActivities(),
-                    Options = options,
-                    Path = _options.Path
-                };
-                var logPage = new LogPage(model);
-
-                await logPage.ExecuteAsync(context);
-            }
-            // request details page
-            else
-            {
-                var parts = context.Request.Path.Value.Split('/');
-                var id = Guid.Empty;
-                if (!Guid.TryParse(parts[parts.Length - 1], out id))
-                {
-                    context.Response.StatusCode = 400;
-                    await context.Response.WriteAsync("Invalid Request Id");
-                    return;
-                }
-                var requestLogs = _store.GetActivityLogs(id, options.MinLevel);
-                var model = new RequestPageModel()
-                {
-                    RequestID = id,
-                    Logs = requestLogs,
-                    Options = options
-                };
-                var requestPage = new RequestPage(model);
-                await requestPage.ExecuteAsync(context);
-            }
+            return options;
         }
     }
 }

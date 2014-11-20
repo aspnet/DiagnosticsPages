@@ -2,9 +2,9 @@
 @using System.Globalization
 @using System.Linq
 @using Microsoft.AspNet.Diagnostics.Elm.Views
-@using Microsoft.Framework.Logging
 @using Microsoft.AspNet.Diagnostics.Elm
 @using Microsoft.AspNet.Diagnostics.Views
+@using Microsoft.Framework.Logging
 
 @functions
 {
@@ -19,7 +19,7 @@
 @* writes one log row indented by the given level *@
 @helper LogRow(LogInfo log, int level) {
     if (log.Severity >= Model.Options.MinLevel && 
-        (string.IsNullOrEmpty(Model.Options.NamePrefix) || log.Name.StartsWith(Model.Options.NamePrefix)))
+        (string.IsNullOrEmpty(Model.Options.NamePrefix) || log.Name.StartsWith(Model.Options.NamePrefix, StringComparison.Ordinal)))
     {
         <tr class="logRow">
             <td>@string.Format("{0:MM/dd/yy}", log.Time)</td>
@@ -91,14 +91,14 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>ELM</title>
+    <title>ASP.NET Logs</title>
     <style>
         <%$ include: LogPage.css %>
         <%$ include: Shared.css %>
     </style>
 </head>
 <body>
-    <h1>ELM</h1>
+    <h1>ASP.NET Logs</h1>
     <form id="viewOptions" method="get">
         <select name="level">
             @foreach (var severity in Enum.GetValues(typeof(LogLevel)))

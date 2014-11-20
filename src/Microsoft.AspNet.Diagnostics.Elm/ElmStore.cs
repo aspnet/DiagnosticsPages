@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Jetbrains.Annotations;
 using Microsoft.Framework.Logging;
 
 namespace Microsoft.AspNet.Diagnostics.Elm
@@ -12,9 +13,9 @@ namespace Microsoft.AspNet.Diagnostics.Elm
     {
         private const int Capacity = 200;
 
-        private static int _count = 0;
+        private static int _count;
 
-        private static LinkedList<ActivityContext> Activities { get; set; } = new LinkedList<ActivityContext>();
+        private LinkedList<ActivityContext> Activities { get; set; } = new LinkedList<ActivityContext>();
 
         /// <summary>
         /// Returns an IEnumerable of the contexts of the logs.
@@ -40,7 +41,7 @@ namespace Microsoft.AspNet.Diagnostics.Elm
         /// <param name="requestId">The id of the request to get the logs of</param>
         /// <param name="minLevel">The minimum <see cref="LogLevel"/> of the returned logs</param>
         /// <returns>An IEnumerable of <see cref="LogInfo"/> objects</returns>
-        public IEnumerable<LogInfo> GetActivityLogs(Guid requestId, LogLevel minLevel)
+        public IEnumerable<LogInfo> GetActivityLogs([NotNull] Guid requestId, [NotNull] LogLevel minLevel)
         {
             return Activities.Where(a => a.HttpInfo?.RequestID == requestId).FirstOrDefault()?.AllMessages?.Where(m => m.Severity >= minLevel);
         }
@@ -49,7 +50,7 @@ namespace Microsoft.AspNet.Diagnostics.Elm
         /// Adds a new <see cref="ActivityContext"/> to the store.
         /// </summary>
         /// <param name="context">The context to be added to the store.</param>
-        public static void AddActivity(ActivityContext activity)
+        public void AddActivity([NotNull] ActivityContext activity)
         {
             lock (Activities)
             {

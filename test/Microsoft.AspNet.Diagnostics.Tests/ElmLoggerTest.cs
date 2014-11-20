@@ -31,13 +31,12 @@ namespace Microsoft.AspNet.Diagnostics.Tests
             var t = SetUp();
             var logger = t.Item1;
             var store = t.Item2;
-            var initialCount = (store.GetActivities().SelectMany(a => a.AllMessages).ToList()).Count;
 
             // Act
             logger.Write(LogLevel.Information, 0, _state, null, null);
 
             // Assert
-            Assert.Equal(1, (store.GetActivities().SelectMany(a => a.AllMessages).ToList()).Count - initialCount);
+            Assert.Single(store.GetActivities());
         }
 
         [Fact]
@@ -47,13 +46,12 @@ namespace Microsoft.AspNet.Diagnostics.Tests
             var t = SetUp();
             var logger = t.Item1;
             var store = t.Item2;
-            var initialCount = (store.GetActivities().SelectMany(a => a.AllMessages).ToList()).Count;
 
             // Act
             logger.Write(LogLevel.Information, 0, null, null, null);
 
             // Assert
-            Assert.Equal(0, (store.GetActivities().SelectMany(a => a.AllMessages).ToList()).Count - initialCount);
+            Assert.Empty(store.GetActivities());
         }
 
         [Fact]
@@ -63,7 +61,6 @@ namespace Microsoft.AspNet.Diagnostics.Tests
             var t = SetUp();
             var logger = t.Item1;
             var store = t.Item2;
-            var initialCount = (store.GetActivities().SelectMany(a => a.AllMessages).ToList()).Count;
 
             // Act
             logger.Write(LogLevel.Verbose, 0, _state, null, null);
@@ -73,7 +70,7 @@ namespace Microsoft.AspNet.Diagnostics.Tests
             logger.Write(LogLevel.Critical, 0, _state, null, null);
 
             // Assert
-            Assert.Equal(5, (store.GetActivities().SelectMany(a => a.AllMessages).ToList()).Count - initialCount);
+            Assert.Equal(5, (store.GetActivities().SelectMany(a => a.AllMessages).ToList()).Count);
         }
 
         [Theory]
@@ -86,10 +83,9 @@ namespace Microsoft.AspNet.Diagnostics.Tests
         public void Filter_LogsWhenAppropriate(LogLevel minLevel, string prefix, int count)
         {
             // Arrange
-            var t = SetUp((name, level) => (name.StartsWith(prefix) && level >= minLevel), _name);
+            var t = SetUp((name, level) => (name.StartsWith(prefix, StringComparison.Ordinal) && level >= minLevel), _name);
             var logger = t.Item1;
             var store = t.Item2;
-            var initialCount = (store.GetActivities().SelectMany(a => a.AllMessages).ToList()).Count;
 
             // Act
             logger.Write(LogLevel.Verbose, 0, _state, null, null);
@@ -99,7 +95,7 @@ namespace Microsoft.AspNet.Diagnostics.Tests
             logger.Write(LogLevel.Critical, 0, _state, null, null);
 
             // Assert
-            Assert.Equal(count, (store.GetActivities().SelectMany(a => a.AllMessages).ToList()).Count - initialCount);
+            Assert.Equal(count, (store.GetActivities().SelectMany(a => a.AllMessages).ToList()).Count);
         }
 
         [Fact]
@@ -109,8 +105,6 @@ namespace Microsoft.AspNet.Diagnostics.Tests
             var t = SetUp();
             var logger = t.Item1;
             var store = t.Item2;
-            var initialCount = (store.GetActivities().SelectMany(a => a.AllMessages).ToList()).Count;
-            var initialActivityCount = store.GetActivities().ToList().Count;
 
             var testThread = new TestThread(logger);
             Thread workerThread = new Thread(testThread.work);
@@ -126,8 +120,8 @@ namespace Microsoft.AspNet.Diagnostics.Tests
             workerThread.Join();
 
             // Assert
-            Assert.Equal(17, (store.GetActivities().SelectMany(a => a.AllMessages).ToList()).Count - initialCount);
-            Assert.Equal(2, store.GetActivities().ToList().Count - initialActivityCount);
+            Assert.Equal(17, (store.GetActivities().SelectMany(a => a.AllMessages).ToList()).Count);
+            Assert.Equal(2, store.GetActivities().ToList().Count);
         }
 
         [Fact]
@@ -152,17 +146,18 @@ namespace Microsoft.AspNet.Diagnostics.Tests
             workerThread.Join();
 
             // Assert
-            var root1 = (store.GetActivities()).Where(a => a.Root.State?.Equals("test2") ?? false)?.ElementAt(0)?.Root;
+            // get the root of the activity for scope "test2"
+            var root1 = (store.GetActivities()).Where(a => a.Root.State.Equals("test2"))?.FirstOrDefault()?.Root;
             Assert.NotNull(root1);
-            var root2 = (store.GetActivities()).Where(a => a.Root.State?.Equals("test12") ?? false)?.ElementAt(0)?.Root;
+            var root2 = (store.GetActivities()).Where(a => a.Root.State.Equals("test12"))?.FirstOrDefault()?.Root;
             Assert.NotNull(root2);
 
             Assert.Equal(0, root1.Children.Count);
             Assert.Equal(2, root1.Messages.Count);
             Assert.Equal(1, root2.Children.Count);
             Assert.Equal(12, root2.Messages.Count);
-            Assert.Equal(0, root2.Children.ElementAt(0).Children.Count);
-            Assert.Equal(3, root2.Children.ElementAt(0).Messages.Count);
+            Assert.Equal(0, root2.Children.First().Children.Count);
+            Assert.Equal(3, root2.Children.First().Messages.Count);
         }
 
         [Fact]
@@ -172,7 +167,6 @@ namespace Microsoft.AspNet.Diagnostics.Tests
             var t = SetUp();
             var logger = t.Item1;
             var store = t.Item2;
-            var initialActivityCount = store.GetActivities().ToList().Count;
 
             // Act
             using (logger.BeginScope("test3"))
@@ -180,7 +174,7 @@ namespace Microsoft.AspNet.Diagnostics.Tests
             }
 
             // Assert
-            Assert.Equal(0, store.GetActivities().ToList().Count - initialActivityCount);
+            Assert.Empty(store.GetActivities());
         }
 
         [Fact]
@@ -190,7 +184,6 @@ namespace Microsoft.AspNet.Diagnostics.Tests
             var t = SetUp();
             var logger = t.Item1;
             var store = t.Item2;
-            var initialActivityCount = store.GetActivities().ToList().Count;
 
             // Act
             using (logger.BeginScope("test4"))
@@ -201,7 +194,7 @@ namespace Microsoft.AspNet.Diagnostics.Tests
             }
 
             // Assert
-            Assert.Equal(0, store.GetActivities().ToList().Count - initialActivityCount);
+            Assert.Empty(store.GetActivities());
         }
 
         [Fact]
@@ -211,7 +204,6 @@ namespace Microsoft.AspNet.Diagnostics.Tests
             var t = SetUp();
             var logger = t.Item1;
             var store = t.Item2;
-            var initialActivityCount = store.GetActivities().ToList().Count;
 
             // Act
             using (logger.BeginScope("test6"))
@@ -223,7 +215,7 @@ namespace Microsoft.AspNet.Diagnostics.Tests
             }
 
             // Assert
-            Assert.Equal(1, store.GetActivities().ToList().Count - initialActivityCount);
+            Assert.Single(store.GetActivities());
         }
 
         [Fact]
@@ -233,7 +225,6 @@ namespace Microsoft.AspNet.Diagnostics.Tests
             var t = SetUp();
             var logger = t.Item1;
             var store = t.Item2;
-            var initialActivityCount = store.GetActivities().ToList().Count;
 
             // Act
             using (logger.BeginScope("test8"))
@@ -245,7 +236,7 @@ namespace Microsoft.AspNet.Diagnostics.Tests
             }
 
             // Assert
-            Assert.Equal(1, store.GetActivities().ToList().Count - initialActivityCount);
+            Assert.Single(store.GetActivities());
             var context = store.GetActivities().Where(a => a.Root.State.Equals("test8")).First();
             Assert.Empty(context.Root.Children);
         }
@@ -257,7 +248,6 @@ namespace Microsoft.AspNet.Diagnostics.Tests
             var t = SetUp((_, level) => level >= LogLevel.Warning, null);
             var logger = t.Item1;
             var store = t.Item2;
-            var initialActivityCount = store.GetActivities().ToList().Count;
 
             // Act
             using (logger.BeginScope("test10"))
@@ -269,7 +259,7 @@ namespace Microsoft.AspNet.Diagnostics.Tests
             }
 
             // Assert
-            Assert.Equal(0, store.GetActivities().ToList().Count - initialActivityCount);
+            Assert.Empty(store.GetActivities());
         }
 
         private class TestThread

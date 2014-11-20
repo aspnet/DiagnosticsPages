@@ -10,11 +10,13 @@ namespace Microsoft.AspNet.Diagnostics.Elm
     {
         private readonly string _name;
         private readonly ElmOptions _options;
+        private readonly ElmStore _store;
 
-        public ElmLogger(string name, ElmOptions options)
+        public ElmLogger(string name, ElmOptions options, ElmStore store)
         {
             _name = name;
             _options = options;
+            _store = store;
         }
 
         public void Write(LogLevel logLevel, int eventId, object state, Exception exception, 
@@ -48,7 +50,7 @@ namespace Microsoft.AspNet.Diagnostics.Elm
                 context.Root = new ScopeNode();
                 context.Root.Messages.Add(info);
                 context.AllMessages.Add(info);  // to keep the log count accurate
-                ElmStore.AddActivity(context);
+                _store.AddActivity(context);
             }
         }
 
@@ -61,7 +63,7 @@ namespace Microsoft.AspNet.Diagnostics.Elm
         {
             var scope = new ElmScope(_name, state);
             scope.Context = ElmScope.Current?.Context ?? GetNewActivityContext();
-            return ElmScope.Push(scope);
+            return ElmScope.Push(scope, _store);
         }
 
         private ActivityContext GetNewActivityContext()
