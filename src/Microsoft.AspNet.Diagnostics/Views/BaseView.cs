@@ -64,6 +64,22 @@ namespace Microsoft.AspNet.Diagnostics.Views
             WriteLiteralTo(Output, value);
         }
 
+        /// <summary>
+        /// Write the given value directly to the output
+        /// </summary>
+        /// <param name="value"></param>
+        protected void WriteLiteral(object value)
+        {
+            WriteLiteralTo(Output, value);
+        }
+
+        /// <summary>
+        /// Writes the given attribute to the output
+        /// </summary>
+        /// <param name="name">The name of the attribute to write</param>
+        /// <param name="leader">The value and position of the prefix</param>
+        /// <param name="trailer">The value and position of the suffix</param>
+        /// <param name="values">The <see cref="AttributeValue"/>s to write.</param>
         protected void WriteAttribute(
             [NotNull] string name,
             [NotNull] Tuple<string, int> leader,
@@ -78,6 +94,14 @@ namespace Microsoft.AspNet.Diagnostics.Views
                 values);
         }
 
+        /// <summary>
+        /// Writes the given attribute to the given writer
+        /// </summary>
+        /// <param name="writer">The <see cref="TextWriter"/> instance to write to.</param>
+        /// <param name="name">The name of the attribute to write</param>
+        /// <param name="leader">The value and position of the prefix</param>
+        /// <param name="trailer">The value and position of the suffix</param>
+        /// <param name="values">The <see cref="AttributeValue"/>s to write.</param>
         protected void WriteAttributeTo(
             [NotNull] TextWriter writer,
             [NotNull] string name,
@@ -90,7 +114,45 @@ namespace Microsoft.AspNet.Diagnostics.Views
             foreach (var value in values)
             {
                 WriteLiteralTo(writer, value.Prefix.Item1);
-                WriteTo(writer, value.Value.Item1);
+
+                // The special cases here are that the value we're writing might already be a string, or that the
+                // value might be a bool. If the value is the bool 'true' we want to write the attribute name
+                // instead of the string 'true'. If the value is the bool 'false' we don't want to write anything.
+                // Otherwise the value is another object (perhaps an HtmlString) and we'll ask it to format itself.
+                string stringValue;
+                if (value.Value.Item1 is bool)
+                {
+                    if ((bool)value.Value.Item1)
+                    {
+                        stringValue = name;
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
+                else
+                {
+                    stringValue = value.Value.Item1 as string;
+                }
+
+                // Call the WriteTo(string) overload when possible
+                if (value.Literal && stringValue != null)
+                {
+                    WriteLiteralTo(writer, stringValue);
+                }
+                else if (value.Literal)
+                {
+                    WriteLiteralTo(writer, value.Value.Item1);
+                }
+                else if (stringValue != null)
+                {
+                    WriteTo(writer, stringValue);
+                }
+                else
+                {
+                    WriteTo(writer, value.Value.Item1);
+                }
             }
             WriteLiteralTo(writer, trailer.Item1);
         }
@@ -101,7 +163,7 @@ namespace Microsoft.AspNet.Diagnostics.Views
         /// <param name="value"></param>
         protected void Write(object value)
         {
-            WriteTo(Output, Convert.ToString(value, CultureInfo.InvariantCulture));
+            WriteTo(Output, value);
         }
 
         /// <summary>
@@ -143,7 +205,7 @@ namespace Microsoft.AspNet.Diagnostics.Views
                 }
                 else
                 {
-                    WriteTo(writer, value.ToString());
+                    WriteTo(writer, Convert.ToString(value, CultureInfo.InvariantCulture));
                 }
             }
         }

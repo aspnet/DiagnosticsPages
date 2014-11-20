@@ -11,11 +11,11 @@ namespace Microsoft.AspNet.Diagnostics.Views
             Literal = literal;
         }
 
-        public Tuple<string, int> Prefix { get; private set; }
+        public Tuple<string, int> Prefix { get; }
 
-        public Tuple<object, int> Value { get; private set; }
+        public Tuple<object, int> Value { get; }
 
-        public bool Literal { get; private set; }
+        public bool Literal { get; }
 
         public static AttributeValue FromTuple(Tuple<Tuple<string, int>, Tuple<object, int>, bool> value)
         {
