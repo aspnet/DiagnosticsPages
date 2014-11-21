@@ -22,7 +22,7 @@ namespace Microsoft.AspNet.Diagnostics.Elm
         public void Write(LogLevel logLevel, int eventId, object state, Exception exception, 
                           Func<object, Exception, string> formatter)
         {
-            if (!IsEnabled(logLevel) || state == null && exception == null)
+            if (!IsEnabled(logLevel) || (state == null && exception == null))
             {
                 return;
             }

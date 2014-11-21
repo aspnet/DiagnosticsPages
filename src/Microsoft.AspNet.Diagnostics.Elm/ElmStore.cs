@@ -41,7 +41,7 @@ namespace Microsoft.AspNet.Diagnostics.Elm
         /// <param name="requestId">The id of the request to get the logs of</param>
         /// <param name="minLevel">The minimum <see cref="LogLevel"/> of the returned logs</param>
         /// <returns>An IEnumerable of <see cref="LogInfo"/> objects</returns>
-        public IEnumerable<LogInfo> GetActivityLogs([NotNull] Guid requestId, [NotNull] LogLevel minLevel)
+        public IEnumerable<LogInfo> GetActivityLogs(Guid requestId, LogLevel minLevel)
         {
             return Activities.Where(a => a.HttpInfo?.RequestID == requestId).FirstOrDefault()?.AllMessages?.Where(m => m.Severity >= minLevel);
         }
