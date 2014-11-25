@@ -7,7 +7,7 @@ namespace Microsoft.AspNet.Diagnostics.Elm.Views
     {
         public Guid RequestID { get; set; }
 
-        public IEnumerable<LogInfo> Logs { get; set; }
+        public ActivityContext Activity { get; set; }
 
         public ViewOptions Options { get; set; }
     }

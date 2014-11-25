@@ -8,6 +8,7 @@ using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Diagnostics.Elm.Views;
 using Microsoft.Framework.Logging;
 using Microsoft.Framework.OptionsModel;
+using System.Linq;
 
 namespace Microsoft.AspNet.Diagnostics.Elm
 {
@@ -70,11 +71,10 @@ namespace Microsoft.AspNet.Diagnostics.Elm
                 await context.Response.WriteAsync("Invalid Request Id");
                 return;
             }
-            var requestLogs = _store.GetActivityLogs(id, options.MinLevel);
             var model = new RequestPageModel()
             {
                 RequestID = id,
-                Logs = requestLogs,
+                Activity = _store.GetActivities().Where(a => a.HttpInfo?.RequestID == id).FirstOrDefault(),
                 Options = options
             };
             var requestPage = new RequestPage(model);

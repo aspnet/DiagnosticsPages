@@ -13,8 +13,6 @@ namespace Microsoft.AspNet.Diagnostics.Elm
 
         public DateTimeOffset Time { get; set; }
 
-        public List<LogInfo> AllMessages { get; private set; } = new List<LogInfo>();
-
         public bool IsCollapsed { get; set; }
     }
 }

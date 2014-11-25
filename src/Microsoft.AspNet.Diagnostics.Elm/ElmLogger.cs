@@ -39,7 +39,6 @@ namespace Microsoft.AspNet.Diagnostics.Elm
             };
             if (ElmScope.Current != null)
             {
-                GetCurrentActivityContext().AllMessages.Add(info);
                 ElmScope.Current.Node.Messages.Add(info);
             }
             // The log does not belong to any scope - create a new context for it
@@ -49,7 +48,6 @@ namespace Microsoft.AspNet.Diagnostics.Elm
                 context.Id = Guid.Empty;  // mark as a non-scope log
                 context.Root = new ScopeNode();
                 context.Root.Messages.Add(info);
-                context.AllMessages.Add(info);  // to keep the log count accurate
                 _store.AddActivity(context);
             }
         }

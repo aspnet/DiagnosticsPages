@@ -2,6 +2,7 @@
 @using System.Globalization
 @using System.Linq
 @using Microsoft.AspNet.Diagnostics.Elm
+@using Microsoft.AspNet.Diagnostics.Views
 @using Microsoft.AspNet.Diagnostics.Elm.Views
 @using Microsoft.Framework.Logging
 
@@ -13,6 +14,55 @@
     }
 
     public RequestPageModel Model { get; set; }
+}
+
+@helper LogRow(LogInfo log)
+{
+    if (log.Severity >= Model.Options.MinLevel &&
+        (string.IsNullOrEmpty(Model.Options.NamePrefix) || log.Name.StartsWith(Model.Options.NamePrefix, StringComparison.Ordinal)))
+    {
+        <tr>
+            <td>@string.Format("{0:MM/dd/yy}", log.Time)</td>
+            <td>@string.Format("{0:H:mm:ss}", log.Time)</td>
+            <td class="@log.Severity.ToString().ToLowerInvariant()">@log.Severity</td>
+            <td title="@log.Name">@log.Name</td>
+            <td title="@log.Message" class="logState" width="100px">@log.Message</td>
+            <td title="@log.Exception">@log.Exception</td>
+        </tr>
+    }
+}
+
+@helper Traverse(ScopeNode node)
+{
+    var messageIndex = 0;
+    var childIndex = 0;
+    while (messageIndex < node.Messages.Count && childIndex < node.Children.Count)
+    {
+        if (node.Messages[messageIndex].Time < node.Children[childIndex].StartTime)
+        {
+            @LogRow(node.Messages[messageIndex])
+            messageIndex++;
+        }
+        else
+        {
+            @Traverse(node.Children[childIndex])
+            childIndex++;
+        }
+    }
+    if (messageIndex < node.Messages.Count)
+    {
+        for (var i = messageIndex; i < node.Messages.Count; i++)
+        {
+            @LogRow(node.Messages[i])
+        }
+    }
+    else
+    {
+        for (var i = childIndex; i < node.Children.Count; i++)
+        {
+            @Traverse(node.Children[i])
+        }
+    }
 }
 <!DOCTYPE html>
 <html>
@@ -28,7 +78,7 @@
 <body>
     <h1>ASP.NET Logs</h1>
     @{
-        var context = Model.Logs.FirstOrDefault()?.ActivityContext?.HttpInfo;
+        var context = Model.Activity?.HttpInfo;
     }
     @if (context != null)
     {
@@ -176,17 +226,7 @@
                 <th>Error</th>
             </tr>
         </thead>
-        @foreach (var log in Model.Logs)
-        {
-            <tr>
-                <td>@string.Format("{0:MM/dd/yy}", log.Time)</td>
-                <td>@string.Format("{0:H:mm:ss}", log.Time)</td>
-                <td class="@log.Severity.ToString().ToLowerInvariant()">@log.Severity</td>
-                <td title="@log.Name">@log.Name</td>
-                <td title="@log.Message" class="logState" width="100px">@log.Message</td>
-                <td title="@log.Exception">@log.Exception</td>
-            </tr>
-        }
+        @Traverse(Model.Activity.Root)
     </table>
     <script type="text/javascript">
         $(document).ready(function () {

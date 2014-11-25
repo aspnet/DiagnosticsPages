@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Microsoft.AspNet.Diagnostics.Elm;
@@ -70,7 +71,7 @@ namespace Microsoft.AspNet.Diagnostics.Tests
             logger.Write(LogLevel.Critical, 0, _state, null, null);
 
             // Assert
-            Assert.Equal(5, (store.GetActivities().SelectMany(a => a.AllMessages).ToList()).Count);
+            Assert.Equal(5, (store.GetActivities().SelectMany(a => NodeLogs(a.Root, new List<LogInfo>()))).ToList().Count);
         }
 
         [Theory]
@@ -95,7 +96,35 @@ namespace Microsoft.AspNet.Diagnostics.Tests
             logger.Write(LogLevel.Critical, 0, _state, null, null);
 
             // Assert
-            Assert.Equal(count, (store.GetActivities().SelectMany(a => a.AllMessages).ToList()).Count);
+            Assert.Equal(count, (store.GetActivities().SelectMany(a => NodeLogs(a.Root, new List<LogInfo>()))).ToList().Count);
+        }
+
+        [Fact]
+        public void CountReturnsCorrectNumber()
+        {
+            // Arrange
+            var t = SetUp();
+            var logger = t.Item1;
+            var store = t.Item2;
+
+            // Act
+            using (logger.BeginScope("test14"))
+            {
+                for (var i = 0; i < 25; i++)
+                {
+                    logger.WriteWarning("hello world");
+                }
+                using (logger.BeginScope("test15"))
+                {
+                    for (var i = 0; i < 25; i++)
+                    {
+                        logger.WriteCritical("goodbye world");
+                    }
+                }
+            }
+
+            // Assert
+            Assert.Equal(50, store.Count());
         }
 
         [Fact]
@@ -120,7 +149,7 @@ namespace Microsoft.AspNet.Diagnostics.Tests
             workerThread.Join();
 
             // Assert
-            Assert.Equal(17, (store.GetActivities().SelectMany(a => a.AllMessages).ToList()).Count);
+            Assert.Equal(17, (store.GetActivities().SelectMany(a => NodeLogs(a.Root, new List<LogInfo>()))).ToList().Count);
             Assert.Equal(2, store.GetActivities().ToList().Count);
         }
 
@@ -260,6 +289,20 @@ namespace Microsoft.AspNet.Diagnostics.Tests
 
             // Assert
             Assert.Empty(store.GetActivities());
+        }
+
+
+        private List<LogInfo> NodeLogs(ScopeNode node, List<LogInfo> logs)
+        {
+            if (node != null)
+            {
+                logs.AddRange(node.Messages);
+                foreach (var child in node.Children)
+                {
+                    NodeLogs(child, logs);
+                }
+            }
+            return logs;
         }
 
         private class TestThread

@@ -13,8 +13,6 @@ namespace Microsoft.AspNet.Diagnostics.Elm
     {
         private const int Capacity = 200;
 
-        private static int _count;
-
         private LinkedList<ActivityContext> Activities { get; set; } = new LinkedList<ActivityContext>();
 
         /// <summary>
@@ -35,18 +33,6 @@ namespace Microsoft.AspNet.Diagnostics.Elm
         }
 
         /// <summary>
-        /// Returns an IEnumerable of <see cref="LogInfo"/> objects for the given request id, 
-        /// with a minimum <see cref="LogLevel"/> of minLevel
-        /// </summary>
-        /// <param name="requestId">The id of the request to get the logs of</param>
-        /// <param name="minLevel">The minimum <see cref="LogLevel"/> of the returned logs</param>
-        /// <returns>An IEnumerable of <see cref="LogInfo"/> objects</returns>
-        public IEnumerable<LogInfo> GetActivityLogs(Guid requestId, LogLevel minLevel)
-        {
-            return Activities.Where(a => a.HttpInfo?.RequestID == requestId).FirstOrDefault()?.AllMessages?.Where(m => m.Severity >= minLevel);
-        }
-
-        /// <summary>
         /// Adds a new <see cref="ActivityContext"/> to the store.
         /// </summary>
         /// <param name="context">The context to be added to the store.</param>
@@ -55,12 +41,34 @@ namespace Microsoft.AspNet.Diagnostics.Elm
             lock (Activities)
             {
                 Activities.AddLast(activity);
-                _count += activity.AllMessages.Count;
-                while (_count > Capacity)
+                while (Count() > Capacity)
                 {
                     Activities.RemoveFirst();
                 }
             }
+        }
+
+        /// <summary>
+        /// Returns the total number of logs in all activities in the store
+        /// </summary>
+        /// <returns>The total log count</returns>
+        public int Count()
+        {
+            return Activities.Sum(a => Count(a.Root));
+        }
+
+        private int Count(ScopeNode node)
+        {
+            if (node == null)
+            {
+                return 0;
+            }
+            var sum = node.Messages.Count;
+            foreach (var child in node.Children)
+            {
+                sum += Count(child);
+            }
+            return sum;
         }
 
         /// <summary>
