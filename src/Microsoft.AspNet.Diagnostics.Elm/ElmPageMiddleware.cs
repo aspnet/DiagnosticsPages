@@ -91,7 +91,7 @@ namespace Microsoft.AspNet.Diagnostics.Elm
             if (context.Request.Query.ContainsKey("level"))
             {
                 var minLevel = options.MinLevel;
-                if (Enum.TryParse<LogLevel>(context.Request.Query.GetValues("level")[0], out minLevel))
+                if (Enum.TryParse<LogLevel>(context.Request.Query["level"], out minLevel))
                 {
                     options.MinLevel = minLevel;
                 }
