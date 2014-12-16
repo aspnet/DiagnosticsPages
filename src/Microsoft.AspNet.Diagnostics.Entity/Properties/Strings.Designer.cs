@@ -458,6 +458,70 @@ namespace Microsoft.AspNet.Diagnostics.Entity
             return GetString("DatabaseErrorPage_EnableMigrationsCommandsInfo");
         }
 
+        /// <summary>
+        /// {0} occurred, checking if Entity Framework recorded this exception as resulting from a failed database operation.
+        /// </summary>
+        internal static string DatabaseErrorPage_AttemptingToMatch
+        {
+            get { return GetString("DatabaseErrorPage_AttemptingToMatch"); }
+        }
+
+        /// <summary>
+        /// {0} occurred, checking if Entity Framework recorded this exception as resulting from a failed database operation.
+        /// </summary>
+        internal static string FormatDatabaseErrorPage_AttemptingToMatch(object p0)
+        {
+            return string.Format(CultureInfo.CurrentCulture, GetString("DatabaseErrorPage_AttemptingToMatch"), p0);
+        }
+
+        /// <summary>
+        /// Entity Framework recorded this exception was due to a failed database operation. Attempting to show database error page.
+        /// </summary>
+        internal static string DatabaseErrorPage_Matched
+        {
+            get { return GetString("DatabaseErrorPage_Matched"); }
+        }
+
+        /// <summary>
+        /// Entity Framework recorded this exception was due to a failed database operation. Attempting to show database error page.
+        /// </summary>
+        internal static string FormatDatabaseErrorPage_Matched()
+        {
+            return GetString("DatabaseErrorPage_Matched");
+        }
+
+        /// <summary>
+        /// Entity Framework did not record this exception. This means the exception is not a failed Entity Framework database operation, or the exception occurred from a DbContext that was not obtained from request services.
+        /// </summary>
+        internal static string DatabaseErrorPage_NotMatched
+        {
+            get { return GetString("DatabaseErrorPage_NotMatched"); }
+        }
+
+        /// <summary>
+        /// Entity Framework did not record this exception. This means the exception is not a failed Entity Framework database operation, or the exception occurred from a DbContext that was not obtained from request services.
+        /// </summary>
+        internal static string FormatDatabaseErrorPage_NotMatched()
+        {
+            return GetString("DatabaseErrorPage_NotMatched");
+        }
+
+        /// <summary>
+        /// The target data store is not a relational database. Skipping the database error page.
+        /// </summary>
+        internal static string DatabaseErrorPage_NotRelationalDatabase
+        {
+            get { return GetString("DatabaseErrorPage_NotRelationalDatabase"); }
+        }
+
+        /// <summary>
+        /// The target data store is not a relational database. Skipping the database error page.
+        /// </summary>
+        internal static string FormatDatabaseErrorPage_NotRelationalDatabase()
+        {
+            return GetString("DatabaseErrorPage_NotRelationalDatabase");
+        }
+
         private static string GetString(string name, params string[] formatterNames)
         {
             var value = _resourceManager.GetString(name);
