@@ -201,4 +201,16 @@
   <data name="DatabaseErrorPage_EnableMigrationsCommandsInfo" xml:space="preserve">
     <value>To use migrations from a command prompt you will need to &lt;a href='http://go.microsoft.com/fwlink/?LinkId=518242'&gt;install K Version Manager (KVM)&lt;/a&gt;. Once installed, you can run migration commands from a standard command prompt in the project directory.</value>
   </data>
+  <data name="DatabaseErrorPage_AttemptingToMatch" xml:space="preserve">
+    <value>{0} occurred, checking if Entity Framework recorded this exception as resulting from a failed database operation.</value>
+  </data>
+  <data name="DatabaseErrorPage_Matched" xml:space="preserve">
+    <value>Entity Framework recorded this exception was due to a failed database operation. Attempting to show database error page.</value>
+  </data>
+  <data name="DatabaseErrorPage_NotMatched" xml:space="preserve">
+    <value>Entity Framework did not record this exception. This means the exception is not a failed Entity Framework database operation, or the exception occurred from a DbContext that was not obtained from request services.</value>
+  </data>
+  <data name="DatabaseErrorPage_NotRelationalDatabase" xml:space="preserve">
+    <value>The target data store is not a relational database. Skipping the database error page.</value>
+  </data>
 </root>

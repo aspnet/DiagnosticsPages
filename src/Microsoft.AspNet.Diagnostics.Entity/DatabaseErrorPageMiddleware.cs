@@ -66,9 +66,19 @@ namespace Microsoft.AspNet.Diagnostics.Entity
             {
                 try
                 {
-                    if (_loggerProvider.Logger.LastError.IsErrorLogged
-                        && _loggerProvider.Logger.LastError.Exception == ex)
+                    _logger.WriteVerbose(Strings.FormatDatabaseErrorPage_AttemptingToMatch(ex.GetType()));
+
+                    var isDatabaseError = _loggerProvider.Logger.LastError.IsErrorLogged
+                        && _loggerProvider.Logger.LastError.Exception == ex;
+
+                    if (!isDatabaseError)
                     {
+                        _logger.WriteVerbose(Strings.DatabaseErrorPage_NotMatched);
+                    }
+                    else
+                    {
+                        _logger.WriteVerbose(Strings.DatabaseErrorPage_Matched);
+
                         using (RequestServicesContainer.EnsureRequestServices(context, _serviceProvider))
                         {
                             var dbContextType = _loggerProvider.Logger.LastError.ContextType;
@@ -79,7 +89,11 @@ namespace Microsoft.AspNet.Diagnostics.Entity
                             }
                             else
                             {
-                                if (dbContext.Database is RelationalDatabase)
+                                if (!(dbContext.Database is RelationalDatabase))
+                                {
+                                    _logger.WriteVerbose(Strings.DatabaseErrorPage_NotRelationalDatabase);
+                                }
+                                else
                                 {
                                     var databaseExists = dbContext.Database.AsRelational().Exists();
 
