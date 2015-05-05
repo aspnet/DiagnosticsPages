@@ -23,7 +23,7 @@ namespace Microsoft.AspNet.Builder
         {
             if (builder == null)
             {
-                throw new ArgumentNullException("builder");
+                throw new ArgumentNullException(nameof(builder));
             }
 
             return builder.Use(next => new WelcomePageMiddleware(next, options).Invoke);

@@ -21,7 +21,7 @@ namespace Microsoft.AspNet.Builder
         {
             if (builder == null)
             {
-                throw new ArgumentNullException("builder");
+                throw new ArgumentNullException(nameof(builder));
             }
 
             return builder.UseErrorPage(new ErrorPageOptions());
@@ -38,7 +38,7 @@ namespace Microsoft.AspNet.Builder
         {
             if (builder == null)
             {
-                throw new ArgumentNullException("builder");
+                throw new ArgumentNullException(nameof(builder));
             }
             /* TODO: Development, Staging, or Production
             string appMode = new AppProperties(builder.Properties).Get<string>(Constants.HostAppMode);
