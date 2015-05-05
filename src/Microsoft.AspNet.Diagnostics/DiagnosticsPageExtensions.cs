@@ -24,7 +24,7 @@ namespace Microsoft.AspNet.Builder
         {
             if (builder == null)
             {
-                throw new ArgumentNullException("builder");
+                throw new ArgumentNullException(nameof(builder));
             }
 
             return builder.Use(next => new DiagnosticsPageMiddleware(next, options).Invoke);
