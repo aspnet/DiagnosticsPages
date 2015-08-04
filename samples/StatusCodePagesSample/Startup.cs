@@ -24,7 +24,7 @@ namespace StatusCodePagesSample
             // app.UseStatusCodePagesWithRedirects("~/errors/{0}"); // PathBase relative
             // app.UseStatusCodePagesWithRedirects("/base/errors/{0}"); // Absolute
             // app.UseStatusCodePages(builder => builder.UseWelcomePage());
-            // app.UseStatusCodePagesWithReExecute("/errors/{0}");
+            // app.UseStatusCodePagesWithReExecute("/errors/{0}/{1}");
 
             // "/[?statuscode=400]"
             app.Use(async (context, next) =>
