@@ -11,21 +11,21 @@ using Microsoft.Net.Http.Headers;
 
 namespace Microsoft.AspNet.Diagnostics
 {
-    public class ErrorHandlerMiddleware
+    public class ExceptionHandlerMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly ErrorHandlerOptions _options;
+        private readonly ExceptionHandlerOptions _options;
         private readonly ILogger _logger;
         private readonly Func<object, Task> _clearCacheHeadersDelegate;
 
-        public ErrorHandlerMiddleware(RequestDelegate next, ILoggerFactory loggerFactory, ErrorHandlerOptions options)
+        public ExceptionHandlerMiddleware(RequestDelegate next, ILoggerFactory loggerFactory, ExceptionHandlerOptions options)
         {
             _next = next;
             _options = options;
-            _logger = loggerFactory.CreateLogger<ErrorHandlerMiddleware>();
-            if (_options.ErrorHandler == null)
+            _logger = loggerFactory.CreateLogger<ExceptionHandlerMiddleware>();
+            if (_options.ExceptionHandler == null)
             {
-                _options.ErrorHandler = _next;
+                _options.ExceptionHandler = _next;
             }
             _clearCacheHeadersDelegate = ClearCacheHeaders;
         }
@@ -47,17 +47,17 @@ namespace Microsoft.AspNet.Diagnostics
                 }
 
                 PathString originalPath = context.Request.Path;
-                if (_options.ErrorHandlingPath.HasValue)
+                if (_options.ExceptionHandlingPath.HasValue)
                 {
-                    context.Request.Path = _options.ErrorHandlingPath;
+                    context.Request.Path = _options.ExceptionHandlingPath;
                 }
                 try
                 {
-                    var errorHandlerFeature = new ErrorHandlerFeature()
+                    var exceptionHandlerFeature = new ExceptionHandlerFeature()
                     {
                         Error = ex,
                     };
-                    context.Features.Set<IErrorHandlerFeature>(errorHandlerFeature);
+                    context.Features.Set<IExceptionHandlerFeature>(exceptionHandlerFeature);
                     context.Response.StatusCode = 500;
                     context.Response.Headers.Clear();
                     context.Response.OnStarting(_clearCacheHeadersDelegate, context.Response);
@@ -68,7 +68,7 @@ namespace Microsoft.AspNet.Diagnostics
                         context.Response.Body.SetLength(0);
                     }
 
-                    await _options.ErrorHandler(context);
+                    await _options.ExceptionHandler(context);
                     // TODO: Optional re-throw? We'll re-throw the original exception by default if the error handler throws.
                     return;
                 }

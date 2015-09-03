@@ -5,14 +5,14 @@ using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Http.Features;
 using Microsoft.Framework.WebEncoders;
 
-namespace ErrorHandlerSample
+namespace ExceptionHandlerSample
 {
     public class Startup
     {
         public void Configure(IApplicationBuilder app)
         {
             // Configure the error handler to show an error page.
-            app.UseErrorHandler(errorApp =>
+            app.UseExceptionHandler(errorApp =>
             {
                 // Normally you'd use MVC or similar to render a nice page.
                 errorApp.Run(async context =>
@@ -22,7 +22,7 @@ namespace ErrorHandlerSample
                     await context.Response.WriteAsync("<html><body>\r\n");
                     await context.Response.WriteAsync("We're sorry, we encountered an un-expected issue with your application.<br>\r\n");
 
-                    var error = context.Features.Get<IErrorHandlerFeature>();
+                    var error = context.Features.Get<IExceptionHandlerFeature>();
                     if (error != null)
                     {
                         // This error would not normally be exposed to the client
@@ -35,7 +35,7 @@ namespace ErrorHandlerSample
             });
 
             // We could also configure it to re-execute the request on the normal pipeline with a different path.
-            // app.UseErrorHandler("/error.html");
+            // app.UseExceptionHandler("/error.html");
 
             // The broken section of our application.
             app.Map("/throw", throwApp =>

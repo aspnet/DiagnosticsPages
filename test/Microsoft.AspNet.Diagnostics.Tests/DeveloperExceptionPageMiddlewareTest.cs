@@ -18,7 +18,7 @@ using Xunit;
 
 namespace Microsoft.AspNet.Diagnostics
 {
-    public class ErrorPageMiddlewareTest
+    public class DeveloperExceptionPageMiddlewareTest
     {
         [Theory]
         [InlineData("TestFiles/SourceFile.txt")]
@@ -100,7 +100,7 @@ namespace Microsoft.AspNet.Diagnostics
             // Arrange
             var provider = new EmbeddedFileProvider(
                 GetType().GetTypeInfo().Assembly,
-                baseNamespace: $"{typeof(ErrorPageMiddlewareTest).GetTypeInfo().Assembly.GetName().Name}.Resources");
+                baseNamespace: $"{typeof(DeveloperExceptionPageMiddlewareTest).GetTypeInfo().Assembly.GetName().Name}.Resources");
 
             // Act
             var middleware = GetErrorPageMiddleware(provider);
@@ -259,7 +259,7 @@ namespace Microsoft.AspNet.Diagnostics
             return Enumerable.Range(start, count).Select(i => string.Format("Line{0}", i));
         }
 
-        private ErrorPageMiddleware GetErrorPageMiddleware(
+        private DeveloperExceptionPageMiddleware GetErrorPageMiddleware(
             IFileProvider fileProvider = null, int sourceCodeLineCount = 6)
         {
             var errorPageOptions = new ErrorPageOptions();
@@ -270,7 +270,7 @@ namespace Microsoft.AspNet.Diagnostics
                 errorPageOptions.FileProvider = fileProvider;
             }
 
-            var middleware = new ErrorPageMiddleware(
+            var middleware = new DeveloperExceptionPageMiddleware(
                 (httpContext) => { return Task.FromResult(0); },
                 errorPageOptions,
                 new LoggerFactory(),

@@ -6,17 +6,15 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Http;
-using Microsoft.AspNet.Http.Features;
 using Microsoft.AspNet.TestHost;
 using Xunit;
 
 namespace Microsoft.AspNet.Diagnostics
 {
-    public class ErrorHandlerTest
+    public class ExceptionHandlerTest
     {
         [Theory]
         [InlineData(HttpStatusCode.NotFound)]
@@ -26,7 +24,7 @@ namespace Microsoft.AspNet.Diagnostics
         {
             using (var server = TestServer.Create(app =>
             {
-                app.UseErrorHandler("/handle-errors");
+                app.UseExceptionHandler("/handle-errors");
 
                 app.Map("/handle-errors", (innerAppBuilder) =>
                 {
@@ -72,7 +70,7 @@ namespace Microsoft.AspNet.Diagnostics
                     Assert.Equal("Something bad happened", exception.Message);
                 });
 
-                app.UseErrorHandler("/handle-errors");
+                app.UseExceptionHandler("/handle-errors");
 
                 app.Map("/handle-errors", (innerAppBuilder) =>
                 {
@@ -124,7 +122,7 @@ namespace Microsoft.AspNet.Diagnostics
                     }
                 });
 
-                app.UseErrorHandler("/handle-errors");
+                app.UseExceptionHandler("/handle-errors");
 
                 app.Map("/handle-errors", (innerAppBuilder) =>
                 {
@@ -171,7 +169,7 @@ namespace Microsoft.AspNet.Diagnostics
             var expectedResponseBody = "Handled error in a custom way.";
             using (var server = TestServer.Create(app =>
             {
-                app.UseErrorHandler("/handle-errors");
+                app.UseExceptionHandler("/handle-errors");
 
                 app.Map("/handle-errors", (innerAppBuilder) =>
                 {
@@ -218,7 +216,7 @@ namespace Microsoft.AspNet.Diagnostics
             var expectedResponseBody = "Hello world!";
             using (var server = TestServer.Create(app =>
             {
-                app.UseErrorHandler("/handle-errors");
+                app.UseExceptionHandler("/handle-errors");
 
                 app.Map("/handle-errors", (innerAppBuilder) =>
                 {
@@ -281,7 +279,7 @@ namespace Microsoft.AspNet.Diagnostics
                     Assert.Equal("Something bad happened", exception.Message);
                 });
 
-                app.UseErrorHandler("/handle-errors");
+                app.UseExceptionHandler("/handle-errors");
 
                 app.Map("/handle-errors", (innerAppBuilder) =>
                 {
