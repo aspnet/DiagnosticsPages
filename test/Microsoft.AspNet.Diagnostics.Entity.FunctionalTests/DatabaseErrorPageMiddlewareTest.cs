@@ -313,7 +313,7 @@ namespace Microsoft.AspNet.Diagnostics.Entity.Tests
                     await server.CreateClient().GetAsync("http://localhost/"));
 
                 Assert.True(logProvider.Logger.Messages.Any(m =>
-                    m.StartsWith(StringsHelpers.GetResourceString("FormatDatabaseErrorPageMiddleware_ContextNotRegistered", typeof(BloggingContext)))));
+                    m != null && m.StartsWith(StringsHelpers.GetResourceString("FormatDatabaseErrorPageMiddleware_ContextNotRegistered", typeof(BloggingContext)))));
             }
         }
 
