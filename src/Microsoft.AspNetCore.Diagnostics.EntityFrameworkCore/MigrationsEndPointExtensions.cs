@@ -3,7 +3,6 @@
 
 using System;
 using Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 
 namespace Microsoft.AspNetCore.Builder
 {
@@ -44,7 +43,7 @@ namespace Microsoft.AspNetCore.Builder
                 throw new ArgumentNullException(nameof(options));
             }
 
-            return app.UseMiddleware<MigrationsEndPointMiddleware>(Options.Create(options));
+            return app.UseMiddleware<MigrationsEndPointMiddleware>(options);
         }
     }
 }
