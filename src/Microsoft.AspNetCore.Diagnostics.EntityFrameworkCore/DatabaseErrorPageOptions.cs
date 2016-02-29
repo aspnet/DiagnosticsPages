@@ -1,8 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 
@@ -24,12 +24,14 @@ namespace Microsoft.AspNetCore.Builder
         /// <param name="configureOptions">The configuration actions that will be applied.</param>
         public DatabaseErrorPageOptions(IEnumerable<IConfigureOptions<DatabaseErrorPageOptions>> configureOptions) : this()
         {
-            if (configureOptions != null)
+            if (configureOptions == null)
             {
-                foreach (var configure in configureOptions)
-                {
-                    configure.Configure(this);
-                }
+                throw new ArgumentNullException(nameof(configureOptions));
+            }
+
+            foreach (var configure in configureOptions)
+            {
+                configure.Configure(this);
             }
         }
 

@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Open Technologies, Inc. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 
@@ -24,6 +24,11 @@ namespace Microsoft.AspNetCore.Builder
         /// <param name="configureOptions">The configuration actions that will be applied.</param>
         public MigrationsEndPointOptions(IEnumerable<IConfigureOptions<MigrationsEndPointOptions>> configureOptions) : this()
         {
+            if (configureOptions == null)
+            {
+                throw new ArgumentNullException(nameof(configureOptions));
+            }
+
             if (configureOptions != null)
             {
                 foreach (var configure in configureOptions)
