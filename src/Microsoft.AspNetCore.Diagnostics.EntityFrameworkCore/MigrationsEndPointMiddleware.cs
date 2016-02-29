@@ -30,12 +30,25 @@ namespace Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore
         /// <param name="next">Delegate to execute the next piece of middleware in the request pipeline.</param>
         /// <param name="serviceProvider">The <see cref="IServiceProvider"/> to resolve services from.</param>
         /// <param name="logger">The <see cref="Logger{T}"/> to write messages to.</param>
+        public MigrationsEndPointMiddleware(
+            [NotNull] RequestDelegate next,
+            [NotNull] IServiceProvider serviceProvider,
+            [NotNull] ILogger<MigrationsEndPointMiddleware> logger)
+            : this(next, serviceProvider, logger, new MigrationsEndPointOptions())
+        { }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MigrationsEndPointMiddleware"/> class
+        /// </summary>
+        /// <param name="next">Delegate to execute the next piece of middleware in the request pipeline.</param>
+        /// <param name="serviceProvider">The <see cref="IServiceProvider"/> to resolve services from.</param>
+        /// <param name="logger">The <see cref="Logger{T}"/> to write messages to.</param>
         /// <param name="options">The options to control the behavior of the middleware.</param>
         public MigrationsEndPointMiddleware(
             [NotNull] RequestDelegate next, 
             [NotNull] IServiceProvider serviceProvider, 
             [NotNull] ILogger<MigrationsEndPointMiddleware> logger, 
-            [NotNull] IOptions<MigrationsEndPointOptions> options)
+            [NotNull] MigrationsEndPointOptions options)
         {
             Check.NotNull(next, "next");
             Check.NotNull(serviceProvider, "serviceProvider");
@@ -45,7 +58,7 @@ namespace Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore
             _next = next;
             _serviceProvider = serviceProvider;
             _logger = logger;
-            _options = options.Value;
+            _options = options;
         }
 
         /// <summary>
