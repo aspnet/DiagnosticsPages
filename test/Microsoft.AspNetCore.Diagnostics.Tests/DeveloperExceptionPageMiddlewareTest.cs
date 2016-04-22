@@ -309,72 +309,94 @@ namespace Microsoft.AspNetCore.Diagnostics
                 (httpContext) => { return Task.FromResult(0); },
                 Options.Create(options),
                 new LoggerFactory(),
-                new TestApplicationEnvironment(),
+                new TestHostingEnvironment(),
                 new DiagnosticListener("Microsoft.Aspnet"));
 
             return middleware;
         }
 
-        private class TestApplicationEnvironment : IApplicationEnvironment
-        {
-            public string ApplicationBasePath
-            {
-                get
-                {
-                    return Directory.GetCurrentDirectory();
-                }
-            }
 
+        private class TestHostingEnvironment : IHostingEnvironment
+        {
             public string ApplicationName
             {
                 get
                 {
                     throw new NotImplementedException();
                 }
-            }
 
-            public string ApplicationVersion
-            {
-                get
+                set
                 {
                     throw new NotImplementedException();
                 }
             }
 
-            public string Configuration
+            public IFileProvider ContentRootFileProvider
             {
                 get
                 {
                     throw new NotImplementedException();
                 }
-            }
 
-            public FrameworkName RuntimeFramework
-            {
-                get
+                set
                 {
                     throw new NotImplementedException();
                 }
             }
 
-            public string Version
+            public string ContentRootPath
             {
                 get
                 {
                     throw new NotImplementedException();
                 }
+
+                set
+                {
+                    throw new NotImplementedException();
+                }
             }
 
-            public object GetData(string name)
+            public string EnvironmentName
             {
-                throw new NotImplementedException();
+                get
+                {
+                    throw new NotImplementedException();
+                }
+
+                set
+                {
+                    throw new NotImplementedException();
+                }
             }
 
-            public void SetData(string name, object value)
+            public IFileProvider WebRootFileProvider
             {
-                throw new NotImplementedException();
+                get
+                {
+                    throw new NotImplementedException();
+                }
+
+                set
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            public string WebRootPath
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+
+                set
+                {
+                    throw new NotImplementedException();
+                }
             }
         }
+
 
         private class TestFileProvider : IFileProvider
         {

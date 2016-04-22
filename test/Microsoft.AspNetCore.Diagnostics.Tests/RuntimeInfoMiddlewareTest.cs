@@ -2,12 +2,13 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System.IO;
+using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
-using Microsoft.Extensions.PlatformAbstractions;
 using Moq;
 using Xunit;
 
@@ -31,12 +32,6 @@ namespace Microsoft.AspNetCore.Diagnostics.Tests
         public void CreateRuntimeInfoModel_GetsTheVersionAndAllPackages()
         {
             // Arrage
-            var runtimeEnvironmentMock = new Mock<IRuntimeEnvironment>(MockBehavior.Strict);
-            runtimeEnvironmentMock.Setup(r => r.OperatingSystem).Returns("Windows");
-            runtimeEnvironmentMock.Setup(r => r.RuntimeArchitecture).Returns("x64");
-            runtimeEnvironmentMock.Setup(r => r.RuntimeType).Returns("clr");
-            runtimeEnvironmentMock.Setup(r => r.RuntimeVersion).Returns("1.0.0");
-
             RequestDelegate next = _ =>
             {
                 return Task.FromResult<object>(null);
@@ -44,16 +39,19 @@ namespace Microsoft.AspNetCore.Diagnostics.Tests
 
             var middleware = new RuntimeInfoMiddleware(
                 next,
-                Options.Create(new RuntimeInfoPageOptions()),
-                runtimeEnvironmentMock.Object);
+                Options.Create(new RuntimeInfoPageOptions()));
 
             // Act
             var model = middleware.CreateRuntimeInfoModel();
 
             // Assert
-            Assert.Equal("1.0.0", model.Version);
-            Assert.Equal("Windows", model.OperatingSystem);
-            Assert.Equal("clr", model.RuntimeType);
+            Assert.Equal(typeof(object).GetTypeInfo().Assembly.GetName().Version.ToString(), model.Version);
+            Assert.Equal(RuntimeInformation.OSDescription, model.OperatingSystem);
+#if NET451
+            Assert.Equal("CLR", model.RuntimeType);
+#else
+            Assert.Equal("CoreCLR", model.RuntimeType);
+#endif
             Assert.Equal("x64", model.RuntimeArchitecture);
         }
 
@@ -61,8 +59,6 @@ namespace Microsoft.AspNetCore.Diagnostics.Tests
         public async void Invoke_WithNonMatchingPath_IgnoresRequest()
         {
             // Arrange
-            var runtimeEnvironmentMock = new Mock<IRuntimeEnvironment>(MockBehavior.Strict);
-
             RequestDelegate next = _ =>
             {
                 return Task.FromResult<object>(null);
@@ -70,8 +66,7 @@ namespace Microsoft.AspNetCore.Diagnostics.Tests
 
             var middleware = new RuntimeInfoMiddleware(
                next,
-               Options.Create(new RuntimeInfoPageOptions()),
-               runtimeEnvironmentMock.Object);
+               Options.Create(new RuntimeInfoPageOptions()));
 
             var contextMock = new Mock<HttpContext>(MockBehavior.Strict);
             contextMock
@@ -89,12 +84,6 @@ namespace Microsoft.AspNetCore.Diagnostics.Tests
         public async void Invoke_WithMatchingPath_ReturnsInfoPage()
         {
             // Arrange
-            var runtimeEnvironmentMock = new Mock<IRuntimeEnvironment>(MockBehavior.Strict);
-            runtimeEnvironmentMock.Setup(r => r.OperatingSystem).Returns("Windows");
-            runtimeEnvironmentMock.Setup(r => r.RuntimeArchitecture).Returns("x64");
-            runtimeEnvironmentMock.Setup(r => r.RuntimeType).Returns("clr");
-            runtimeEnvironmentMock.Setup(r => r.RuntimeVersion).Returns("1.0.0");
-
             RequestDelegate next = _ =>
             {
                 return Task.FromResult<object>(null);
@@ -102,8 +91,7 @@ namespace Microsoft.AspNetCore.Diagnostics.Tests
 
             var middleware = new RuntimeInfoMiddleware(
                 next,
-                Options.Create(new RuntimeInfoPageOptions()),
-                runtimeEnvironmentMock.Object);
+                Options.Create(new RuntimeInfoPageOptions()));
 
             var buffer = new byte[4096];
             using (var responseStream = new MemoryStream(buffer))
@@ -125,10 +113,13 @@ namespace Microsoft.AspNetCore.Diagnostics.Tests
                 // Assert
                 string response = Encoding.UTF8.GetString(buffer);
 
-                Assert.Contains("<p>Runtime Version: 1.0.0</p>", response);
-                Assert.Contains("<p>Operating System: Windows</p>", response);
-                Assert.Contains("<p>Runtime Architecture: x64</p>", response);
-                Assert.Contains("<p>Runtime Type: clr</p>", response);
+                Assert.Contains($"<p>Operating System: {RuntimeInformation.OSDescription}</p>", response);
+                Assert.Contains($"<p>Runtime Architecture: {RuntimeInformation.ProcessArchitecture}</p>", response);
+#if NET451
+                Assert.Contains($"<p>Runtime Type: CLR</p>", response);
+#else
+                Assert.Contains($"<p>Runtime Type: CoreCLR</p>", response);
+#endif
             }
         }
     }

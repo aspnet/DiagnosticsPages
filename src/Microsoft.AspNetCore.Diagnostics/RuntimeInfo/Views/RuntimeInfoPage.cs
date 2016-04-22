@@ -30,8 +30,6 @@ using Microsoft.AspNetCore.Diagnostics.Views
 #line default
 #line hidden
     ;
-#line 6 "RuntimeInfoPage.cshtml"
-using Microsoft.Extensions.PlatformAbstractions;
 
 #line default
 #line hidden
