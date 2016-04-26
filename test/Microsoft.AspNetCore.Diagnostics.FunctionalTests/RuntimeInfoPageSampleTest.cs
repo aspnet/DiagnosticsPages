@@ -3,8 +3,8 @@
 
 using System.Net;
 using System.Net.Http;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
-using Microsoft.Extensions.PlatformAbstractions;
 using Xunit;
 
 namespace Microsoft.AspNetCore.Diagnostics.FunctionalTests
@@ -27,12 +27,10 @@ namespace Microsoft.AspNetCore.Diagnostics.FunctionalTests
             // Act
             var response = await Client.SendAsync(request);
 
-            var os = PlatformServices.Default.Runtime.OperatingSystem;
-
             // Assert
             var body = await response.Content.ReadAsStringAsync();
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Contains($"Operating System: {os}", body);
+            Assert.Contains($"Operating System: {RuntimeInformation.OSDescription}", body);
         }
     }
 }
