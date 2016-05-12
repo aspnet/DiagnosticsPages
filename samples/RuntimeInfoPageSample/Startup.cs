@@ -8,7 +8,8 @@ namespace RuntimeInfoPageSample
     {
         public void Configure(IApplicationBuilder app)
         {
-            app.UseRuntimeInfoPage();
+            // Temporarily disabling this https://github.com/aspnet/Diagnostics/issues/279
+            // app.UseRuntimeInfoPage();
 
             app.Run(context =>
             {

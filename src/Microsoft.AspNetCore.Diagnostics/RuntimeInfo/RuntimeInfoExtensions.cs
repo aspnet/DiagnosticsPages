@@ -8,7 +8,8 @@ using Microsoft.Extensions.Options;
 
 namespace Microsoft.AspNetCore.Builder
 {
-    public static class RuntimeInfoExtensions
+    // Temporarily disabling these extensions https://github.com/aspnet/Diagnostics/issues/279
+    static class RuntimeInfoExtensions
     {
         public static IApplicationBuilder UseRuntimeInfoPage(this IApplicationBuilder app)
         {
@@ -27,7 +28,7 @@ namespace Microsoft.AspNetCore.Builder
                 throw new ArgumentNullException(nameof(app));
             }
 
-            return app.UseRuntimeInfoPage(new RuntimeInfoPageOptions 
+            return app.UseRuntimeInfoPage(new RuntimeInfoPageOptions
             {
                 Path = new PathString(path)
             });

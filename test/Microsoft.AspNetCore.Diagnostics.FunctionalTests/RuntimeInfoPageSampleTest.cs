@@ -9,7 +9,8 @@ using Xunit;
 
 namespace Microsoft.AspNetCore.Diagnostics.FunctionalTests
 {
-    public class RuntimeInfoPageSampleTest : IClassFixture<TestFixture<RuntimeInfoPageSample.Startup>>
+    // Temporarily disabling tests https://github.com/aspnet/Diagnostics/issues/279
+    class RuntimeInfoPageSampleTest : IClassFixture<TestFixture<RuntimeInfoPageSample.Startup>>
     {
         public RuntimeInfoPageSampleTest(TestFixture<RuntimeInfoPageSample.Startup> fixture)
         {
