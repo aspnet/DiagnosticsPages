@@ -20,7 +20,6 @@ namespace Microsoft.AspNetCore.Builder
             HandleAsync = context =>
             {
                 // TODO: Render with a pre-compiled html razor view.
-                // Note the 500 spaces are to work around an IE 'feature'
                 var statusCode = context.HttpContext.Response.StatusCode;
 
                 var body = BuildResponseBody(statusCode);
@@ -32,17 +31,16 @@ namespace Microsoft.AspNetCore.Builder
 
         private string BuildResponseBody(int httpStatusCode)
         {
+            // Note the 500 spaces are to work around an IE 'feature'
             string internetExplorerWorkaround = new string(' ', 500);
+
             var reasonPhrase = ReasonPhrases.GetReasonPhrase(httpStatusCode);
 
-            if (string.IsNullOrWhiteSpace(reasonPhrase))
-            {
-                return string.Format(CultureInfo.InvariantCulture, "Status Code: {0} {1}", httpStatusCode, internetExplorerWorkaround);
-            }
-            else
-            {
-                return string.Format(CultureInfo.InvariantCulture, "Status Code: {0}; {1}{2}", httpStatusCode, reasonPhrase, internetExplorerWorkaround);
-            }
+            return string.Format(CultureInfo.InvariantCulture, "Status Code: {0}{1}{2}{3}",
+                                                                    httpStatusCode,
+                                                                    string.IsNullOrWhiteSpace(reasonPhrase) ? "" : "; ",
+                                                                    reasonPhrase,
+                                                                    internetExplorerWorkaround);
         }
 
         public Func<StatusCodeContext, Task> HandleAsync { get; set; }
