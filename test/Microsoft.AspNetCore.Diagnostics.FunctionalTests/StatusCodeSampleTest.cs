@@ -34,41 +34,44 @@ namespace Microsoft.AspNetCore.Diagnostics.FunctionalTests
         }
 
         [Fact]
-        public async Task StatusCodePageOptions_HidesSemicolon_WhenReasonPhrase_IsUnknown()
+        public async Task StatusCodePageOptions_ExcludesSemicolon_AndReasonPhrase_WhenReasonPhrase_IsUnknown()
         {
+            //Arrange
+            var httpStatusCode = 541;
+            var request = new HttpRequestMessage(HttpMethod.Get, $"http://localhost/?statuscode={httpStatusCode}");
+
+            //Act
+            var response = await Client.SendAsync(request);
+
+            var statusCode = response.StatusCode;
+            var statusCodeReasonPhrase = ReasonPhrases.GetReasonPhrase(httpStatusCode);
+
+            var responseBody = await response.Content.ReadAsStringAsync();
+
+            //Assert
+            Assert.Equal((HttpStatusCode)httpStatusCode, response.StatusCode);
+            Assert.DoesNotContain(";", responseBody);
+        }   
+
+        [Fact]
+        public async Task StatusCodePageOptions_IncludesSemicolon__AndReasonPhrase_WhenReasonPhrase_IsKnown()
+        {
+            //Arrange    
             var httpStatusCode = 400;
+            var request = new HttpRequestMessage(HttpMethod.Get, $"http://localhost/?statuscode={httpStatusCode}");
 
-            do
-            {
-                //Arrange    
-                var request = new HttpRequestMessage(HttpMethod.Get, $"http://localhost/?statuscode={httpStatusCode}");
+            //Act
+            var response = await Client.SendAsync(request);
 
-                //Act
-                var response = await Client.SendAsync(request);
+            var statusCode = response.StatusCode;
+            var statusCodeReasonPhrase = ReasonPhrases.GetReasonPhrase(httpStatusCode);
 
-                var statusCode = response.StatusCode;
-                var statusCodeReasonPhrase = ReasonPhrases.GetReasonPhrase(httpStatusCode);
+            var responseBody = await response.Content.ReadAsStringAsync();
 
-                var responseBody = await response.Content.ReadAsStringAsync();
-
-                //Assert
-                Assert.Equal((HttpStatusCode)httpStatusCode, response.StatusCode);
-
-                //Response should contain a semicolon
-                if (!string.IsNullOrWhiteSpace(statusCodeReasonPhrase))
-                {
-                    Assert.Contains(";", responseBody);
-                }
-                else
-                {
-                    //No reason phrase, so there should not be a semicolon
-                    Assert.DoesNotContain(";", responseBody);
-                }
-
-                //Move to the next status code in the series so the test can be repeated.
-                httpStatusCode++;
-            }
-            while ((httpStatusCode > 400 && httpStatusCode < 600));
+            //Assert
+            Assert.Equal((HttpStatusCode)httpStatusCode, response.StatusCode);
+            Assert.Contains(";", responseBody);
+            Assert.Contains(statusCodeReasonPhrase, responseBody);
         }
     }
 }
