@@ -10,7 +10,7 @@ namespace Microsoft.AspNetCore.Diagnostics.Views
     /// <summary>
     /// Detailed exception stack information used to generate a view
     /// </summary>
-    public class StackFrame
+    public class StackFrameModel
     {
         /// <summary>
         /// Function containing instruction

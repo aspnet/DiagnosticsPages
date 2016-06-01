@@ -22,7 +22,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 using Xunit;
-using StackFrame = Microsoft.AspNetCore.Diagnostics.Views.StackFrame;
+using StackFrameModel = Microsoft.AspNetCore.Diagnostics.Views.StackFrameModel;
 using Moq;
 
 namespace Microsoft.AspNetCore.Diagnostics
@@ -273,7 +273,7 @@ namespace Microsoft.AspNetCore.Diagnostics
         {
             // Arrange
             var middleware = GetErrorPageMiddleware();
-            var stackFrame = new StackFrame();
+            var stackFrame = new StackFrameModel();
 
             // Act
             middleware.ReadFrameContent(

@@ -5,9 +5,12 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Reflection.Metadata;
+using System.Reflection.Metadata.Ecma335;
+using System.Reflection.PortableExecutable;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.Views;
@@ -16,7 +19,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using StackFrame = Microsoft.AspNetCore.Diagnostics.Views.StackFrame;
 
 namespace Microsoft.AspNetCore.Diagnostics
 {
@@ -122,7 +124,7 @@ namespace Microsoft.AspNetCore.Diagnostics
 
         private Task DisplayCompilationException(
             HttpContext context,
-                                                 ICompilationException compilationException)
+            ICompilationException compilationException)
         {
             var model = new CompilationErrorPageModel
             {
@@ -131,7 +133,7 @@ namespace Microsoft.AspNetCore.Diagnostics
 
             foreach (var compilationFailure in compilationException.CompilationFailures)
             {
-                var stackFrames = new List<StackFrame>();
+                var stackFrames = new List<StackFrameModel>();
                 var errorDetails = new ErrorDetails
                 {
                     StackFrames = stackFrames
@@ -142,7 +144,7 @@ namespace Microsoft.AspNetCore.Diagnostics
 
                 foreach (var item in compilationFailure.Messages)
                 {
-                    var frame = new StackFrame
+                    var frame = new StackFrameModel
                     {
                         File = compilationFailure.SourceFilePath,
                         Line = item.StartLine,
@@ -170,10 +172,13 @@ namespace Microsoft.AspNetCore.Diagnostics
         {
             var request = context.Request;
 
+            var details = GetErrorDetails(ex);
+            details.Reverse();
+
             var model = new ErrorPageModel
             {
                 Options = _options,
-                ErrorDetails = GetErrorDetails(ex).Reverse(),
+                ErrorDetails = details,
                 Query = request.Query,
                 Cookies = request.Cookies,
                 Headers = request.Headers
@@ -183,64 +188,48 @@ namespace Microsoft.AspNetCore.Diagnostics
             return errorPage.ExecuteAsync(context);
         }
 
-        private IEnumerable<ErrorDetails> GetErrorDetails(Exception ex)
+        private List<ErrorDetails> GetErrorDetails(Exception ex)
         {
+            var details = new List<ErrorDetails>();
+            var pdbReader = new PortablePdbReader();
+
             for (var scan = ex; scan != null; scan = scan.InnerException)
             {
-                yield return new ErrorDetails
+                details.Add(new ErrorDetails
                 {
                     Error = scan,
-                    StackFrames = StackFrames(scan)
-                };
+                    StackFrames = StackFrames(scan, pdbReader)
+                });
             }
+
+            return details;
         }
 
-        private IEnumerable<StackFrame> StackFrames(Exception ex)
+        private List<StackFrameModel> StackFrames(Exception ex, PortablePdbReader pdbReader)
         {
-            var stackTrace = ex.StackTrace;
-            if (!string.IsNullOrEmpty(stackTrace))
+            var frames = new List<StackFrameModel>();
+            var stackTrace = new StackTrace(ex, true);
+
+            foreach (var frame in stackTrace.GetFrames())
             {
-                var heap = new Chunk { Text = stackTrace + Environment.NewLine, End = stackTrace.Length + Environment.NewLine.Length };
-                for (var line = heap.Advance(Environment.NewLine); line.HasValue; line = heap.Advance(Environment.NewLine))
-                {
-                    yield return StackFrame(line);
-                }
+                var model = GetStackFrameModel(frame, pdbReader);
+
+                frames.Add(GetStackFrame(model));
             }
+
+            return frames;
         }
 
-        private StackFrame StackFrame(Chunk line)
+        internal StackFrameModel GetStackFrame(string function, string fileName, int lineNumber)
         {
-            line.Advance("  at ");
-            string function = line.Advance(" in ").ToString();
-
-            //exception message line format differences in .net and mono
-            //On .net : at ConsoleApplication.Program.Main(String[] args) in D:\Program.cs:line 16
-            //On Mono : at ConsoleApplication.Program.Main(String[] args) in d:\Program.cs:16
-            string file = !IsMono ?
-                line.Advance(":line ").ToString() :
-                line.Advance(":").ToString();
-
-            int lineNumber = line.ToInt32();
-
-            if (string.IsNullOrEmpty(file))
-            {
-                return GetStackFrame(
-                    // Handle stack trace lines like
-                    // "--- End of stack trace from previous location where exception from thrown ---"
-                    string.IsNullOrEmpty(function) ? line.ToString() : function,
-                    file: string.Empty,
-                    lineNumber: 0);
-            }
-            else
-            {
-                return GetStackFrame(function, file, lineNumber);
-            }
+            return GetStackFrame(new StackFrameModel { Function = function, File = fileName, Line = lineNumber });
         }
 
         // make it internal to enable unit testing
-        internal StackFrame GetStackFrame(string function, string file, int lineNumber)
+        private StackFrameModel GetStackFrame(StackFrameModel frame)
         {
-            var frame = new StackFrame { Function = function, File = file, Line = lineNumber };
+            var file = frame.File;
+            var lineNumber = frame.Line;
 
             if (string.IsNullOrEmpty(file))
             {
@@ -281,7 +270,7 @@ namespace Microsoft.AspNetCore.Diagnostics
 
         // make it internal to enable unit testing
         internal void ReadFrameContent(
-            StackFrame frame,
+            StackFrameModel frame,
             IEnumerable<string> allLines,
             int errorStartLineNumberInFile,
             int errorEndLineNumberInFile)
@@ -320,41 +309,113 @@ namespace Microsoft.AspNetCore.Diagnostics
             }
         }
 
-        internal class Chunk
+        private StackFrameModel GetStackFrameModel(StackFrame frame, PortablePdbReader pdbReader)
         {
-            public string Text { get; set; }
-            public int Start { get; set; }
-            public int End { get; set; }
+            var lineNumber = frame.GetFileLineNumber();
+            var fileName = frame.GetFileName();
+            var method = frame.GetMethod();
 
-            public bool HasValue => Text != null;
-
-            public Chunk Advance(string delimiter)
+            var model = new StackFrameModel
             {
-                int indexOf = HasValue ? Text.IndexOf(delimiter, Start, End - Start, StringComparison.Ordinal) : -1;
-                if (indexOf < 0)
+                Function = method.Name,
+                Line = lineNumber,
+                File = fileName
+            };
+
+            if (string.IsNullOrEmpty(model.File))
+            {
+#if NET451
+                // .NET Framework and older versions of mono don't support portable PDBs
+                // so we read it manually to get file name and line information
+                pdbReader.PopulateStackFrame(model, method, frame.GetILOffset());
+#endif
+            }
+
+            return model;
+        }
+
+        private class PortablePdbReader
+        {
+#if NET451
+            public void PopulateStackFrame(StackFrameModel model, MethodBase method, int IlOffset)
+            {
+                var pdbPath = GetPdbPath(method.Module.Assembly.Location);
+
+                if (string.IsNullOrEmpty(pdbPath))
                 {
-                    return new Chunk();
+                    return;
                 }
 
-                var chunk = new Chunk { Text = Text, Start = Start, End = indexOf };
-                Start = indexOf + delimiter.Length;
-                return chunk;
+                // REVIEW: Performance? Should we just cache this information?
+                using (var pdbStream = File.OpenRead(pdbPath))
+                {
+                    using (var metadataReaderProvider = MetadataReaderProvider.FromPortablePdbStream(pdbStream))
+                    {
+                        var metadataReader = metadataReaderProvider.GetMetadataReader();
+                        var methodToken = MetadataTokens.Handle(method.MetadataToken);
+
+                        Debug.Assert(methodToken.Kind == HandleKind.MethodDefinition);
+
+                        var handle = ((MethodDefinitionHandle)methodToken).ToDebugInformationHandle();
+
+                        if (!handle.IsNil)
+                        {
+                            var methodDebugInfo = metadataReader.GetMethodDebugInformation(handle);
+                            var sequencePoints = methodDebugInfo.GetSequencePoints();
+                            SequencePoint? bestPointSoFar = null;
+
+                            foreach (var point in sequencePoints)
+                            {
+                                if (point.Offset > IlOffset)
+                                {
+                                    break;
+                                }
+
+                                if (point.StartLine != SequencePoint.HiddenLine)
+                                {
+                                    bestPointSoFar = point;
+                                }
+                            }
+
+                            if (bestPointSoFar.HasValue)
+                            {
+                                model.Line = bestPointSoFar.Value.StartLine;
+                                model.File = metadataReader.GetString(metadataReader.GetDocument(bestPointSoFar.Value.Document).Name);
+                            }
+                        }
+                    }
+                }
             }
 
-            public override string ToString()
+            private static string GetPdbPath(string assemblyPath)
             {
-                return HasValue ? Text.Substring(Start, End - Start) : string.Empty;
-            }
+                if (string.IsNullOrEmpty(assemblyPath))
+                {
+                    return null;
+                }
 
-            public int ToInt32()
-            {
-                int value;
-                return HasValue && int.TryParse(
-                    Text.Substring(Start, End - Start),
-                    NumberStyles.Integer,
-                    CultureInfo.InvariantCulture,
-                    out value) ? value : 0;
+                if (File.Exists(assemblyPath))
+                {
+                    var peStream = File.OpenRead(assemblyPath);
+
+                    using (var peReader = new PEReader(peStream))
+                    {
+                        foreach (var entry in peReader.ReadDebugDirectory())
+                        {
+                            if (entry.Type == DebugDirectoryEntryType.CodeView)
+                            {
+                                var codeViewData = peReader.ReadCodeViewDebugDirectoryData(entry);
+
+                                string peDirectory = Path.GetDirectoryName(assemblyPath);
+                                return Path.Combine(peDirectory, Path.GetFileName(codeViewData.Path));
+                            }
+                        }
+                    }
+                }
+
+                return null;
             }
+#endif
         }
     }
 }
