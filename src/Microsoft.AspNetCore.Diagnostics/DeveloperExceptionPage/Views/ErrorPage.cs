@@ -124,7 +124,7 @@ WriteAttributeValue("", 512, CultureInfo.CurrentUICulture.TwoLetterISOLanguageNa
 
 #line 35 "ErrorPage.cshtml"
               
-                StackFrame firstFrame = null;
+                StackFrameModel firstFrame = null;
                 firstFrame = errorDetail.StackFrames.FirstOrDefault();
                 if (firstFrame != null)
                 {

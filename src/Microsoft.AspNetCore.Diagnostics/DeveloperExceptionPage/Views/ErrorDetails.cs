@@ -19,6 +19,6 @@ namespace Microsoft.AspNetCore.Diagnostics.Views
         /// <summary>
         /// The generated stack frames
         /// </summary>
-        public IEnumerable<StackFrame> StackFrames { get; set; }
+        public IEnumerable<StackFrameModel> StackFrames { get; set; }
     }
 }
