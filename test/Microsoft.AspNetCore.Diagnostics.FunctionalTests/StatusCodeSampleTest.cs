@@ -34,7 +34,7 @@ namespace Microsoft.AspNetCore.Diagnostics.FunctionalTests
         }
 
         [Fact]
-        public async Task StatusCodePageOptions_ExcludesSemicolon_AndReasonPhrase_WhenReasonPhrase_IsUnknown()
+        public async Task StatusCodePageOptions_ExcludesSemicolon_WhenReasonPhrase_IsUnknown()
         {
             //Arrange
             var httpStatusCode = 541;
@@ -44,7 +44,6 @@ namespace Microsoft.AspNetCore.Diagnostics.FunctionalTests
             var response = await Client.SendAsync(request);
 
             var statusCode = response.StatusCode;
-            var statusCodeReasonPhrase = ReasonPhrases.GetReasonPhrase(httpStatusCode);
 
             var responseBody = await response.Content.ReadAsStringAsync();
 
