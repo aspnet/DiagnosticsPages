@@ -6,12 +6,14 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.Views;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Internal;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.StackTrace.Sources;
@@ -188,13 +190,82 @@ namespace Microsoft.AspNetCore.Diagnostics
                 yield return new ErrorDetails
                 {
                     Error = scan,
-                    StackFrames = StackTraceHelper.GetFrames(ex)
-                        .Select(frame => GetStackFrame(frame.Method, frame.FilePath, frame.LineNumber))
+                    StackFrames = StackTraceHelper.GetFrames(ex).Select(GetStackFrame)
                 };
-            };
+            }
         }
 
-        // make it internal to enable unit testing
+        private StackFrame GetStackFrame(StackFrameInfo stackFrameInfo)
+        {
+            var methodDisplayString = GetMethodDisplayString(stackFrameInfo.StackFrame.GetMethod());
+            return GetStackFrame(methodDisplayString, stackFrameInfo.FilePath, stackFrameInfo.LineNumber);
+        }
+
+        // Internal for unit testing
+        internal static string GetMethodDisplayString(MethodBase method)
+        {
+            // Special case: no method available
+            if (method == null)
+            {
+                return string.Empty;
+            }
+
+            // Return type
+            var returnType = string.Empty;
+            var methodInfo = method as MethodInfo;
+            if (methodInfo != null)
+            {
+                returnType = TypeNameHelper.GetTypeDisplayName(methodInfo.ReturnType, fullName: false) + " ";
+            }
+
+            // Type name
+            var typeName = string.Empty;
+            var type = method.DeclaringType;
+            if (type != null)
+            {
+                typeName = TypeNameHelper.GetTypeDisplayName(type, fullName: false);
+                if (!string.IsNullOrEmpty(typeName) && !string.IsNullOrEmpty(type.Namespace))
+                {
+                    typeName = type.Namespace + "." + typeName;
+                }
+
+                if (!string.IsNullOrEmpty(typeName))
+                {
+                    typeName += ".";
+                }
+            }
+
+            // Method name
+            var methodName = method.Name;
+            if (method.IsGenericMethod)
+            {
+                var genericArguments = string.Join(", ", method.GetGenericArguments()
+                    .Select(arg => TypeNameHelper.GetTypeDisplayName(arg, fullName: false)));
+                methodName += "<" + genericArguments + ">";
+            }
+
+            // Method parameters
+            var parameters = method.GetParameters().Select(parameter =>
+            {
+                var parameterType = parameter.ParameterType;
+                var parameterString = "?";
+                if (parameterType != null)
+                {
+                    parameterString = TypeNameHelper.GetTypeDisplayName(parameterType, fullName: false);
+                }
+
+                if (parameter.IsOut)
+                {
+                    parameterString = "out " + parameterType;
+                }
+
+                return parameterString + " " + parameter.Name;
+            });
+
+            return $"{returnType}{typeName}{methodName}({string.Join(", ", parameters)})";
+        }
+
+        // make it internal to enable unit testingOk.
         internal StackFrame GetStackFrame(string method, string filePath, int lineNumber)
         {
             var stackFrame = new StackFrame
