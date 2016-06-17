@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -27,6 +28,42 @@ namespace Microsoft.AspNetCore.Diagnostics
 {
     public class DeveloperExceptionPageMiddlewareTest
     {
+        public static TheoryData GetMethodDisplayString_ReturnsTypeNameQualifiedMethodsData
+        {
+            get
+            {
+                var thisType = typeof(DeveloperExceptionPageMiddlewareTest);
+                var intParse = ((Func<string, int>)int.Parse).GetMethodInfo();
+                var dateTimeOffsetTryParse = typeof(DateTimeOffset).GetMethods()
+                    .First(m => m.Name == nameof(DateTimeOffset.TryParse) && m.GetParameters().Length == 2);
+                var genericTypeMethod = typeof(List<Process>).GetMethod(nameof(List<Process>.Remove));
+                var genericMethod = thisType.GetMethod(nameof(GenericMethod));
+                var byRefMethod = thisType.GetMethod(nameof(ByRefMethod));
+                var asyncMethod = thisType.GetMethod(nameof(AsyncMethod));
+
+                return new TheoryData<MethodBase, string>
+                {
+                    { intParse, "int System.int.Parse(string s)" },
+                    { dateTimeOffsetTryParse, "bool System.DateTimeOffset.TryParse(string input, out System.DateTimeOffset& result)" },
+                    { genericTypeMethod, "bool System.Collections.Generic.List<Process>.Remove(Process item)" },
+                    { genericMethod, $"Void {thisType}.{nameof(GenericMethod)}<TVal>(TVal value)" },
+                    { byRefMethod, $"decimal {thisType}.{nameof(ByRefMethod)}(int a, CultureInfo b, Int64& c)" },
+                    { asyncMethod, $"Task<object> {thisType}.{nameof(AsyncMethod)}(string name)" },
+                };
+            }
+        }
+
+        [Theory]
+        [MemberData(nameof(GetMethodDisplayString_ReturnsTypeNameQualifiedMethodsData))]
+        public void GetMethodDisplayString_ReturnsTypeNameQualifiedMethods(MethodBase method, string expected)
+        {
+            // Act
+            var actual = DeveloperExceptionPageMiddleware.GetMethodDisplayString(method);
+
+            // Assert
+            Assert.Equal(expected, actual);
+        }
+
         public static TheoryData RelativePathsData
         {
             get
@@ -454,5 +491,11 @@ namespace Microsoft.AspNetCore.Diagnostics
             Assert.Null(listener.DiagnosticHandledException?.HttpContext);
             Assert.Null(listener.DiagnosticHandledException?.Exception);
         }
+
+        public void GenericMethod<TVal>(TVal value) => value.ToString();
+
+        public decimal ByRefMethod(int a, CultureInfo b, ref long c) => a + c;
+
+        public async Task<object> AsyncMethod(string name) => await Task.FromResult(0);
     }
 }
