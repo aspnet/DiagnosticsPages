@@ -3,29 +3,19 @@
   "description": "Builds the pages for the Diagnostics projects. Runs in build.cmd.",
   "buildOptions": {
     "warningsAsErrors": true,
-    "emitEntryPoint": true,
-    "keyFile": "../../tools/Key.snk"
-  },
-  "packOptions": {
-    "repository": {
-      "type": "git",
-      "url": "git://github.com/aspnet/diagnostics"
-    }
+    "emitEntryPoint": true
   },
   "dependencies": {
-    "Microsoft.AspNetCore.Razor": "1.1.0-*"
+    "Microsoft.AspNetCore.Razor": "1.0.0"
   },
   "frameworks": {
     "netcoreapp1.0": {
       "dependencies": {
         "Microsoft.NETCore.App": {
-          "version": "1.0.0-*",
+          "version": "1.0.0",
           "type": "platform"
         }
       }
     }
-  },
-  "commands": {
-    "run": "PageGenerator"
   }
 }

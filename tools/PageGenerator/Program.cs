@@ -22,8 +22,7 @@ namespace PageGenerator
             }
             var diagnosticsDir = args[0];
 
-            var viewDirectories = Directory.EnumerateDirectories(
-                Path.GetDirectoryName(diagnosticsDir), "Views", SearchOption.AllDirectories);
+            var viewDirectories = Directory.EnumerateDirectories(diagnosticsDir, "Views", SearchOption.AllDirectories);
 
             var fileCount = 0;
             foreach (var viewDir in viewDirectories)
@@ -42,8 +41,8 @@ namespace PageGenerator
                 foreach (var fileName in cshtmlFiles)
                 {
                     Console.WriteLine("    Generating code file for view {0}...", Path.GetFileName(fileName));
-                    var nameSpace = viewDir.Split(Path.DirectorySeparatorChar)[1];
-                    GenerateCodeFile(fileName, $"{nameSpace}.Views");
+                    var rootNamespace = Path.GetDirectoryName(diagnosticsDir);
+                    GenerateCodeFile(fileName, $"{rootNamespace}.Views");
                     Console.WriteLine("      Done!");
                     fileCount++;
                 }
