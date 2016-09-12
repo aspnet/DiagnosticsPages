@@ -9,6 +9,6 @@ namespace Microsoft.AspNetCore.Diagnostics
     {
         public Exception Error { get; set; }
 
-        public String Path { get; set; }
+        public string Path { get; set; }
     }
 }
