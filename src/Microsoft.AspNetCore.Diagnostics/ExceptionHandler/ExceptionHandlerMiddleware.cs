@@ -22,8 +22,8 @@ namespace Microsoft.AspNetCore.Diagnostics
         private readonly DiagnosticSource _diagnosticSource;
 
         public ExceptionHandlerMiddleware(
-            RequestDelegate next, 
-            ILoggerFactory loggerFactory, 
+            RequestDelegate next,
+            ILoggerFactory loggerFactory,
             IOptions<ExceptionHandlerOptions> options,
             DiagnosticSource diagnosticSource)
         {
@@ -56,7 +56,7 @@ namespace Microsoft.AspNetCore.Diagnostics
 
                 PathString originalPath = context.Request.Path;
                 if (_options.ExceptionHandlingPath.HasValue)
-                {                  
+                {
                     context.Request.Path = _options.ExceptionHandlingPath;
                 }
                 try
