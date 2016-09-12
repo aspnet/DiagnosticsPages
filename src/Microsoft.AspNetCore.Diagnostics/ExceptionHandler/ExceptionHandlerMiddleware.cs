@@ -56,7 +56,7 @@ namespace Microsoft.AspNetCore.Diagnostics
 
                 PathString originalPath = context.Request.Path;
                 if (_options.ExceptionHandlingPath.HasValue)
-                {
+                {                  
                     context.Request.Path = _options.ExceptionHandlingPath;
                 }
                 try
@@ -65,6 +65,7 @@ namespace Microsoft.AspNetCore.Diagnostics
                     var exceptionHandlerFeature = new ExceptionHandlerFeature()
                     {
                         Error = ex,
+                        Path = originalPath.Value
                     };
                     context.Features.Set<IExceptionHandlerFeature>(exceptionHandlerFeature);
                     context.Response.StatusCode = 500;

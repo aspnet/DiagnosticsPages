@@ -8,5 +8,7 @@ namespace Microsoft.AspNetCore.Diagnostics
     public class ExceptionHandlerFeature : IExceptionHandlerFeature
     {
         public Exception Error { get; set; }
+
+        public String Path { get; set; }
     }
 }
