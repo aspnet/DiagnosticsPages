@@ -5,8 +5,14 @@ using System;
 
 namespace Microsoft.AspNetCore.Diagnostics
 {
+    /// <summary>
+    /// Represents an exception handler with the original path of the request.
+    /// </summary>
     public interface IExceptionHandlerPathFeature : IExceptionHandlerFeature
     {
+        /// <summary>
+        /// The path of request that caused the exception. The value is un-escaped.
+        /// </summary>
         string Path { get; }
     }
 }
