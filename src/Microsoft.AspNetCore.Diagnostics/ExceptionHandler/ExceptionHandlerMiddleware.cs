@@ -65,7 +65,7 @@ namespace Microsoft.AspNetCore.Diagnostics
                     var exceptionHandlerFeature = new ExceptionHandlerFeature()
                     {
                         Error = ex,
-                        Path = originalPath.Value
+                        Path = originalPath.Value,
                     };
                     context.Features.Set<IExceptionHandlerFeature>(exceptionHandlerFeature);
                     context.Features.Set<IExceptionHandlerPathFeature>(exceptionHandlerFeature);
