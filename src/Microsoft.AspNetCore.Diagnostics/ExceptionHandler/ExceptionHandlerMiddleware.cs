@@ -68,6 +68,7 @@ namespace Microsoft.AspNetCore.Diagnostics
                         Path = originalPath.Value
                     };
                     context.Features.Set<IExceptionHandlerFeature>(exceptionHandlerFeature);
+                    context.Features.Set<IExceptionHandlerPathFeature>(exceptionHandlerFeature);
                     context.Response.StatusCode = 500;
                     context.Response.OnStarting(_clearCacheHeadersDelegate, context.Response);
 
