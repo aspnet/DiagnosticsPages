@@ -4,8 +4,3 @@
 using System.Reflection;
 using System.Resources;
 
-[assembly: AssemblyMetadata("Serviceable", "True")]
-[assembly: NeutralResourcesLanguage("en-US")]
-[assembly: AssemblyCompany("Microsoft Corporation.")]
-[assembly: AssemblyCopyright("© Microsoft Corporation. All rights reserved.")]
-[assembly: AssemblyProduct("Microsoft ASP.NET Core")]
