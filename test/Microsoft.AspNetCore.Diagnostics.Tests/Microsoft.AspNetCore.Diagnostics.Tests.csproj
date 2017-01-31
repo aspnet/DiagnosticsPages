@@ -8,9 +8,7 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Resources\**" Exclude="$(DefaultItemExcludes)" />
-    <Content Include="TestFiles\**\*">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <Content Include="TestFiles\**\*" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ItemGroup>

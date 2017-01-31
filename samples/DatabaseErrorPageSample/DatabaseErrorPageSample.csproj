@@ -13,8 +13,6 @@
     <PackageReference Include="Microsoft.AspNetCore.Server.IISIntegration" Version="1.2.0-*" />
     <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="1.2.0-*" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="1.2.0-*" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="1.0.0-msbuild*" PrivateAssets="All"/>
-    <DotNetCliToolReference Include="Microsoft.EntityFrameworkCore.Tools.DotNet" Version="1.0.0-msbuild*" />
   </ItemGroup>
 
 </Project>
