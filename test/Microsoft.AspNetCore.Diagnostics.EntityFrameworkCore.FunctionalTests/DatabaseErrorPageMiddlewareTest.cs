@@ -77,7 +77,7 @@ namespace Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore.Tests
             }
         }
 
-        [ConditionalTheory]
+        [ConditionalFact(Skip = "aspnet/Diagnostics#350")]
         [FrameworkSkipCondition(RuntimeFrameworks.Mono)]
         public async Task Existing_database_not_using_migrations_exception_passes_thru()
         {
@@ -105,7 +105,7 @@ namespace Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore.Tests
             }
         }
 
-        [ConditionalTheory]
+        [ConditionalFact(Skip = "aspnet/Diagnostics#350")]
         [FrameworkSkipCondition(RuntimeFrameworks.Mono)]
         public async Task Error_page_displayed_no_migrations()
         {
@@ -133,7 +133,7 @@ namespace Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore.Tests
             }
         }
 
-        [ConditionalTheory]
+        [ConditionalFact(Skip = "aspnet/Diagnostics#350")]
         [FrameworkSkipCondition(RuntimeFrameworks.Mono)]
         public async Task Error_page_displayed_pending_migrations()
         {
@@ -165,7 +165,7 @@ namespace Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore.Tests
             }
         }
 
-        [ConditionalTheory]
+        [ConditionalFact(Skip = "aspnet/Diagnostics#350")]
         [FrameworkSkipCondition(RuntimeFrameworks.Mono)]
         public async Task Error_page_displayed_pending_model_changes()
         {
@@ -196,7 +196,7 @@ namespace Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore.Tests
             }
         }
 
-        [ConditionalTheory]
+        [ConditionalFact(Skip = "aspnet/Diagnostics#350")]
         [FrameworkSkipCondition(RuntimeFrameworks.Mono)]
         public async Task Error_page_then_apply_migrations()
         {
@@ -247,7 +247,7 @@ namespace Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore.Tests
             }
         }
 
-        [ConditionalTheory]
+        [ConditionalFact(Skip = "aspnet/Diagnostics#350")]
         [FrameworkSkipCondition(RuntimeFrameworks.Mono)]
         public async Task Customize_migrations_end_point()
         {
@@ -285,7 +285,7 @@ namespace Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore.Tests
             }
         }
 
-        [ConditionalTheory]
+        [ConditionalFact(Skip = "aspnet/Diagnostics#350")]
         [FrameworkSkipCondition(RuntimeFrameworks.Mono)]
         public async Task Pass_thru_when_context_not_in_services()
         {
@@ -340,7 +340,7 @@ namespace Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore.Tests
             }
         }
 
-        [ConditionalTheory]
+        [ConditionalFact(Skip = "aspnet/Diagnostics#350")]
         [FrameworkSkipCondition(RuntimeFrameworks.Mono)]
         public async Task Pass_thru_when_exception_in_logic()
         {
@@ -372,7 +372,7 @@ namespace Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore.Tests
             }
         }
 
-        [ConditionalTheory]
+        [ConditionalFact(Skip = "aspnet/Diagnostics#350")]
         [FrameworkSkipCondition(RuntimeFrameworks.Mono)]
         public async Task Error_page_displayed_when_exception_wrapped()
         {

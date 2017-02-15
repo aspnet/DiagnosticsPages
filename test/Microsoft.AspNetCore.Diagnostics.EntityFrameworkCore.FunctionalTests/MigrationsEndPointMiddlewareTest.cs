@@ -50,14 +50,14 @@ namespace Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore.Tests
             }
         }
 
-        [ConditionalTheory]
+        [ConditionalFact]
         [FrameworkSkipCondition(RuntimeFrameworks.Mono)]
         public async Task Migration_request_default_path()
         {
             await Migration_request(useCustomPath: false);
         }
 
-        [ConditionalTheory]
+        [ConditionalFact]
         [FrameworkSkipCondition(RuntimeFrameworks.Mono)]
         public async Task Migration_request_custom_path()
         {
@@ -187,7 +187,7 @@ namespace Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore.Tests
             Assert.True(content.Length > 512);
         }
 
-        [ConditionalTheory]
+        [ConditionalFact]
         [FrameworkSkipCondition(RuntimeFrameworks.Mono)]
         public async Task Exception_while_applying_migrations()
         {
