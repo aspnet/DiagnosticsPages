@@ -78,7 +78,8 @@ namespace Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore.Tests
         }
 
         [ConditionalFact(Skip = "aspnet/Diagnostics#350")]
-        [FrameworkSkipCondition(RuntimeFrameworks.Mono)]
+        [OSSkipCondition(OperatingSystems.Linux)]
+        [OSSkipCondition(OperatingSystems.MacOSX)]
         public async Task Existing_database_not_using_migrations_exception_passes_thru()
         {
             TestServer server = SetupTestServer<BloggingContext, DatabaseErrorButNoMigrationsMiddleware>();
@@ -106,7 +107,8 @@ namespace Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore.Tests
         }
 
         [ConditionalFact(Skip = "aspnet/Diagnostics#350")]
-        [FrameworkSkipCondition(RuntimeFrameworks.Mono)]
+        [OSSkipCondition(OperatingSystems.Linux)]
+        [OSSkipCondition(OperatingSystems.MacOSX)]
         public async Task Error_page_displayed_no_migrations()
         {
             TestServer server = SetupTestServer<BloggingContext, NoMigrationsMiddleware>();
@@ -134,7 +136,8 @@ namespace Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore.Tests
         }
 
         [ConditionalFact(Skip = "aspnet/Diagnostics#350")]
-        [FrameworkSkipCondition(RuntimeFrameworks.Mono)]
+        [OSSkipCondition(OperatingSystems.Linux)]
+        [OSSkipCondition(OperatingSystems.MacOSX)]
         public async Task Error_page_displayed_pending_migrations()
         {
             TestServer server = SetupTestServer<BloggingContextWithMigrations, PendingMigrationsMiddleware>();
@@ -166,7 +169,8 @@ namespace Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore.Tests
         }
 
         [ConditionalFact(Skip = "aspnet/Diagnostics#350")]
-        [FrameworkSkipCondition(RuntimeFrameworks.Mono)]
+        [OSSkipCondition(OperatingSystems.Linux)]
+        [OSSkipCondition(OperatingSystems.MacOSX)]
         public async Task Error_page_displayed_pending_model_changes()
         {
             TestServer server = SetupTestServer<BloggingContextWithPendingModelChanges, PendingModelChangesMiddleware>();
@@ -197,7 +201,8 @@ namespace Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore.Tests
         }
 
         [ConditionalFact(Skip = "aspnet/Diagnostics#350")]
-        [FrameworkSkipCondition(RuntimeFrameworks.Mono)]
+        [OSSkipCondition(OperatingSystems.Linux)]
+        [OSSkipCondition(OperatingSystems.MacOSX)]
         public async Task Error_page_then_apply_migrations()
         {
             TestServer server = SetupTestServer<BloggingContextWithMigrations, ApplyMigrationsMiddleware>();
@@ -248,7 +253,8 @@ namespace Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore.Tests
         }
 
         [ConditionalFact(Skip = "aspnet/Diagnostics#350")]
-        [FrameworkSkipCondition(RuntimeFrameworks.Mono)]
+        [OSSkipCondition(OperatingSystems.Linux)]
+        [OSSkipCondition(OperatingSystems.MacOSX)]
         public async Task Customize_migrations_end_point()
         {
             var migrationsEndpoint = "/MyCustomEndPoints/ApplyMyMigrationsHere";
@@ -286,7 +292,8 @@ namespace Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore.Tests
         }
 
         [ConditionalFact(Skip = "aspnet/Diagnostics#350")]
-        [FrameworkSkipCondition(RuntimeFrameworks.Mono)]
+        [OSSkipCondition(OperatingSystems.Linux)]
+        [OSSkipCondition(OperatingSystems.MacOSX)]
         public async Task Pass_thru_when_context_not_in_services()
         {
             using (var database = SqlServerTestStore.CreateScratch())
@@ -341,7 +348,8 @@ namespace Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore.Tests
         }
 
         [ConditionalFact(Skip = "aspnet/Diagnostics#350")]
-        [FrameworkSkipCondition(RuntimeFrameworks.Mono)]
+        [OSSkipCondition(OperatingSystems.Linux)]
+        [OSSkipCondition(OperatingSystems.MacOSX)]
         public async Task Pass_thru_when_exception_in_logic()
         {
             using (var database = SqlServerTestStore.CreateScratch())
@@ -373,7 +381,8 @@ namespace Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore.Tests
         }
 
         [ConditionalFact(Skip = "aspnet/Diagnostics#350")]
-        [FrameworkSkipCondition(RuntimeFrameworks.Mono)]
+        [OSSkipCondition(OperatingSystems.Linux)]
+        [OSSkipCondition(OperatingSystems.MacOSX)]
         public async Task Error_page_displayed_when_exception_wrapped()
         {
             TestServer server = SetupTestServer<BloggingContext, WrappedExceptionMiddleware>();
