@@ -39,8 +39,21 @@ namespace Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore
         /// The <see cref="ILoggerFactory"/> for the application. This middleware both produces logging messages and
         /// consumes them to detect database related exception.
         /// </param>
-        /// <param name="options">The options to control what information is displayed on the error page.</param>
         public DatabaseErrorPageMiddleware([NotNull] RequestDelegate next, [NotNull] IServiceProvider serviceProvider, [NotNull] ILoggerFactory loggerFactory, [NotNull] IOptions<DatabaseErrorPageOptions> options)
+            : this(next, serviceProvider, loggerFactory, new DatabaseErrorPageOptions())
+        { }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DatabaseErrorPageMiddleware"/> class
+        /// </summary>
+        /// <param name="next">Delegate to execute the next piece of middleware in the request pipeline.</param>
+        /// <param name="serviceProvider">The <see cref="IServiceProvider"/> to resolve services from.</param>
+        /// <param name="loggerFactory">
+        /// The <see cref="ILoggerFactory"/> for the application. This middleware both produces logging messages and 
+        /// consumes them to detect database related exception.
+        /// </param>
+        /// <param name="options">The options to control what information is displayed on the error page.</param>
+        public DatabaseErrorPageMiddleware([NotNull] RequestDelegate next, [NotNull] IServiceProvider serviceProvider, [NotNull] ILoggerFactory loggerFactory, [NotNull] DatabaseErrorPageOptions options)
         {
             Check.NotNull(next, nameof(next));
             Check.NotNull(serviceProvider, nameof(serviceProvider));
@@ -49,7 +62,7 @@ namespace Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore
 
             _next = next;
             _serviceProvider = serviceProvider;
-            _options = options.Value;
+            _options = options;
             _logger = loggerFactory.CreateLogger<DatabaseErrorPageMiddleware>();
 
             _loggerProvider = new DataStoreErrorLoggerProvider();

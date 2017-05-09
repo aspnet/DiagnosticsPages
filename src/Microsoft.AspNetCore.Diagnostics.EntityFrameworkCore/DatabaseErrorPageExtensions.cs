@@ -3,7 +3,6 @@
 
 using System;
 using Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 
 namespace Microsoft.AspNetCore.Builder
 {
@@ -46,7 +45,7 @@ namespace Microsoft.AspNetCore.Builder
                 throw new ArgumentNullException(nameof(options));
             }
 
-            app = app.UseMiddleware<DatabaseErrorPageMiddleware>(Options.Create(options));
+            app = app.UseMiddleware<DatabaseErrorPageMiddleware>(options);
 
             app.UseMigrationsEndPoint(new MigrationsEndPointOptions
             {
