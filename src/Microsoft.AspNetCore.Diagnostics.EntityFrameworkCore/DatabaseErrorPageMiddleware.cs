@@ -69,6 +69,16 @@ namespace Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore
 
             try
             {
+#if NET461
+                // TODO This probably isn't the correct place for this workaround, it
+                //      needs to be called before anything is written to CallContext
+                // http://msdn.microsoft.com/en-us/library/dn458353(v=vs.110).aspx
+                System.Configuration.ConfigurationManager.GetSection("system.xml/xmlReader");
+#elif NETSTANDARD2_0
+#else
+#error Target frameworks need to be updated.
+#endif                
+                
                 _loggerProvider.Logger.StartLoggingForCurrentCallContext();
 
                 await _next(context);
