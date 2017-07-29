@@ -45,7 +45,7 @@ namespace Microsoft.AspNetCore.Diagnostics
             }
             catch (Exception ex)
             {
-                _logger.LogError(0, ex, "An unhandled exception has occurred: " + ex.Message);
+                _logger.LogError(0, ex, "An unhandled exception has occurred: " + ex.ToString());
                 // We can't do anything if the response has already started, just abort.
                 if (context.Response.HasStarted)
                 {
