@@ -121,7 +121,7 @@ namespace Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore
             {
                 var message = Strings.FormatMigrationsEndPointMiddleware_InvalidContextType(contextTypeName);
 
-                logger.InvalidContextType(contextType);
+                logger.InvalidContextType(contextTypeName);
 
                 await WriteErrorToResponse(context.Response, message);
 

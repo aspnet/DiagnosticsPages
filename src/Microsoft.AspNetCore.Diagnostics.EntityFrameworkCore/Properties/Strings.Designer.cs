@@ -235,34 +235,6 @@ namespace Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore
             => GetString("DatabaseErrorPage_ApplyMigrationsCommandCLI");
 
         /// <summary>
-        /// Migrations successfully applied for context '{0}'.
-        /// </summary>
-        internal static string MigrationsEndPointMiddleware_Applied
-        {
-            get => GetString("MigrationsEndPointMiddleware_Applied");
-        }
-
-        /// <summary>
-        /// Migrations successfully applied for context '{0}'.
-        /// </summary>
-        internal static string FormatMigrationsEndPointMiddleware_Applied(object p0)
-            => string.Format(CultureInfo.CurrentCulture, GetString("MigrationsEndPointMiddleware_Applied"), p0);
-
-        /// <summary>
-        /// Request is valid, applying migrations for context '{0}'.
-        /// </summary>
-        internal static string MigrationsEndPointMiddleware_ApplyingMigrations
-        {
-            get => GetString("MigrationsEndPointMiddleware_ApplyingMigrations");
-        }
-
-        /// <summary>
-        /// Request is valid, applying migrations for context '{0}'.
-        /// </summary>
-        internal static string FormatMigrationsEndPointMiddleware_ApplyingMigrations(object p0)
-            => string.Format(CultureInfo.CurrentCulture, GetString("MigrationsEndPointMiddleware_ApplyingMigrations"), p0);
-
-        /// <summary>
         /// The context type '{0}' was not found in services. This usually means the context was not registered in services during startup. You probably want to call AddScoped&lt;{0}&gt;() inside the UseServices(...) call in your application startup code.
         /// </summary>
         internal static string MigrationsEndPointMiddleware_ContextNotRegistered
@@ -319,20 +291,6 @@ namespace Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore
             => GetString("MigrationsEndPointMiddleware_NoContextType");
 
         /// <summary>
-        /// Request path matched the path configured for this migrations endpoint ({0}). Attempting to process the migrations request.
-        /// </summary>
-        internal static string MigrationsEndPointMiddleware_RequestPathMatched
-        {
-            get => GetString("MigrationsEndPointMiddleware_RequestPathMatched");
-        }
-
-        /// <summary>
-        /// Request path matched the path configured for this migrations endpoint ({0}). Attempting to process the migrations request.
-        /// </summary>
-        internal static string FormatMigrationsEndPointMiddleware_RequestPathMatched(object p0)
-            => string.Format(CultureInfo.CurrentCulture, GetString("MigrationsEndPointMiddleware_RequestPathMatched"), p0);
-
-        /// <summary>
         /// A database operation failed while processing the request.
         /// </summary>
         internal static string DatabaseErrorPage_Title
@@ -347,34 +305,6 @@ namespace Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore
             => GetString("DatabaseErrorPage_Title");
 
         /// <summary>
-        /// {0} occurred, checking if Entity Framework recorded this exception as resulting from a failed database operation.
-        /// </summary>
-        internal static string DatabaseErrorPage_AttemptingToMatchException
-        {
-            get => GetString("DatabaseErrorPage_AttemptingToMatchException");
-        }
-
-        /// <summary>
-        /// {0} occurred, checking if Entity Framework recorded this exception as resulting from a failed database operation.
-        /// </summary>
-        internal static string FormatDatabaseErrorPage_AttemptingToMatchException(object p0)
-            => string.Format(CultureInfo.CurrentCulture, GetString("DatabaseErrorPage_AttemptingToMatchException"), p0);
-
-        /// <summary>
-        /// Entity Framework recorded that the current exception was due to a failed database operation. Attempting to show database error page.
-        /// </summary>
-        internal static string DatabaseErrorPage_Matched
-        {
-            get => GetString("DatabaseErrorPage_Matched");
-        }
-
-        /// <summary>
-        /// Entity Framework recorded that the current exception was due to a failed database operation. Attempting to show database error page.
-        /// </summary>
-        internal static string FormatDatabaseErrorPage_Matched()
-            => GetString("DatabaseErrorPage_Matched");
-
-        /// <summary>
         /// Entity Framework did not record any exceptions due to failed database operations. This means the current exception is not a failed Entity Framework database operation, or the current exception occurred from a DbContext that was not obtained from request services.
         /// </summary>
         internal static string DatabaseErrorPage_NoRecordedException
@@ -387,34 +317,6 @@ namespace Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore
         /// </summary>
         internal static string FormatDatabaseErrorPage_NoRecordedException()
             => GetString("DatabaseErrorPage_NoRecordedException");
-
-        /// <summary>
-        /// The target data store is not a relational database. Skipping the database error page.
-        /// </summary>
-        internal static string DatabaseErrorPage_NotRelationalDatabase
-        {
-            get => GetString("DatabaseErrorPage_NotRelationalDatabase");
-        }
-
-        /// <summary>
-        /// The target data store is not a relational database. Skipping the database error page.
-        /// </summary>
-        internal static string FormatDatabaseErrorPage_NotRelationalDatabase()
-            => GetString("DatabaseErrorPage_NotRelationalDatabase");
-
-        /// <summary>
-        /// The current exception (and its inner exceptions) do not match the last exception Entity Framework recorded due to a failed database operation. This means the database operation exception was handled and another exception occurred later in the request.
-        /// </summary>
-        internal static string DatabaseErrorPage_NoMatch
-        {
-            get => GetString("DatabaseErrorPage_NoMatch");
-        }
-
-        /// <summary>
-        /// The current exception (and its inner exceptions) do not match the last exception Entity Framework recorded due to a failed database operation. This means the database operation exception was handled and another exception occurred later in the request.
-        /// </summary>
-        internal static string FormatDatabaseErrorPage_NoMatch()
-            => GetString("DatabaseErrorPage_NoMatch");
 
         /// <summary>
         /// PM&gt; Add-Migration [migration name]

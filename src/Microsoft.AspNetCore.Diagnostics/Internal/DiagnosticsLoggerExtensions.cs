@@ -8,43 +8,27 @@ namespace Microsoft.AspNetCore.Diagnostics.Internal
 {
     internal static class DiagnosticsLoggerExtensions
     {
-        private static readonly Action<ILogger, Exception, Exception> _unhandledException;
-        private static readonly Action<ILogger, Exception> _responseStartedErrorHandler;
-        private static readonly Action<ILogger, Exception, Exception> _errorHandlerException;
-        private static readonly Action<ILogger, Exception> _responseStartedErrorPageMiddleware;
-        private static readonly Action<ILogger, Exception, Exception> _displayErrorPageException;
+        // ExceptionHandlerMiddleware & DeveloperExceptionPageMiddleware
+        private static readonly Action<ILogger, Exception> _unhandledException =
+            LoggerMessage.Define(LogLevel.Error, new EventId(1, "UnhandledException"), "An unhandled exception has occurred while executing the request.");
 
-        static DiagnosticsLoggerExtensions()
-        {
-            _unhandledException = LoggerMessage.Define<Exception>(
-                LogLevel.Error,
-                1,
-                "An unhandled exception has occurred while executing the request: {Exception}");
+        // ExceptionHandlerMiddleware
+        private static readonly Action<ILogger, Exception> _responseStartedErrorHandler =
+            LoggerMessage.Define(LogLevel.Warning, new EventId(2, "ResponseStarted"), "The response has already started, the error handler will not be executed.");
 
-            _responseStartedErrorHandler = LoggerMessage.Define(
-                LogLevel.Warning,
-                2,
-                "The response has already started, the error handler will not be executed.");
+        private static readonly Action<ILogger, Exception> _errorHandlerException =
+            LoggerMessage.Define(LogLevel.Error, new EventId(3, "Exception"), "An exception was thrown attempting to execute the error handler.");
 
-            _errorHandlerException = LoggerMessage.Define<Exception>(
-                LogLevel.Error,
-                3,
-                "An exception was thrown attempting to execute the error handler: {Exception}");
+        // DeveloperExceptionPageMiddleware
+        private static readonly Action<ILogger, Exception> _responseStartedErrorPageMiddleware =
+            LoggerMessage.Define(LogLevel.Warning, new EventId(2, "ResponseStarted"), "The response has already started, the error page middleware will not be executed.");
 
-            _responseStartedErrorPageMiddleware = LoggerMessage.Define(
-                LogLevel.Warning,
-                2,
-                "The response has already started, the error page middleware will not be executed.");
-
-            _displayErrorPageException = LoggerMessage.Define<Exception>(
-                LogLevel.Error,
-                3,
-                "An exception was thrown attempting to display the error page: {Exception}");
-        }
+        private static readonly Action<ILogger, Exception> _displayErrorPageException =
+            LoggerMessage.Define(LogLevel.Error, new EventId(3, "DisplayErrorPageException"), "An exception was thrown attempting to display the error page.");
 
         public static void UnhandledException(this ILogger logger, Exception exception)
         {
-            _unhandledException(logger, exception, null);
+            _unhandledException(logger, exception);
         }
 
         public static void ResponseStartedErrorHandler(this ILogger logger)
@@ -54,7 +38,7 @@ namespace Microsoft.AspNetCore.Diagnostics.Internal
 
         public static void ErrorHandlerException(this ILogger logger, Exception exception)
         {
-            _errorHandlerException(logger, exception, null);
+            _errorHandlerException(logger, exception);
         }
 
         public static void ResponseStartedErrorPageMiddleware(this ILogger logger)
@@ -64,7 +48,7 @@ namespace Microsoft.AspNetCore.Diagnostics.Internal
 
         public static void DisplayErrorPageException(this ILogger logger, Exception exception)
         {
-            _displayErrorPageException(logger, exception, null);
+            _displayErrorPageException(logger, exception);
         }
     }
 }
