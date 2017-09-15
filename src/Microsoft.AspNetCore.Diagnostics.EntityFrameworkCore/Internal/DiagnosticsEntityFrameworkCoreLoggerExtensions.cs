@@ -41,7 +41,7 @@ namespace Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore.Internal
 
         private static readonly Action<ILogger, string, Exception> _migrationsEndPointMiddlewareException = LoggerMessage.Define<string>(
             LogLevel.Error,
-            new EventId(7, "Exception"),
+            new EventId(7, "MigrationsEndPointException"),
             "An error occurred while applying the migrations for '{ContextTypeName}'. See InnerException for details:");
 
         // DatabaseErrorPageMiddleware
@@ -52,17 +52,17 @@ namespace Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore.Internal
 
         private static readonly Action<ILogger, Exception> _noRecordedException = LoggerMessage.Define(
             LogLevel.Debug,
-            new EventId(2, "AttemptingToMatchException"),
+            new EventId(2, "NoRecordedException"),
             "Entity Framework did not record any exceptions due to failed database operations. This means the current exception is not a failed Entity Framework database operation, or the current exception occurred from a DbContext that was not obtained from request services.");
 
         private static readonly Action<ILogger, Exception> _noMatch = LoggerMessage.Define(
             LogLevel.Debug,
-            new EventId(3, "NoMatch"),
+            new EventId(3, "NoMatchFound"),
             "The current exception (and its inner exceptions) do not match the last exception Entity Framework recorded due to a failed database operation. This means the database operation exception was handled and another exception occurred later in the request.");
 
         private static readonly Action<ILogger, Exception> _matched = LoggerMessage.Define(
             LogLevel.Debug,
-            new EventId(4, "Matched"),
+            new EventId(4, "MatchFound"),
             "Entity Framework recorded that the current exception was due to a failed database operation. Attempting to show database error page.");
 
         private static readonly Action<ILogger, string, Exception> _contextNotRegisteredDatabaseErrorPageMiddleware = LoggerMessage.Define<string>(
@@ -77,7 +77,7 @@ namespace Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore.Internal
 
         private static readonly Action<ILogger, Exception> _databaseErrorPageMiddlewareException = LoggerMessage.Define(
             LogLevel.Error,
-            new EventId(7, "Exception"),
+            new EventId(7, "DatabaseErrorPageException"),
             "An exception occurred while calculating the database error page content. Skipping display of the database error page.");
 
         public static void NoContextType(this ILogger logger)
