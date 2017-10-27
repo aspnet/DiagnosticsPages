@@ -247,4 +247,7 @@
   <data name="RuntimeInfoPage_Environment" xml:space="preserve">
     <value>Environment:</value>
   </data>
+  <data name="ExceptionHandlerOptions_NotConfiguredCorrectly" xml:space="preserve">
+    <value>The exception handler middleware options 'ExceptionHandlingPath' and 'ExceptionHandler' are both null. Please set either both or at least the 'ExceptionHandlingPath' when using 'app.UseExceptionHandler()'.</value>
+  </data>
 </root>
