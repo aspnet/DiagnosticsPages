@@ -505,13 +505,13 @@ namespace Microsoft.AspNetCore.Diagnostics
                 .Configure(app =>
                 {
                     diagnosticListener = app.ApplicationServices.GetRequiredService<DiagnosticListener>();
-                    
+
                     // Act
                     var exception = Assert.Throws<InvalidOperationException>(() => app.UseExceptionHandler());
-                    
+
                     // Assert
-                    Assert.Equal($"The exception handler middleware options 'ExceptionHandlingPath' and 'ExceptionHandler' are both null." +
-                        $" Please set either both or at least the 'ExceptionHandlingPath' when using 'app.UseExceptionHandler()'.",
+                    Assert.Equal($"An error occurred when configuring the exception handler middleware. " +
+                        $"Either the 'ExceptionHandlingPath' or the 'ExceptionHandler' option must be set in 'UseExceptionHandler()'.",
                         exception.Message);
                 });
         }

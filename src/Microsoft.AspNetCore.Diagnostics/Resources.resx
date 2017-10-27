@@ -248,6 +248,6 @@
     <value>Environment:</value>
   </data>
   <data name="ExceptionHandlerOptions_NotConfiguredCorrectly" xml:space="preserve">
-    <value>The exception handler middleware options 'ExceptionHandlingPath' and 'ExceptionHandler' are both null. Please set either both or at least the 'ExceptionHandlingPath' when using 'app.UseExceptionHandler()'.</value>
+    <value>An error occurred when configuring the exception handler middleware. Either the 'ExceptionHandlingPath' or the 'ExceptionHandler' option must be set in 'UseExceptionHandler()'.</value>
   </data>
 </root>

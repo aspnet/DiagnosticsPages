@@ -585,7 +585,7 @@ namespace Microsoft.AspNetCore.Diagnostics
             => GetString("RuntimeInfoPage_Environment");
 
         /// <summary>
-        /// The exception handler middleware options 'ExceptionHandlingPath' and 'ExceptionHandler' are both null. Please set either both or at least the 'ExceptionHandlingPath' when using 'app.UseExceptionHandler()'.
+        /// An error occurred when configuring the exception handler middleware. Either the 'ExceptionHandlingPath' or the 'ExceptionHandler' option must be set in 'UseExceptionHandler()'.
         /// </summary>
         internal static string ExceptionHandlerOptions_NotConfiguredCorrectly
         {
@@ -593,7 +593,7 @@ namespace Microsoft.AspNetCore.Diagnostics
         }
 
         /// <summary>
-        /// The exception handler middleware options 'ExceptionHandlingPath' and 'ExceptionHandler' are both null. Please set either both or at least the 'ExceptionHandlingPath' when using 'app.UseExceptionHandler()'.
+        /// An error occurred when configuring the exception handler middleware. Either the 'ExceptionHandlingPath' or the 'ExceptionHandler' option must be set in 'UseExceptionHandler()'.
         /// </summary>
         internal static string FormatExceptionHandlerOptions_NotConfiguredCorrectly()
             => GetString("ExceptionHandlerOptions_NotConfiguredCorrectly");
