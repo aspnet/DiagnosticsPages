@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.Internal;
@@ -28,6 +29,7 @@ namespace Microsoft.AspNetCore.Diagnostics
         private readonly IFileProvider _fileProvider;
         private readonly DiagnosticSource _diagnosticSource;
         private readonly ExceptionDetailsProvider _exceptionDetailsProvider;
+        private readonly DetectBlocking _detectBlocking;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DeveloperExceptionPageMiddleware"/> class
@@ -60,6 +62,7 @@ namespace Microsoft.AspNetCore.Diagnostics
             _fileProvider = _options.FileProvider ?? hostingEnvironment.ContentRootFileProvider;
             _diagnosticSource = diagnosticSource;
             _exceptionDetailsProvider = new ExceptionDetailsProvider(_fileProvider, _options.SourceCodeLineCount);
+            _detectBlocking = new DetectBlocking(loggerFactory);
         }
 
         /// <summary>
@@ -69,6 +72,8 @@ namespace Microsoft.AspNetCore.Diagnostics
         /// <returns></returns>
         public async Task Invoke(HttpContext context)
         {
+            var syncCtx = SynchronizationContext.Current;
+            SynchronizationContext.SetSynchronizationContext(_detectBlocking);
             try
             {
                 await _next(context);
@@ -103,6 +108,10 @@ namespace Microsoft.AspNetCore.Diagnostics
                     _logger.DisplayErrorPageException(ex2);
                 }
                 throw;
+            }
+            finally
+            {
+                SynchronizationContext.SetSynchronizationContext(syncCtx);
             }
         }
 

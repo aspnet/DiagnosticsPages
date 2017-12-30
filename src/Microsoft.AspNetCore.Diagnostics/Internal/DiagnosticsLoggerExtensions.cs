@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Diagnostics;
 using Microsoft.Extensions.Logging;
 
 namespace Microsoft.AspNetCore.Diagnostics.Internal
@@ -26,6 +27,10 @@ namespace Microsoft.AspNetCore.Diagnostics.Internal
         private static readonly Action<ILogger, Exception> _displayErrorPageException =
             LoggerMessage.Define(LogLevel.Error, new EventId(3, "DisplayErrorPageException"), "An exception was thrown attempting to display the error page.");
 
+        // BlockingDetection
+        private static readonly Action<ILogger, StackTrace, Exception> _blockingMethodCalled =
+            LoggerMessage.Define<StackTrace>(LogLevel.Warning, new EventId(4, "BlockingMethodCalled"), "Blocking method has been invoked and blocked, this can lead to threadpool starvation." + Environment.NewLine + "{stackTrace}");
+
         public static void UnhandledException(this ILogger logger, Exception exception)
         {
             _unhandledException(logger, exception);
@@ -49,6 +54,11 @@ namespace Microsoft.AspNetCore.Diagnostics.Internal
         public static void DisplayErrorPageException(this ILogger logger, Exception exception)
         {
             _displayErrorPageException(logger, exception);
+        }
+
+        public static void BlockingMethodCalled(this ILogger logger, StackTrace stackTrace)
+        {
+            _blockingMethodCalled(logger, stackTrace, null);
         }
     }
 }
