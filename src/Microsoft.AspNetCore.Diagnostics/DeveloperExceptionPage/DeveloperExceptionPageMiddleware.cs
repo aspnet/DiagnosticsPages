@@ -86,6 +86,11 @@ namespace Microsoft.AspNetCore.Diagnostics
                 try
                 {
                     context.Response.Clear();
+                    var exceptionHandlerFeature = new DeveloperExceptionPageFeature()
+                    {
+                        Error = ex,
+                    };
+                    context.Features.Set<IExceptionHandlerFeature>(exceptionHandlerFeature);
                     context.Response.StatusCode = 500;
 
                     await DisplayException(context, ex);
