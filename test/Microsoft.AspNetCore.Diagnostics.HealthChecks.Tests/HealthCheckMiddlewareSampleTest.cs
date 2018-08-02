@@ -49,7 +49,7 @@ namespace Microsoft.AspNetCore.Diagnostics.HealthChecks
                 .UseStartup<HealthChecksSample.LivenessProbeStartup>();
 
             var server = new TestServer(builder);
-            System.Net.Http.HttpClient client = server.CreateClient();
+            var client = server.CreateClient();
 
             var response = await client.GetAsync("/health/live");
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
