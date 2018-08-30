@@ -100,16 +100,11 @@ namespace Microsoft.Extensions.DependencyInjection
         /// provided implementation type <typeparamref name="T"/>. Using this method to register a health
         /// check allows you to register a health check that depends on transient and scoped services.
         /// </remarks>
-        public static IHealthChecksBuilder AddCheck<T>(this IHealthChecksBuilder builder) where T : class
+        public static IHealthChecksBuilder AddCheck<T>(this IHealthChecksBuilder builder) where T : class, IHealthCheck
         {
             if (builder == null)
             {
                 throw new ArgumentNullException(nameof(builder));
-            }
-
-            if (typeof(T).IsAssignableFrom(typeof(IHealthCheck)))
-            {
-                throw new ArgumentException($"The provided type must implement {nameof(IHealthCheck)}.", nameof(T));
             }
 
             builder.Services.Add(ServiceDescriptor.Transient(typeof(IHealthCheck), typeof(T)));
