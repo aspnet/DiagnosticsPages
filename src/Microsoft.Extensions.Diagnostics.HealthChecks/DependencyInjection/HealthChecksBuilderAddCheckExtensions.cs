@@ -18,76 +18,18 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="builder">The <see cref="IHealthChecksBuilder"/>.</param>
         /// <param name="name">The name of the health check.</param>
         /// <param name="instance">An <see cref="IHealthCheck"/> instance.</param>
-        /// <returns>The <see cref="IHealthChecksBuilder"/>.</returns>
-        public static IHealthChecksBuilder AddCheck(this IHealthChecksBuilder builder, string name, IHealthCheck instance)
-        {
-            if (builder == null)
-            {
-                throw new ArgumentNullException(nameof(builder));
-            }
-
-            if (name == null)
-            {
-                throw new ArgumentNullException(nameof(name));
-            }
-
-            if (instance == null)
-            {
-                throw new ArgumentNullException(nameof(instance));
-            }
-
-            return AddCheck(builder, name, failureStatus: null, tags: null, instance);
-        }
-
-        /// <summary>
-        /// Adds a new health check with the specified name and implementation.
-        /// </summary>
-        /// <param name="builder">The <see cref="IHealthChecksBuilder"/>.</param>
-        /// <param name="name">The name of the health check.</param>
-        /// <param name="failureStatus">
-        /// The <see cref="HealthStatus"/> that should be reported when the health check reports a failure. If the provided value
-        /// is <c>null</c>, then <see cref="HealthStatus.Unhealthy"/> will be reported.
-        /// </param>
-        /// <param name="instance">An <see cref="IHealthCheck"/> instance.</param>
-        /// <returns>The <see cref="IHealthChecksBuilder"/>.</returns>
-        public static IHealthChecksBuilder AddCheck(this IHealthChecksBuilder builder, string name, HealthStatus? failureStatus, IHealthCheck instance)
-        {
-            if (builder == null)
-            {
-                throw new ArgumentNullException(nameof(builder));
-            }
-
-            if (name == null)
-            {
-                throw new ArgumentNullException(nameof(name));
-            }
-
-            if (instance == null)
-            {
-                throw new ArgumentNullException(nameof(instance));
-            }
-
-            return AddCheck(builder, name, failureStatus, tags: null, instance);
-        }
-
-        /// <summary>
-        /// Adds a new health check with the specified name and implementation.
-        /// </summary>
-        /// <param name="builder">The <see cref="IHealthChecksBuilder"/>.</param>
-        /// <param name="name">The name of the health check.</param>
         /// <param name="failureStatus">
         /// The <see cref="HealthStatus"/> that should be reported when the health check reports a failure. If the provided value
         /// is <c>null</c>, then <see cref="HealthStatus.Unhealthy"/> will be reported.
         /// </param>
         /// <param name="tags">A list of tags that can be used to filter health checks.</param>
-        /// <param name="instance">An <see cref="IHealthCheck"/> instance.</param>
         /// <returns>The <see cref="IHealthChecksBuilder"/>.</returns>
         public static IHealthChecksBuilder AddCheck(
             this IHealthChecksBuilder builder,
             string name,
-            HealthStatus? failureStatus,
-            IEnumerable<string> tags,
-            IHealthCheck instance)
+            IHealthCheck instance,
+            HealthStatus? failureStatus = null,
+            IEnumerable<string> tags = null)
         {
             if (builder == null)
             {
@@ -104,67 +46,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 throw new ArgumentNullException(nameof(instance));
             }
 
-            return builder.Add(new HealthCheckRegistration(name, failureStatus, tags, instance));
-        }
-
-        /// <summary>
-        /// Adds a new health check with the specified name and implementation.
-        /// </summary>
-        /// <typeparam name="T">The health check implementation type.</typeparam>
-        /// <param name="builder">The <see cref="IHealthChecksBuilder"/>.</param>
-        /// <param name="name">The name of the health check.</param>
-        /// <returns>The <see cref="IHealthChecksBuilder"/>.</returns>
-        /// <remarks>
-        /// This method will use <see cref="ActivatorUtilities.GetServiceOrCreateInstance{T}(IServiceProvider)"/> to create the health check
-        /// instance when needed. If a service of type <typeparamref name="T"/> is registred in the dependency injection container
-        /// with any liftime it will be used. Otherwise an instance of type <typeparamref name="T"/> will be constructed with
-        /// access to services from the dependency injection container.
-        /// </remarks>
-        public static IHealthChecksBuilder AddCheck<T>(this IHealthChecksBuilder builder, string name) where T : class, IHealthCheck
-        {
-            if (builder == null)
-            {
-                throw new ArgumentNullException(nameof(builder));
-            }
-
-            if (name == null)
-            {
-                throw new ArgumentNullException(nameof(name));
-            }
-
-            return AddCheck<T>(builder, name, failureStatus: null, tags: null);
-        }
-
-        /// <summary>
-        /// Adds a new health check with the specified name and implementation.
-        /// </summary>
-        /// <typeparam name="T">The health check implementation type.</typeparam>
-        /// <param name="builder">The <see cref="IHealthChecksBuilder"/>.</param>
-        /// <param name="name">The name of the health check.</param>
-        /// <param name="failureStatus">
-        /// The <see cref="HealthStatus"/> that should be reported when the health check reports a failure. If the provided value
-        /// is <c>null</c>, then <see cref="HealthStatus.Unhealthy"/> will be reported.
-        /// </param>
-        /// <returns>The <see cref="IHealthChecksBuilder"/>.</returns>
-        /// <remarks>
-        /// This method will use <see cref="ActivatorUtilities.GetServiceOrCreateInstance{T}(IServiceProvider)"/> to create the health check
-        /// instance when needed. If a service of type <typeparamref name="T"/> is registred in the dependency injection container
-        /// with any liftime it will be used. Otherwise an instance of type <typeparamref name="T"/> will be constructed with
-        /// access to services from the dependency injection container.
-        /// </remarks>
-        public static IHealthChecksBuilder AddCheck<T>(this IHealthChecksBuilder builder, string name, HealthStatus? failureStatus) where T : class, IHealthCheck
-        {
-            if (builder == null)
-            {
-                throw new ArgumentNullException(nameof(builder));
-            }
-
-            if (name == null)
-            {
-                throw new ArgumentNullException(nameof(name));
-            }
-
-            return AddCheck<T>(builder, name, failureStatus, tags: null);
+            return builder.Add(new HealthCheckRegistration(name, instance, failureStatus, tags));
         }
 
         /// <summary>
@@ -188,8 +70,8 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IHealthChecksBuilder AddCheck<T>(
             this IHealthChecksBuilder builder,
             string name,
-            HealthStatus? failureStatus,
-            IEnumerable<string> tags) where T : class, IHealthCheck
+            HealthStatus? failureStatus = null,
+            IEnumerable<string> tags = null) where T : class, IHealthCheck
         {
             if (builder == null)
             {
@@ -201,8 +83,11 @@ namespace Microsoft.Extensions.DependencyInjection
                 throw new ArgumentNullException(nameof(name));
             }
 
-            return builder.Add(new HealthCheckRegistration(name, failureStatus, tags, s => ActivatorUtilities.GetServiceOrCreateInstance<T>(s)));
+            return builder.Add(new HealthCheckRegistration(name, s => ActivatorUtilities.GetServiceOrCreateInstance<T>(s), failureStatus, tags));
         }
+
+        // NOTE: AddTypeActivatedCheck has overloads rather than default parameters values, because default parameter values don't
+        // play super well with params.
 
         /// <summary>
         /// Adds a new type activated health check with the specified name and implementation.
@@ -300,7 +185,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 throw new ArgumentNullException(nameof(name));
             }
 
-            return builder.Add(new HealthCheckRegistration(name, failureStatus, tags, s => ActivatorUtilities.CreateInstance<T>(s, args)));
+            return builder.Add(new HealthCheckRegistration(name, s => ActivatorUtilities.CreateInstance<T>(s, args), failureStatus, tags));
         }
     }
 }

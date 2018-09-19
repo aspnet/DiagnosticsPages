@@ -112,7 +112,7 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             // Arrange
             var services = CreateServices();
-            services.AddHealthChecks().AddDelegateCheck("test", failureStatus: HealthStatus.Degraded, tags: new[] { "tag", }, check: () =>
+            services.AddHealthChecks().AddCheck("test", failureStatus: HealthStatus.Degraded, tags: new[] { "tag", }, check: () =>
             {
                 return HealthCheckResult.Passed();
             });
@@ -135,10 +135,10 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             // Arrange
             var services = CreateServices();
-            services.AddHealthChecks().AddDelegateCheck("test", failureStatus: HealthStatus.Degraded, tags: new[] { "tag", }, check: (_) =>
+            services.AddHealthChecks().AddCheck("test", (_) =>
             {
                 return HealthCheckResult.Passed();
-            });
+            }, failureStatus: HealthStatus.Degraded, tags: new[] { "tag", });
 
             var serviceProvider = services.BuildServiceProvider();
 
@@ -158,10 +158,10 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             // Arrange
             var services = CreateServices();
-            services.AddHealthChecks().AddAsyncDelegateCheck("test", failureStatus: HealthStatus.Degraded, tags: new[] { "tag", }, check: () =>
+            services.AddHealthChecks().AddAsyncCheck("test", () =>
             {
                 return Task.FromResult(HealthCheckResult.Passed());
-            });
+            }, failureStatus: HealthStatus.Degraded, tags: new[] { "tag", });
 
             var serviceProvider = services.BuildServiceProvider();
 
@@ -181,10 +181,10 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             // Arrange
             var services = CreateServices();
-            services.AddHealthChecks().AddAsyncDelegateCheck("test", failureStatus: HealthStatus.Degraded, tags: new[] { "tag", }, check: (_) =>
+            services.AddHealthChecks().AddAsyncCheck("test", (_) =>
             {
                 return Task.FromResult(HealthCheckResult.Passed());
-            });
+            }, failureStatus: HealthStatus.Degraded, tags: new[] { "tag", });
 
             var serviceProvider = services.BuildServiceProvider();
 
@@ -205,10 +205,10 @@ namespace Microsoft.Extensions.DependencyInjection
             var services = new ServiceCollection();
             services
                 .AddHealthChecks()
-                .AddAsyncDelegateCheck("Foo", () => Task.FromResult(HealthCheckResult.Passed()));
+                .AddAsyncCheck("Foo", () => Task.FromResult(HealthCheckResult.Passed()));
             services
                 .AddHealthChecks()
-                .AddAsyncDelegateCheck("Bar", () => Task.FromResult(HealthCheckResult.Passed()));
+                .AddAsyncCheck("Bar", () => Task.FromResult(HealthCheckResult.Passed()));
 
             // Act
             var options = services.BuildServiceProvider().GetRequiredService<IOptions<HealthCheckServiceOptions>>();

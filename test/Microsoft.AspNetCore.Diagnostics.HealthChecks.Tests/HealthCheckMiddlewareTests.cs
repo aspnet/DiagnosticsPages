@@ -109,9 +109,9 @@ namespace Microsoft.AspNetCore.Diagnostics.HealthChecks
                 .ConfigureServices(services =>
                 {
                     services.AddHealthChecks()
-                        .AddDelegateCheck("Foo", () => HealthCheckResult.Passed("A-ok!"))
-                        .AddDelegateCheck("Bar", () => HealthCheckResult.Passed("A-ok!"))
-                        .AddDelegateCheck("Baz", () => HealthCheckResult.Passed("A-ok!"));
+                        .AddCheck("Foo", () => HealthCheckResult.Passed("A-ok!"))
+                        .AddCheck("Bar", () => HealthCheckResult.Passed("A-ok!"))
+                        .AddCheck("Baz", () => HealthCheckResult.Passed("A-ok!"));
                 });
             var server = new TestServer(builder);
             var client = server.CreateClient();
@@ -134,9 +134,9 @@ namespace Microsoft.AspNetCore.Diagnostics.HealthChecks
                 .ConfigureServices(services =>
                 {
                     services.AddHealthChecks()
-                        .AddDelegateCheck("Foo", () => HealthCheckResult.Passed("A-ok!"))
-                        .AddDelegateCheck("Bar", failureStatus: HealthStatus.Degraded, () => HealthCheckResult.Failed("Not so great."))
-                        .AddDelegateCheck("Baz", () => HealthCheckResult.Passed("A-ok!"));
+                        .AddCheck("Foo", () => HealthCheckResult.Passed("A-ok!"))
+                        .AddCheck("Bar", () => HealthCheckResult.Failed("Not so great."), failureStatus: HealthStatus.Degraded)
+                        .AddCheck("Baz", () => HealthCheckResult.Passed("A-ok!"));
                 });
             var server = new TestServer(builder);
             var client = server.CreateClient();
@@ -159,9 +159,9 @@ namespace Microsoft.AspNetCore.Diagnostics.HealthChecks
                 .ConfigureServices(services =>
                 {
                     services.AddHealthChecks()
-                        .AddAsyncDelegateCheck("Foo", () => Task.FromResult(HealthCheckResult.Passed("A-ok!")))
-                        .AddAsyncDelegateCheck("Bar", () => Task.FromResult(HealthCheckResult.Failed("Pretty bad.")))
-                        .AddAsyncDelegateCheck("Baz", () => Task.FromResult(HealthCheckResult.Passed("A-ok!")));
+                        .AddAsyncCheck("Foo", () => Task.FromResult(HealthCheckResult.Passed("A-ok!")))
+                        .AddAsyncCheck("Bar", () => Task.FromResult(HealthCheckResult.Failed("Pretty bad.")))
+                        .AddAsyncCheck("Baz", () => Task.FromResult(HealthCheckResult.Passed("A-ok!")));
                 });
             var server = new TestServer(builder);
             var client = server.CreateClient();
@@ -184,9 +184,9 @@ namespace Microsoft.AspNetCore.Diagnostics.HealthChecks
                 .ConfigureServices(services =>
                 {
                     services.AddHealthChecks()
-                        .AddAsyncDelegateCheck("Foo", () => Task.FromResult(HealthCheckResult.Passed("A-ok!")))
-                        .AddAsyncDelegateCheck("Bar", () => throw null)
-                        .AddAsyncDelegateCheck("Baz", () => Task.FromResult(HealthCheckResult.Passed("A-ok!")));
+                        .AddAsyncCheck("Foo", () => Task.FromResult(HealthCheckResult.Passed("A-ok!")))
+                        .AddAsyncCheck("Bar", () => throw null)
+                        .AddAsyncCheck("Baz", () => Task.FromResult(HealthCheckResult.Passed("A-ok!")));
                 });
             var server = new TestServer(builder);
             var client = server.CreateClient();
@@ -222,9 +222,9 @@ namespace Microsoft.AspNetCore.Diagnostics.HealthChecks
                 .ConfigureServices(services =>
                 {
                     services.AddHealthChecks()
-                        .AddAsyncDelegateCheck("Foo", () => Task.FromResult(HealthCheckResult.Passed("A-ok!")))
-                        .AddAsyncDelegateCheck("Bar", () => Task.FromResult(HealthCheckResult.Failed("Pretty bad.")))
-                        .AddAsyncDelegateCheck("Baz", () => Task.FromResult(HealthCheckResult.Passed("A-ok!")));
+                        .AddAsyncCheck("Foo", () => Task.FromResult(HealthCheckResult.Passed("A-ok!")))
+                        .AddAsyncCheck("Bar", () => Task.FromResult(HealthCheckResult.Failed("Pretty bad.")))
+                        .AddAsyncCheck("Baz", () => Task.FromResult(HealthCheckResult.Passed("A-ok!")));
                 });
             var server = new TestServer(builder);
             var client = server.CreateClient();
@@ -251,9 +251,9 @@ namespace Microsoft.AspNetCore.Diagnostics.HealthChecks
                 .ConfigureServices(services =>
                 {
                     services.AddHealthChecks()
-                        .AddAsyncDelegateCheck("Foo", () => Task.FromResult(HealthCheckResult.Passed("A-ok!")))
-                        .AddAsyncDelegateCheck("Bar", () => Task.FromResult(HealthCheckResult.Failed("Pretty bad.")))
-                        .AddAsyncDelegateCheck("Baz", () => Task.FromResult(HealthCheckResult.Passed("A-ok!")));
+                        .AddAsyncCheck("Foo", () => Task.FromResult(HealthCheckResult.Passed("A-ok!")))
+                        .AddAsyncCheck("Bar", () => Task.FromResult(HealthCheckResult.Failed("Pretty bad.")))
+                        .AddAsyncCheck("Baz", () => Task.FromResult(HealthCheckResult.Passed("A-ok!")));
                 });
             var server = new TestServer(builder);
             var client = server.CreateClient();
@@ -305,10 +305,10 @@ namespace Microsoft.AspNetCore.Diagnostics.HealthChecks
                 .ConfigureServices(services =>
                 {
                     services.AddHealthChecks()
-                        .AddAsyncDelegateCheck("Foo", () => Task.FromResult(HealthCheckResult.Passed("A-ok!")))
+                        .AddAsyncCheck("Foo", () => Task.FromResult(HealthCheckResult.Passed("A-ok!")))
                         // Will get filtered out
-                        .AddAsyncDelegateCheck("Bar", () => Task.FromResult(HealthCheckResult.Failed("A-ok!")))
-                        .AddAsyncDelegateCheck("Baz", () => Task.FromResult(HealthCheckResult.Passed("A-ok!")));
+                        .AddAsyncCheck("Bar", () => Task.FromResult(HealthCheckResult.Failed("A-ok!")))
+                        .AddAsyncCheck("Baz", () => Task.FromResult(HealthCheckResult.Passed("A-ok!")));
                 });
             var server = new TestServer(builder);
             var client = server.CreateClient();

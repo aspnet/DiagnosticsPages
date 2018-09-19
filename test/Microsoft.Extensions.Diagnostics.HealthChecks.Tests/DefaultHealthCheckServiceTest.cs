@@ -63,9 +63,9 @@ namespace Microsoft.Extensions.Diagnostics.HealthChecks
 
             var service = CreateHealthChecksService(b =>
             {
-                b.AddAsyncDelegateCheck("HealthyCheck", _ => Task.FromResult(HealthCheckResult.Passed(HealthyMessage, data)));
-                b.AddAsyncDelegateCheck("DegradedCheck", failureStatus: HealthStatus.Degraded,_ => Task.FromResult(HealthCheckResult.Failed(DegradedMessage)));
-                b.AddAsyncDelegateCheck("UnhealthyCheck", _ => Task.FromResult(HealthCheckResult.Failed(UnhealthyMessage, exception)));
+                b.AddAsyncCheck("HealthyCheck", _ => Task.FromResult(HealthCheckResult.Passed(HealthyMessage, data)));
+                b.AddAsyncCheck("DegradedCheck", _ => Task.FromResult(HealthCheckResult.Failed(DegradedMessage)), failureStatus: HealthStatus.Degraded);
+                b.AddAsyncCheck("UnhealthyCheck", _ => Task.FromResult(HealthCheckResult.Failed(UnhealthyMessage, exception)));
             });
 
             // Act
@@ -121,9 +121,9 @@ namespace Microsoft.Extensions.Diagnostics.HealthChecks
 
             var service = CreateHealthChecksService(b =>
             {
-                b.AddAsyncDelegateCheck("HealthyCheck", _ => Task.FromResult(HealthCheckResult.Passed(HealthyMessage, data)));
-                b.AddAsyncDelegateCheck("DegradedCheck", failureStatus: HealthStatus.Degraded, _ => Task.FromResult(HealthCheckResult.Failed(DegradedMessage)));
-                b.AddAsyncDelegateCheck("UnhealthyCheck", _ => Task.FromResult(HealthCheckResult.Failed(UnhealthyMessage, exception)));
+                b.AddAsyncCheck("HealthyCheck", _ => Task.FromResult(HealthCheckResult.Passed(HealthyMessage, data)));
+                b.AddAsyncCheck("DegradedCheck", _ => Task.FromResult(HealthCheckResult.Failed(DegradedMessage)), failureStatus: HealthStatus.Degraded);
+                b.AddAsyncCheck("UnhealthyCheck", _ => Task.FromResult(HealthCheckResult.Failed(UnhealthyMessage, exception)));
             });
 
             // Act
@@ -197,9 +197,9 @@ namespace Microsoft.Extensions.Diagnostics.HealthChecks
 
             var service = CreateHealthChecksService(b =>
             {
-                b.AddAsyncDelegateCheck("Throws", ct => throw thrownException);
-                b.AddAsyncDelegateCheck("Faults", ct => Task.FromException<HealthCheckResult>(faultedException));
-                b.AddAsyncDelegateCheck("Succeeds", ct => Task.FromResult(HealthCheckResult.Passed()));
+                b.AddAsyncCheck("Throws", ct => throw thrownException);
+                b.AddAsyncCheck("Faults", ct => Task.FromException<HealthCheckResult>(faultedException));
+                b.AddAsyncCheck("Succeeds", ct => Task.FromResult(HealthCheckResult.Passed()));
             });
 
             // Act

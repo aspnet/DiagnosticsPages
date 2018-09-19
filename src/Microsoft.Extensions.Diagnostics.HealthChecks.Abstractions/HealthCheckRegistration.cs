@@ -29,13 +29,13 @@ namespace Microsoft.Extensions.Diagnostics.HealthChecks
         /// Creates a new <see cref="HealthCheckRegistration"/> for an existing <see cref="IHealthCheck"/> instance.
         /// </summary>
         /// <param name="name">The health check name.</param>
+        /// <param name="instance">The <see cref="IHealthCheck"/> instance.</param>
         /// <param name="failureStatus">
         /// The <see cref="HealthStatus"/> that should be reported upon failure of the health check. If the provided value
         /// is <c>null</c>, then <see cref="HealthStatus.Unhealthy"/> will be reported.
         /// </param>
         /// <param name="tags">A list of tags that can be used for filtering health checks.</param>
-        /// <param name="instance">The <see cref="IHealthCheck"/> instance.</param>
-        public HealthCheckRegistration(string name, HealthStatus? failureStatus, IEnumerable<string> tags, IHealthCheck instance)
+        public HealthCheckRegistration(string name, IHealthCheck instance, HealthStatus? failureStatus, IEnumerable<string> tags)
         {
             if (name == null)
             {
@@ -57,17 +57,17 @@ namespace Microsoft.Extensions.Diagnostics.HealthChecks
         /// Creates a new <see cref="HealthCheckRegistration"/> for an existing <see cref="IHealthCheck"/> instance.
         /// </summary>
         /// <param name="name">The health check name.</param>
+        /// <param name="factory">A delegate used to create the <see cref="IHealthCheck"/> instance.</param>
         /// <param name="failureStatus">
         /// The <see cref="HealthStatus"/> that should be reported when the health check reports a failure. If the provided value
         /// is <c>null</c>, then <see cref="HealthStatus.Unhealthy"/> will be reported.
         /// </param>
         /// <param name="tags">A list of tags that can be used for filtering health checks.</param>
-        /// <param name="factory">A delegate used to create the <see cref="IHealthCheck"/> instance.</param>
         public HealthCheckRegistration(
-            string name, 
-            HealthStatus? failureStatus, 
-            IEnumerable<string> tags, 
-            Func<IServiceProvider, IHealthCheck> factory)
+            string name,
+            Func<IServiceProvider, IHealthCheck> factory,
+            HealthStatus? failureStatus,
+            IEnumerable<string> tags)
         {
             if (name == null)
             {
