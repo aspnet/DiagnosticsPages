@@ -34,13 +34,13 @@ namespace Microsoft.Extensions.Diagnostics.HealthChecks
 
                 // Assert
                 Assert.False(service.IsTimerRunning);
-                Assert.True(service.IsCancelled);
+                Assert.False(service.IsStopping);
             }
             finally
             {
                 await service.StopAsync();
                 Assert.False(service.IsTimerRunning);
-                Assert.True(service.IsCancelled);
+                Assert.True(service.IsStopping);
             }
         }
 
@@ -62,13 +62,13 @@ namespace Microsoft.Extensions.Diagnostics.HealthChecks
 
                 // Assert
                 Assert.True(service.IsTimerRunning);
-                Assert.False(service.IsCancelled);
+                Assert.False(service.IsStopping);
             }
             finally
             {
                 await service.StopAsync();
                 Assert.False(service.IsTimerRunning);
-                Assert.True(service.IsCancelled);
+                Assert.True(service.IsStopping);
             }
         }
 
@@ -107,13 +107,13 @@ namespace Microsoft.Extensions.Diagnostics.HealthChecks
 
                 // Assert
                 Assert.True(service.IsTimerRunning);
-                Assert.False(service.IsCancelled);
+                Assert.False(service.IsStopping);
             }
             finally
             {
                 await service.StopAsync();
                 Assert.False(service.IsTimerRunning);
-                Assert.True(service.IsCancelled);
+                Assert.True(service.IsStopping);
             }
         }
 
@@ -147,7 +147,7 @@ namespace Microsoft.Extensions.Diagnostics.HealthChecks
                 // Assert
                 await AssertCancelledAsync(publishers[0].Entries[0].cancellationToken);
                 Assert.False(service.IsTimerRunning);
-                Assert.True(service.IsCancelled);
+                Assert.True(service.IsStopping);
 
                 unblock.SetResult(null);
 
@@ -157,7 +157,7 @@ namespace Microsoft.Extensions.Diagnostics.HealthChecks
             {
                 await service.StopAsync();
                 Assert.False(service.IsTimerRunning);
-                Assert.True(service.IsCancelled);
+                Assert.True(service.IsStopping);
             }
         }
 
@@ -191,7 +191,7 @@ namespace Microsoft.Extensions.Diagnostics.HealthChecks
 
                 // Assert
                 Assert.True(service.IsTimerRunning);
-                Assert.False(service.IsCancelled);
+                Assert.False(service.IsStopping);
 
                 for (var i = 0; i < publishers.Length; i++)
                 {
@@ -203,7 +203,7 @@ namespace Microsoft.Extensions.Diagnostics.HealthChecks
             {
                 await service.StopAsync();
                 Assert.False(service.IsTimerRunning);
-                Assert.True(service.IsCancelled);
+                Assert.True(service.IsStopping);
             }
 
             Assert.Collection(
@@ -257,7 +257,7 @@ namespace Microsoft.Extensions.Diagnostics.HealthChecks
 
                 // Assert
                 Assert.True(service.IsTimerRunning);
-                Assert.False(service.IsCancelled);
+                Assert.False(service.IsStopping);
 
                 for (var i = 0; i < publishers.Length; i++)
                 {
@@ -269,7 +269,7 @@ namespace Microsoft.Extensions.Diagnostics.HealthChecks
             {
                 await service.StopAsync();
                 Assert.False(service.IsTimerRunning);
-                Assert.True(service.IsCancelled);
+                Assert.True(service.IsStopping);
             }
         }
 
@@ -307,13 +307,13 @@ namespace Microsoft.Extensions.Diagnostics.HealthChecks
 
                 // Assert
                 Assert.True(service.IsTimerRunning);
-                Assert.False(service.IsCancelled);
+                Assert.False(service.IsStopping);
             }
             finally
             {
                 await service.StopAsync();
                 Assert.False(service.IsTimerRunning);
-                Assert.True(service.IsCancelled);
+                Assert.True(service.IsStopping);
             }
 
             Assert.Collection(
@@ -363,7 +363,7 @@ namespace Microsoft.Extensions.Diagnostics.HealthChecks
             {
                 await service.StopAsync();
                 Assert.False(service.IsTimerRunning);
-                Assert.True(service.IsCancelled);
+                Assert.True(service.IsStopping);
             }
         }
 
@@ -391,7 +391,7 @@ namespace Microsoft.Extensions.Diagnostics.HealthChecks
             {
                 await service.StopAsync();
                 Assert.False(service.IsTimerRunning);
-                Assert.True(service.IsCancelled);
+                Assert.True(service.IsStopping);
             }
 
             Assert.Collection(
@@ -435,7 +435,7 @@ namespace Microsoft.Extensions.Diagnostics.HealthChecks
             {
                 await service.StopAsync();
                 Assert.False(service.IsTimerRunning);
-                Assert.True(service.IsCancelled);
+                Assert.True(service.IsStopping);
             }
         }
 
@@ -455,9 +455,9 @@ namespace Microsoft.Extensions.Diagnostics.HealthChecks
             // All of the tests that rely on the timer will set their own values for speed.
             serviceCollection.Configure<HealthCheckPublisherOptions>(options =>
             {
-                options.Delay = Timeout.InfiniteTimeSpan;
-                options.Period = Timeout.InfiniteTimeSpan;
-                options.Timeout = Timeout.InfiniteTimeSpan;
+                options.Delay = TimeSpan.FromMinutes(5);
+                options.Period = TimeSpan.FromMinutes(5);
+                options.Timeout = TimeSpan.FromMinutes(5);
             });
 
             if (publishers != null)

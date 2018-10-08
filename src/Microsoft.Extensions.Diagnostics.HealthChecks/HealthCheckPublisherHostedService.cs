@@ -53,9 +53,11 @@ namespace Microsoft.Extensions.Diagnostics.HealthChecks
             _options = options;
             _logger = logger;
             _publishers = publishers.ToArray();
+
+            _stopping = new CancellationTokenSource();
         }
 
-        internal bool IsCancelled => _stopping == null || _stopping.IsCancellationRequested;
+        internal bool IsStopping => _stopping.IsCancellationRequested;
 
         internal bool IsTimerRunning => _timer != null;
 
@@ -66,8 +68,6 @@ namespace Microsoft.Extensions.Diagnostics.HealthChecks
                 return Task.CompletedTask;
             }
 
-            _stopping = new CancellationTokenSource();
-
             // IMPORTANT - make sure this is the last thing that happens in this method. The timer can
             // fire before other code runs. 
             _timer = NonCapturingTimer.Create(Timer_Tick, null, dueTime: _options.Value.Delay, period: _options.Value.Period);
@@ -77,6 +77,15 @@ namespace Microsoft.Extensions.Diagnostics.HealthChecks
 
         public Task StopAsync(CancellationToken cancellationToken = default)
         {
+            try
+            {
+                _stopping.Cancel();
+            }
+            catch
+            {
+                // Ignore exceptions thrown as a result of a cancellation.
+            }
+
             if (_publishers.Length == 0)
             {
                 return Task.CompletedTask;
@@ -85,9 +94,6 @@ namespace Microsoft.Extensions.Diagnostics.HealthChecks
             _timer?.Dispose();
             _timer = null;
 
-            _stopping?.Cancel();
-            _stopping?.Dispose();
-            _stopping = null;
 
             return Task.CompletedTask;
         }
@@ -110,16 +116,13 @@ namespace Microsoft.Extensions.Diagnostics.HealthChecks
                 var timeout = _options.Value.Timeout;
 
                 cancellation = CancellationTokenSource.CreateLinkedTokenSource(_stopping.Token);
-                if (timeout != Timeout.InfiniteTimeSpan)
-                {
-                    cancellation.CancelAfter(timeout);
-                }
+                cancellation.CancelAfter(timeout);
 
                 await RunAsyncCore(cancellation.Token);
 
                 Logger.HealthCheckPublisherProcessingEnd(_logger, duration.GetElapsedTime());
             }
-            catch (OperationCanceledException) when (IsCancelled)
+            catch (OperationCanceledException) when (IsStopping)
             {
                 // This is a cancellation - if the app is shutting down we want to ignore it. Otherwise, it's
                 // a timeout and we want to log it.
@@ -147,17 +150,7 @@ namespace Microsoft.Extensions.Diagnostics.HealthChecks
             var tasks = new Task[publishers.Length];
             for (var i = 0; i < publishers.Length; i++)
             {
-                try
-                {
-                    tasks[i] = RunPublisherAsync(publishers[i], report, cancellationToken);
-                }
-                catch (Exception ex)
-                {
-                    // Handle any exceptions that are thrown synchronously - this allows us to start
-                    // all publishers before awaiting any of them. We don't want a single slow publisher
-                    // to prevent others from getting started.
-                    tasks[i] = Task.FromException(ex);
-                }
+                tasks[i] = RunPublisherAsync(publishers[i], report, cancellationToken);
             }
 
             await Task.WhenAll(tasks);
@@ -174,7 +167,7 @@ namespace Microsoft.Extensions.Diagnostics.HealthChecks
                 await publisher.PublishAsync(report, cancellationToken);
                 Logger.HealthCheckPublisherEnd(_logger, publisher, duration.GetElapsedTime());
             }
-            catch (OperationCanceledException) when (IsCancelled)
+            catch (OperationCanceledException) when (IsStopping)
             {
                 // This is a cancellation - if the app is shutting down we want to ignore it. Otherwise, it's
                 // a timeout and we want to log it.
