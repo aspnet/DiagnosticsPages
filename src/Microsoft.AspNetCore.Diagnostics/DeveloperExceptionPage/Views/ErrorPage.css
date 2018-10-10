@@ -5,10 +5,6 @@
     background-color: #fff;
 }
 
-h1, h2, h3, h4, h5 {
-    font-weight: 400;
-}
-
 h1 {
     color: #44525e;
     margin: 15px 0 15px 0;
@@ -21,11 +17,12 @@ h2 {
 h3 {
     color: #363636;
     margin: 5px 5px 0 0;
+    font-weight: normal;
 }
 
 code {
     font-family: Consolas, "Courier New", courier, monospace;
-    font-weight: 600;
+    font-weight: bold;
 }
 
 body .titleerror {
