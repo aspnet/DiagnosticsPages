@@ -8,10 +8,6 @@ namespace Microsoft.Extensions.Diagnostics.HealthChecks
     /// </summary>
     /// <remarks>
     /// <para>
-    /// A health status is derived the pass/fail result of an <see cref="IHealthCheck"/> (<see cref="HealthCheckResult.Status"/>)
-    /// and the corresponding value of <see cref="HealthCheckRegistration.FailureStatus"/>.
-    /// </para>
-    /// <para>
     /// A status of <see cref="Unhealthy"/> should be considered the default value for a failing health check. Application
     /// developers may configure a health check to report a different status as desired.
     /// </para>

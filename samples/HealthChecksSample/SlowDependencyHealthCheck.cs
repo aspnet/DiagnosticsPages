@@ -24,7 +24,9 @@ namespace HealthChecksSample
                 return Task.FromResult(HealthCheckResult.Healthy("Dependency is ready"));
             }
 
-            return Task.FromResult(HealthCheckResult.Unhealthy("Dependency is still initializing"));
+            return Task.FromResult(new HealthCheckResult(
+                status: context.Registration.FailureStatus, 
+                description: "Dependency is still initializing"));
         }
     }
 }

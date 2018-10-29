@@ -74,7 +74,6 @@ namespace HealthChecksSample
             return Task.FromResult(new HealthCheckResult(
                 result,
                 description: "reports degraded status if allocated bytes >= 1gb",
-                exception: null,
                 data: data));
         }
     }

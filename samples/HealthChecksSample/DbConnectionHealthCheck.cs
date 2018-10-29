@@ -51,7 +51,7 @@ namespace HealthChecksSample
                 }
                 catch (DbException ex)
                 {
-                    return HealthCheckResult.Unhealthy(exception: ex);
+                    return new HealthCheckResult(status: context.Registration.FailureStatus, exception: ex);
                 }
             }
 
