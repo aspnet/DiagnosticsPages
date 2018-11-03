@@ -46,8 +46,7 @@ namespace Microsoft.AspNetCore.Diagnostics
         /// <returns></returns>
         public Task Invoke(HttpContext context)
         {
-            HttpRequest request = context.Request;
-            if (!_options.Path.HasValue || _options.Path == request.Path)
+            if (!_options.Path.HasValue || _options.Path == context.Request.Path)
             {
                 // Dynamically generated for LOC.
                 var welcomePage = new WelcomePage();
